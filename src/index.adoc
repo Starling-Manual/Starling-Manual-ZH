@@ -1,5 +1,6 @@
-= The Starling Manual
+= Starling手册
 Daniel Sperl <http://www.gamua.com[Gamua]>
+:revremark: 朱中茂 <http://www.evil3d.cn[Evil3D]>
 :doctype: book
 :toc: left
 :sectnums:
@@ -14,36 +15,35 @@ ifndef::ebook-format[:leveloffset: 1]
 
 // introduction
 
-The goal of this manual is to provide an extensive introduction to the http://www.starling-framework.org[Starling Framework].
-Starling is a cross-platform engine for _ActionScript 3_ that can be used for all kinds of applications, with a special focus on 2D games.
+本手册旨在广泛介绍 http://www.starling-framework.org[Starling 框架].
+Starling是一个可用于各种应用程序, 特别关注2D游戏的ActionScript 3跨平台引擎.
 
 ifdef::backend-html5[]
-TIP: Feel free to download a link:manual.pdf[PDF version] of this document.
+TIP: 免费下载此文档的 link:manual.pdf[PDF 版本].
 endif::[]
 
-In this guide, you will learn:
+在本手册中你将学习:
+* Starling使用的技术及其遵循的原则。
+* 如何选择IDE并建立第一个项目。
+* 显示列表，事件和动画系统等基本概念。
+* 如何挖掘片段和顶点程序的潜力等进阶技术。
+* 如何发挥框架的最佳性能。
+* 如何将游戏运行在手机和平板电脑上。
 
-* The technologies Starling was built upon and the principles it follows.
-* How to pick an IDE and set it up for your first project.
-* The basic concepts like the display list, events and the animation system.
-* Advanced techniques, like how to tap into the potential of fragment and vertex programs.
-* How to get the best performance out of the framework.
-* What's required to get your game to run on mobile phones and tablets.
-
-Keep on reading to dive right into it!
+继续深入阅读!
 
 [NOTE]
-.The Starling Handbook
+.Starling指南
 ====
 [.right]
 image::handbook-mockup.jpg[The Starling Handbook, 250]
 
-I'm also working on a book that contains not only the complete contents of this manual, but adds lots of additional HOW-TOs and guides.
-A step-by-step tutorial will lead you through the development of a *complete game*.
+我还在编写一本书，其中不仅包含本手册的完整内容，还添加了许多其他的HOW-TO和指南。 
+分步教程将引导您完成一个完整的游戏的开发。
 
-* Find out more about it on the http://gamua.com/blog/2016/09/the-starling-handbook/[Gamua Blog].
-* Or download a http://bit.ly/2dfNIQF[Book Preview] right away.
-* http://eepurl.com/chQGpD[Sign up] to get notified when it launches!
+* 上 http://gamua.com/blog/2016/09/the-starling-handbook/[Gamua 博客]了解更多信息.
+* 或立即下载 http://bit.ly/2dfNIQF[新书预览].
+* http://eepurl.com/chQGpD[报名预约] 以在新书推出时获得消息通知!
 ====
 
 // include main chapters
@@ -60,29 +60,29 @@ include::mobile-development/index.adoc[]
 
 :leveloffset: 0
 
-== Final Words
+== 结束语
 
-=== Achievement Unlocked!
+=== 成就达成!
 
-You have successfully finished working through the _Starling Manual_.
-We covered a lot of ground, didn't we?
-Pat yourself on the back and shave off that beard you've grown during the last hours.
+您已完成_Starling手册_的学习。
+我们已经知道了很多内容，不是吗？
+起身拍拍自己发酸的后背，然后剃掉过去几个小时里不断生长的胡须。
 
-Congratulations!
+祝贺你顺利通关！
 
 image::impressive.jpg[Impressive]
 
-=== Getting Help
+=== 获得帮助
 
-Want to share the knowledge you have just acquired?
-Or do you have any questions that haven't been answered yet?
-The Starling community is eager to help you!
-Pay us a visit at the official http://forum.starling-framework.org[Starling Forum].
+想分享你刚刚获得的知识吗？
+或者您有任何尚未回答的问题吗？
+Starling社区渴望你的到来！
+欢迎访问官方http://forum.starling-framework.org [Starling论坛]。
 
-=== Want more?
+=== 想了解更多?
 
-If you just can't get enough of Starling, don't forget to http://eepurl.com/chQGpD[sign up] for the launch of the http://gamua.com/blog/2016/09/the-starling-handbook/[Starling Handbook]!
-In addition to all the contents of this manual, it goes above and beyond to provide you with easy to follow recipes you can put to use in your own projects.
-And you're supporting the continuing development of Starling at the same time!
+如果你觉得关于Starling这还不够，不要忘了http://eepurl.com/chQGpD[报名预约]http://gamua.com/blog/2016/09/the-starling-handbook/[Starling指南]的新书发布！
+除了本手册的所有内容，它还提供了易于使用的技巧，你可以放在自己的项目中使用。
+同时也更好的支持Starling持续发展！
 
 image::handbook-mockup.jpg[The Starling Handbook]
