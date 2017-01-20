@@ -1,33 +1,33 @@
 == Hello World
 ifndef::imagesdir[:imagesdir: ../../img]
 
-Phew, that was quite a lot of background information.
-It's time we finally get our hands dirty!
-And what better way to do that than a classical "Hello World" program.
-This manual wouldn't be complete without one, right?
+好了，说了这么多背景信息.
+是时候开始干活了!
+没有比一个经典的“Hello World”程序更管用的开始方式.
+本手册如果没有一个岂不是不完整?
 
-=== Checklist
+=== 清单
 
-Here's a quick summary of the preparations you should already have made:
+以下是您应该已经准备好的快速摘要:
 
-* Chosen and downloaded an IDE.
-* Downloaded the latest version of the _AIR SDK_.
-* Downloaded the latest version of the _Flash Player Projector_.
-* Downloaded the latest version of _Starling_.
-* Configured your IDE to use the correct SDK and player.
+* 选择并下载IDE.
+* 下载了AIR SDK的最新版本.
+* 下载最新版本的Flash Player独立版播放器.
+* 下载最新版本的Starling.
+* 配置您的IDE以适用正确的SDK和播放器.
 
-Configuring the IDE and setting up a project is done slightly different in each IDE.
-To help you with that, I created a specific how-to for each IDE in the http://wiki.starling-framework.org/manual/[Starling Wiki].
-Please follow the appropriate tutorial before you continue.
+配置IDE和设置项目对每个IDE来说都略有不同.
+为了帮助您，我在Starling Wiki中的为每个IDE创建了一个特定的操作方法: http://wiki.starling-framework.org/manual/[Starling Wiki].
+请按照相应的教程，然后继续.
 
-NOTE: Admittedly, all of those set-up procedures are a pain. But bear with me: you only need to do this very rarely.
+NOTE: 诚然，这些设置流程都是那么的让人讨厌. 但是相信我：你需要做的其实很少.
 
-=== Startup Code
+=== 启动代码
 
-Create a new project or module in your IDE; I recommend you start with a _Flash Player_ project (target platform: _Web_) with the name "Hello World".
-As part of the initialization process, your IDE will also setup a minimal startup class for you.
-Let's open it up and modify it as shown below.
-(Typically, that class is named like your project, so exchange the class name below with the correct one.)
+在IDE中创建一个新项目或模块; 建议您创建一个Flash Player项目（目标平台： Web），并且命名为 "Hello World".
+作为初始化过程的一部分，IDE还将为您设置一个最小的启动类.
+让我们打开并修改它，如下所示.
+（通常，该类的命名类似于您的项目名，因此请使用合适的类名替换下面的类名.）
 
 [source, as3]
 ----
@@ -50,13 +50,13 @@ package
 }
 ----
 
-This code creates a Starling instance and starts it right away.
-Note that we pass a reference to the “Game” class into the Starling constructor.
-Starling will instantiate that class once it is ready.
-(It's done that way so you don't have to take care about doing stuff in the right order.)
+此代码创建了一个Starling实例并立即启动它.
+注意，我们将“Game”类的引用传递给Starling构造函数.
+Starling将在准备好之后实例化该类.
+（这样做的原因是你不必考虑代码运行的先后顺序。）
 
-That class first needs to be written, of course.
-Add a new class called `Game` to your project and add the following code:
+当然, 那个类还是需要先写.
+向您的项目添加一个名为Game的新类，并添加以下代码:
 
 [source, as3]
 ----
@@ -79,63 +79,63 @@ package
 }
 ----
 
-The class just displays a simple red quad to see if we've set up everything correctly.
+类仅仅显示一个简单的红色矩形，以检测我们是否配置好基本的开发和运行环境.
 
-IMPORTANT: Note that the Game class extends `starling.display.Sprite`, not `flash.display.Sprite`!
-This is crucial, because we're in the Starling world now.
-It's completely separate from the `flash.display` package.
+IMPORTANT: 注意Game类扩展自starling.display.Sprite，而不是flash.display.Sprite!
+这是至关重要的，因为我们现在处于Starling世界.
+它完全独立于flash.display软件包.
 
-=== First Launch
+=== 首次运行
 
-Now start up the project.
-For some of you, the output might be a little anticlimactic, because you are seeing an error message like this:
+现在启动项目.
+可能有一些人会遇到出人意料的结果，因为你看到一个错误消息，像这样:
 
-.You might be greeted with this error instead of the expected quad.
+.您可能会遇到此错误，而不是预期的矩形.
 image::startup-error.png["Startup error message"]
 
-In that case, it was probably the browser that opened up instead of the standalone Flash Player.
-Check the run/debug configuration and make sure the _Flash Player Projector_ (debug version) is used, not the browser.
-That should fix the problem.
+这种情况很可能是因为打开了浏览器，而不是独立的Flash Player.
+检查运行/调试配置，并确保使用Flash Player Projector（调试版本），而不是浏览器.
+这个问题应该会被解决.
 
-==== Fixing the browser error
+==== 修复浏览器错误
 
-One day, though, you'll want to embed your SWF file into an HTML page.
-In that case, you can fix the error by changing the `wmode` Flash parameter to `direct` in the HTML file that's embedding the SWF file.
-Typically, this means you have to make the following change:
+有一天，你会想要将SWF文件嵌入到HTML页面中.
+在这种情况下，您可以通过在嵌入SWF文件的HTML文件中将wmode Flash参数更改为direct来修复错误.
+通常，这意味着您必须进行以下更改:
 
 [source, js]
 ----
-// find the following line ...
+// 找到下面这行 ...
 var params = {};
 
-// ... and add that one directly below:
+// ... 在其下面增加一行:
 params.wmode = "direct";
 ----
 
-==== Fixing the AIR error
+==== 修复AIR错误
 
-You will also see this error if you created an AIR application instead of an SWF file.
-In that case, you will need to edit the AIR application descriptor, which is probably called `HelloWorld-app.xml` or similar.
-Find and the `renderMode` XML node (which might be commented out) and change its value to `direct`.
+如果您创建了AIR应用程序而不是SWF文件，则也会看到此错误.
+在这种情况下，您需要编辑AIR应用程序描述文件，这可能称为HelloWorld-app.xml或类似文件.
+查找和renderMode XML节点（可能已注释掉），并将其值更改为'direct'.
 
 [source, xml]
 ----
-Find this:
+找到这个:
 <!-- <renderMode></renderMode> -->
 
-Replace with this:
+替换成这个:
 <renderMode>direct</renderMode>
 ----
 
-NOTE: What we've been doing here is allowing the runtime to access the GPU.
-Without those changes, _Stage3D_ is simply not accessible.
+NOTE: 我们这里做的其实是允许运行时访问GPU.
+不做这些更改，Stage3D根本无法访问.
 
-=== Fixed Launch
+=== 修复后运行
 
-Congratulations! You have successfully compiled and run your first Starling based project.
+恭喜！ 您已成功编译并运行您的第一个基于Starling的项目.
 
-.Fantastic: a red Starling in a red box.
+.见证奇迹的时刻：一个Starling渲染的红色盒子.
 image::hello-world.png["Hello World"]
 
-Seriously: the most daunting part now lies behind you.
-Finally, we are ready to dig into a real project!
+老实说：最艰巨的部分还在后面呢.
+最后，我们准备开始一个真正的项目!

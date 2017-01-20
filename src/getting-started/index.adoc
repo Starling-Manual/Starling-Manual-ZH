@@ -1,9 +1,9 @@
-= Getting Started
+= 开始
 
-This chapter will provide you with an overview of Starling and technologies it builds upon.
-We will first take a brief look at the history of _Flash_ and _AIR_ and how Starling came into being.
-Then, we will evaluate the tools and resources that will help you when working with Starling.
-At the end of the chapter, you will have your first "Hello World" example up and running.
+本章将对Starling所基于的技术进行概述.
+首先简要介绍一下Flash和AIR的历史，以及Starling是如何诞生的.
+然后介绍使用Starling开发时所需要的工具和资源.
+在本章的最后，运行第一个“Hello World”示例程序.
 
 include::introduction.adoc[]
 
@@ -17,7 +17,7 @@ include::resources.adoc[]
 
 include::hello-world.adoc[]
 
-== Summary
+== 总结
 
-You should now have a basic understanding of Starling and the tools and resources you will work with.
-It's time to jump into your first real game!
+您现在应该对Starling和您将使用的工具和资源有基本的了解.
+是时候开始你的第一个真正的游戏!

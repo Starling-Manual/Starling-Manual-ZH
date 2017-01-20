@@ -1,44 +1,44 @@
-== What is Adobe AIR?
+== 什么是Adobe AIR?
 ifndef::imagesdir[:imagesdir: ../../img]
 
-Just a few years ago, Adobe's _Flash Player_ was omnipresent when browsing the web.
-At that time, it was basically the only choice when you wanted to create interactive or animated content for the web.
-Browsers had very limited capabilities when it came to video, sound, and animation; and the few features they had were plagued by browser incompatibilities.
-In short: it was a mess.
+就在几年前，Adobe的Flash Player在web浏览器界如日中天，无处不在.
+当时，如果你想创建具有互动和动画内容的网页，它基本上是唯一的选择.
+浏览器在视频，声音和动画方面的能力非常有限; 并且开发者经常因为少数功能不被浏览器兼容所困扰.
+总之：情况是一团糟.
 
-That's why _Adobe Flash_ was so popular.
+这就是为什么Adobe Flash如此受欢迎的原因.
 footnote:[_Flash_ was originally created by _Macromedia_, which was acquired by Adobe in 2005.]
-It allowed designers and developers to create multimedia content in an intuitive authoring program (now called _Adobe Animate_), and ensured that it would look the same across all platforms.
-With _ActionScript 3_, it also featured a language that was both easy to learn, and very powerful.
+Adobe Flash允许设计师和开发人员在直观的创作工具（现在称为Adobe Animate）中创建多媒体内容，并确保它在所有平台上看起来一样.
+Flash使用ActionScript 3编程，它是一门易于学习， 并且非常强大的编程语言.
 
-Building on the popularity of its platform, Adobe realized that there was a demand to use the same technology for standalone applications that run outside the browser.
-That's what the _Adobe AIR_ runtime is for.
-Applications built with the _AIR SDK_ can be deployed as standalone applications that run on desktop (_Windows_, _macOS_) or mobile (_Android_, _iOS_).
-Its standard library is a superset of the one from Flash, so you can do anything in _AIR_ that you can do in _Flash_; but it also provides a huge number of additional APIs for things like file system access or window management.
+基于其平台的普及，Adobe意识到，需要使用相同的技术,使得应用程序运行在浏览器之外.
+这就是Adobe AIR运行时的目标.
+使用AIR SDK构建的独立应用程序可以运行在桌面平台（Windows，macOS）或移动平台（Android，iOS）之上.
+AIR的标准库是Flash的一个超集，任何你能在Flash中做到的事情，在AIR中同样可以做到；不仅如此，AIR还为文件系统访问或窗口管理等功能提供了大量额外的API.
 
-Of course, when you want to create a desktop application, you also need a way to create a graphical user interface, right?
-Since standard Flash was not very well suited for this task, this was moved into another SDK: _Flex_ (now _Apache Flex_).
-Flex also introduced an XML-based markup language (called _MXML_) to define user interface layouts.
+当然，当你想创建一个桌面应用程序时，你需要一种方法来创建一个图形用户界面，对吧?
+由于标准的Flash不是非常适合这个任务，所以这项任务交给了另一个SDK来承担：Flex（现在的Apache Flex）.
+Flex还引入了基于XML的标记语言（称为MXML）来定义用户界面布局.
 
-NOTE: For Starling, you don't need _Flex_, just the _AIR SDK_.
+NOTE: 对于Starling，您不需要Flex SDK，只需要AIR SDK.
 
-=== The current state of Flash and AIR
+=== Flash和AIR的现状
 
-At the time of its introduction, _AIR_ was part of a trend summarized under the term "rich Internet applications" (_RIA_) -- a buzzword that was all the rage in the late 2000's.
-There was a fierce competition between Adobe's _AIR_ and Microsoft's _Silverlight_ (as well as Sun's _JavaFX_).
-Fast forward to the present day, though, and it's apparent that the tides have turned.
-The winner is clearly _HTML5/JavaScript_, which is now the most popular technology stack when building applications with web technologies.
-Even Adobe followed the trend and is adding more and more _HTML5_-support to its products.
+AIR是"富互联网应用"（RIA）这个术语的一部分 - 这是一个流行语，在2000年末曾风行一时.
+曾经，Adobe的AIR和Microsoft的Silverlight（以及Sun的JavaFX）之间存在激烈的竞争.
+那么到今天，当热潮已经退去，结果又如何呢.
+显然， 获胜者是HTML5 / JavaScript，它是使用Web技术构建应用程序时最受欢迎的技术.
+事实上Adobe也遵循这一趋势，并且为其产品增加了越来越多的HTML5支持.
 
-TIP: When it comes to software development, don't fall into the trap of blindly following the masses.
-For every problem, there are multiple solutions; some of them better suited than others.
-Pick the tool you are most comfortable with; a tool that gets out of your way and lets you focus on the software you want to create.
+TIP: 当谈到软件开发时，不要陷入人云亦云的陷阱.
+对于每个问题，会有多个解决方案; 也许其中一些不适合别人，但更适合你.
+选择你最觉得最顺手的工具和方式; 让自己专注于想要创建的软件.
 
-Even though it might be no longer the "cool kid" in town, the _AIR/Flash_-platform is still an extremely attractive platform to build software with.
+即使AIR / Flash可能不再是被众人所羡慕的那个"别人家的孩子", 但它仍然是一个用于构建软件非常有吸引力的平台.
 
-* Compared to the fragmented world of _HTML5_, where trending libraries change faster than Lady Gaga's costumes, it is very mature and easy to use.
-* It comes with an extensive standard library that provides all the tools you need for day-to-day development.
-* The Flash plug-in, while clearly on the decline for general websites, is still the standard for browser gaming. The majority of games on _Facebook_, for example, is still built with Flash.
-* Especially combined with _Starling_ and _Feathers_, it provides one of the smoothest paths for true cross-platform development (targeting all major desktop and mobile platforms with a single code-base).
+* 相比HTML5的各自为政的分散现象，以及比Lady Gaga的裙子变得更快的类库来说，AIR / Flash是非常成熟和易于使用的技术平台.
+* 它带有一个广泛的标准库，提供日常开发所需的所有工具.
+* Flash插件虽然在一般网站上使用频率表现为衰退，但仍是网页游戏的标准. 例如，Facebook上的大多数游戏仍然使用Flash构建.
+* 特别是Flash与Starling和Feathers相结合，它为真正的跨平台开发提供了最平滑的途径之一（以同一份代码为基础，可运行于所有主要桌面和移动平台）.
 
-Talking about _Starling_ ... how does it fit into this picture?
+谈到Starling ...它是如何对应这张图片的?

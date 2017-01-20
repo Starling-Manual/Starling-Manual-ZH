@@ -1,68 +1,68 @@
-== What is Starling?
+== 什么是Starling?
 ifndef::imagesdir[:imagesdir: ../../img]
 
-The _Starling Framework_ allows you to create hardware accelerated apps in _ActionScript 3_.
-The main target is the creation of 2D games, but Starling may be used for any graphical application.
-Thanks to _Adobe AIR_, Starling-based applications can be deployed to all major mobile and desktop platforms.
+Starling 框架允许您在ActionScript 3中创建硬件加速应用程序.
+主要目标是创建2D游戏，但Starling可用于任何图形应用程序.
+借助于Adobe AIR，基于Starling的应用程序可以部署到所有主要的移动和桌面平台.
 
-.This red little fella represents the logo of the Starling Framework.
+.这个红色的小鸟代表着Starling框架.
 image::starling-bird.png["The Starling logo.", 400]
 
-While Starling mimics the classic display list architecture of _Adobe AIR/Flash_, it provides a much better performance: all objects are rendered directly by the GPU (using the _Stage3D_ API).
-The complete architecture was designed for working well with the GPU; common game development tasks were built right into its core.
-Starling hides _Stage3D_ internals from developers, but makes it easy to access them for those who need full performance and flexibility.
+虽然Starling模拟了Adobe AIR / Flash的经典显示列表架构，但它提供了更好的性能：所有对象都由GPU直接渲染（使用Stage3D API）.
+Starling完成了一整套架构设计，能更好的与GPU协同工作，集成了对常用的游戏开发任务的核心支持.
+Starling对开发人员隐藏了Stage3D内部接口，但是对于需要完全性能和灵活性的用户来说，它也很容易访问.
 
-=== Why another display API?
+=== 为什么要另一个显示API?
 
-As outlined above, Starling's API is very similar to the native Flash API, namely: the `flash.display` package.
-So you might ask: why go to all that effort to recreate Flash inside ... err, Flash?
+如上所述，Starling的API与本机Flash API非常相似，即：flash.display软件包.
+所以你可能会问：为什么要花费巨大的努力来重建Flash内部结构...，这样做真的好吗?
 
-The reason is that the original `flash.display` API, with its flexible display list, vector capabilities, text rendering, filters, and whatnot, was designed in an era of desktop computers.
-Those computers had powerful CPUs, but (by modern standards) primitive, fixed-logic graphics hardware.
-Today's mobile hardware, on the other hand, has an almost reversed setup: a weak (i.e. battery-conserving) CPU with a very advanced graphics chip.
+原因是:原生的flash.display API，它灵活的显示列表，矢量能力，文本呈现，滤镜等等，都是针对台式计算机时代设计的.
+这些台式计算机拥有强大的CPU和非常原始的图形硬件（相对现代标准）.
+但是，今天的移动硬件具有几乎颠倒的设置：拥有非常先进的图形芯片和相对较弱的CPU（即节省电池的）.
 
-The problem: it's extremely difficult (if not impossible) to change an API that was designed for pure CPU rendering to suddenly use the GPU efficiently.
+那么问题来了：如何让原有针对纯CPU渲染设计的API能够快速有效地利用GPU，显然，这是是非常困难的（即使有可能的话）.
 footnote:[Here's an interesting article from one of Adobe's engineers about the reasons, via 'archive.org': http://tinyurl.com/hkbdgfn]
-Thus, such attempts failed spectacularly, and the Flash plug-in is nowadays completely gone from browsers on phones and tablets.
+这种尝试失败了，因此，Flash插件也一直未能在手机和平板电脑上的浏览器中出现.
 
-To its credit, Adobe was very aware of this issue.
-That's why, back in 2011, they introduced a low level graphics API called _Stage3D_.
-That API is decidedly low-level; it's basically a wrapper of _OpenGL_ and _DirectX_, allowing developers to access the raw power of the GPU.
+值得称道的是，Adobe非常清楚这个问题.
+这就是为什么，在2011年，他们推出了一个称为Stage3D的低级图形API.
+这个API确实是够低级的; 它基本上是一个OpenGL和DirectX的简单包装，允许开发人员访问GPU的原始功能而已.
 
-The problem: such a low-level API didn't help users of the classic display list much, at least not right away.
-That's because the _Stage3D_ API is as low-level as it gets, so it's nothing a typical developer can (or should!) directly work with when creating an app or game.
+那么问题又来了：这样一个低级的API并没能帮助用户利用上已有的经典显示列表，至少不能方便的使用.
+正因为Stage3D API是如此低级，所以它不是一个典型的开发者可以（或应该）用来直接创建应用程序或游戏的API.
 footnote:[Fancy writing some some pixel shaders in an assembly language? I guessed so.]
-Clearly, Adobe needed a more high-level API, built on top of _Stage3D_, but as easy to use as `flash.display`.
+显然，Adobe需要一个建立在Stage3D之上，但是像'flash.display'一样容易使用的更高级的API.
 
-Well ... this is were Starling enters the stage (pun intended)!
-It was designed from ground up for _Stage3D_, while mimicking the classic Flash API as much as possible.
-This makes it is possible to fully leverage today's powerful graphics hardware, while using concepts countless developers are already familiar with.
+嗯...是时候了，Starling进入舞台了（一语双关）!
+它是基于Stage3D同时尽可能模仿经典的Flash API而设计的.
+这使得它既有可能充分利用现代强大的图形硬件，又可以使用无数的开发人员已经熟悉的概念.
 
-Adobe could have made such an API themselves, of course.
-However, monolithic APIs built by big companies have the tendency to become big and inflexible.
-A small open source project, on the other hand, powered by a community of equal-minded developers, can act much more swiftly.
-That's the insight that lead _Thibault Imbert_, product manager of the _Flash_ and _AIR_ platforms in 2011, to initiate the Starling project.
+Adobe当然可以自己制作这样的API.
+然而，由大公司构建的API具有变得膨胀和不灵活的毛病.
+一个小型的开源项目，加上一个公平开放、交流活跃的开发者的社区，可以更迅速地达成目的.
+Flash和AIR平台产品经理Thibault Imbert洞悉了这一切， 2011年，Starling项目在他的带领下由此开启.
 
-To this day, it is funded and supported by Adobe.
+直到今天，它仍由Adobe资助和支持.
 
-=== Starling's philosophy
+=== Starling的核心观念
 
-One of the core aims of Starling was to make it as lightweight and easy to use as possible.
-In my opinion, an open source library should not only be easy to use -- it should also encourage diving into the code.
-I want developers to be able to understand what's going on behind the scenes; only then will they be able to extend and modify it until it perfectly fits their needs.
+Starling的核心目标之一是使其尽可能轻量和易于使用.
+在我看来，开源库不应该只是易于使用 - 它也应该鼓励开发人员深入阅读代码.
+我希望开发人员能够了解幕后的情况; 只有这样，他们才能够扩展和修改它，直到它完全满足需求.
 
-That's why Starling's source is well documented and surprisingly concise.
-With a size of just about 15k lines of code, it's probably smaller than most games that are written with it!
+所以Starling的源文件都有据可查，简明扼要.
+由于只有大约15000行代码，它可能比大多数游戏源码更小!
 
 [TIP]
 ====
-I really want to emphasize that: if you're one day stuck or confused why your code isn't working as expected, don't hesitate to step into the source code of Starling.
-Oftentimes, you'll quickly see what's going wrong, and you'll get a much better understanding of its internals.
+我真的想强调：如果你有一天卡住或困惑为什么你的代码不能正常工作，不要犹豫，阅读Starling的源代码.
+通常，你会很快看到发生了什么问题，你会更好地理解它的内部实现机制.
 ====
 
-Another important goal of Starling is, of course, its close affinity to the display list architecture.
-That's not only because I really like the whole idea behind the display list, but also to make it easy for developers to transition to Starling.
+Starling的另一个重要目标当然是它尽量亲近本机显示列表架构.
+这不仅是因为我真的很喜欢显示列表背后的整个思路，还使开发人员能够轻松地过渡到Starling.
 
-Nevertheless, I was never trying to create a perfect duplicate.
-Targeting the GPU requires specific concepts, and those should shine through!
-Concepts like _Textures_ and _Meshes_ aim to blend in seamlessly with the original API, just as if it had always been designed for the GPU.
+然而，我从来没有试图创建一个完美的复制品.
+针对GPU编程需要具体的概念，那些概念应该被突出!
+例如，纹理和网格的概念旨在与原始API无缝融合，就像它一直是为GPU设计的.
