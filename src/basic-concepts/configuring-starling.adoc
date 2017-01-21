@@ -1,7 +1,7 @@
-== Configuring Starling
+== 配置Starling
 
-The first step of every Starling-powered application: creating an instance of the _Starling_ class (package `starling.core`).
-Here is the complete declaration of Starling's constructor:
+每个Starling应用程序的第一步：创建一个Starling类的实例（包名starling.core）.
+下面是Starling的构造函数的完整声明:
 
 [source, as3]
 ----
@@ -14,21 +14,19 @@ public function Starling(
     profile:Object = auto);
 ----
 
-rootClass:: The class that is instantiated as soon as _Stage3D_ has finished initializing. Must be a subclass of `starling.display.DisplayObject`.
+rootClass:: 一旦Stage3D完成初始化，必须实例化的类。 根类是以下类的一个子类 `starling.display.DisplayObject`.
 
-stage:: The traditional Flash stage that will host Starling's content. That's how the Starling and Flash display list are connected to each other.
+stage:: 传统的Flash通过此类承接Starling的内容。 这就是Starling和Flash显示列表相互连接的关键所在.
 
-viewPort:: The area within the Flash stage that Starling will render into. Since this is often the full stage size, you can omit this parameter (i.e. pass `null`) to use the full area.
+viewPort:: 定义Starling渲染的一个区域(Flash Stage中)。由于这通常是完整的大小，您可以忽略此参数（即传递null）以使用完整区域.
 
-stage3D:: The _Stage3D_ instance used for rendering. Each Flash stage may contain several _Stage3D_ instances and you can pick any one of those. However, the default parameter (`null`) will suffice most of the time: this will make Starling use the first available _Stage3D_ object.
+stage3D:: 用于渲染的Stage3D实例。每个Flash阶段可能包含多个Stage3D实例，您可以选择其中任何一个。然而，默认参数（null）将足以满足大多数需求.
 
-renderMode:: The whole idea behind _Stage3D_ is to provide hardware-accelerated rendering. However, there is also a software fallback mode; it may be forced by passing `Context3DRenderMode.SOFTWARE`. The default (`auto`) is recommended, though -- it means that software rendering is used only when there's no alternative.
+renderMode:: Stage3D背后的整体理念是提供硬件加速渲染。但是，还有一种软件回退模式;它可能会通过传递Context3DRenderMode.SOFTWARE来强制。建议使用默认（自动），但这意味着软件渲染仅在没有其他选项时使用.
 
-profile:: _Stage3D_ provides a set of capabilities that are grouped into different _profiles_ (defined as constants within `Context3DProfile`). The better the hardware the application is running on, the better the available profile. The default (`auto`) simply picks the best available profile.
+profile:: Stage3D提供了一组分组到不同配置文件（定义为Context3DProfile中的常量）的功能。应用程序运行的硬件越好，可用配置文件越好。默认（自动）是选择最好的可用配置文件.
 
-Most of these arguments have useful default values, so you will probably not need to specify all of them.
-The code below shows the most straight-forward way to start Starling.
-We are looking at the _Main_ class of a _Flash Player_ or _AIR_ project.
+大多数这些参数具有正确的默认值，因此您可能不需要指定所有这些值。下面的代码显示了启动Starling的最直接的方法。这是Flash Player或AIR项目的Main Class.
 
 [source, as3]
 ----
@@ -53,17 +51,17 @@ package
 }
 ----
 
-Note that the class extends `flash.display.Sprite`, not the Starling variant.
-That's simply a necessity of all _Main_ classes in _AS3_.
-However, as soon as Starling has finished starting up, the logic is moved over to the _Game_ class, which builds our link to the `starling.display` world.
+注意类扩展自flash.display.Sprite，而不是Starling变量.
+这是AS3中所有Main类的必要条件.
+然而，一旦Starling完成启动，逻辑就转移到Game类，它构建了我们与starling.display世界的链接.
 
 [NOTE]
-.Configuring the Frame Rate
+.配置帧速率
 ====
-Some settings are configured right in the "SWF" _MetaData_ tag in front of the class.
-The frame rate is one of them.
-Starling itself does not have an equivalent setting: it always simply uses the _frameRate_ from the native stage.
-To change it at runtime, access the `nativeStage` property:
+有些设置位于类前面的“SWF”MetaData标签中.
+帧速率是其中之一.
+Starling没有类似设置：它总是简单地使用flash本身的frameRate.
+在运行时更改它，请访问nativeStage属性:
 
 [source, as3]
 ----
@@ -71,9 +69,9 @@ Starling.current.nativeStage.frameRate = 60;
 ----
 ====
 
-Starling's setup process is asynchronous.
-That means that you won't yet be able to access the `Game` instance at the end of the `Main` method.
-However, you can listen to the `ROOT_CREATED` event to get notified when the class has been instantiated.
+Starling的设置过程是异步的.
+这意味着您将无法在Main方法结束时访问Game实例.
+但是，可以侦听ROOT_CREATED事件，以在类实例化完成后收到通知.
 
 [source, as3]
 ----
@@ -92,23 +90,23 @@ private function onRootCreated(event:Event, root:Game):void
 
 === The ViewPort
 
-_Stage3D_ provides Starling with a rectangular area to draw into.
-That area can be anywhere within the native stage, which means: anywhere within the area of the _Flash Player_ or the application window (in case of an _AIR_ project).
+Stage3D为Starling提供了一个矩形区域.
+该区域可以在Flash舞台的任何位置：Flash Player或应用程序（如果是AIR项目）窗口区域内的任何位置.
 
-In Starling, that area is called the _viewPort_.
-Most of the time, you will want to use all of the available area, but sometimes it makes sense to limit rendering to a certain region.
+在Starling中，该区域称为viewPort.
+大多数时候，你使用区域将是整个Flash舞台的尺寸，但有时，限制渲染到某个局部区域是有意义的.
 
-Think of a game designed in an aspect ratio of 4:3, running on an 16:9 screen.
-By centering the 4:3 _viewPort_ on the screen, you will end up with a "letterboxed" game, with black bars at the top and bottom.
+想象一个设计的长宽比为4：3的游戏，运行在16：9的屏幕上.
+通过在屏幕上居中4：3 viewPort，你会得到一个“letterboxed”游戏，在顶部和底部有黑色条.
 
 // TODO: add image
 
-You can't talk about the _viewPort_ without looking at Starling's _stage_, as well.
-By default, the stage will be exactly the same size as the _viewPort_.
-That makes a lot of sense, of course: a device with a display size of 1024 × 768 pixels should have an equally sized stage.
+离开Starling的stage谈论viewPort是没有意义的.
+默认情况下，stage尺寸将与viewPort的大小完全相同.
+这是很有道理的：一个显示器大小为1024×768像素的设备应该有一个相同大小的舞台.
 
-You can customize the stage size, though.
-That's possible via the `stage.stageWidth` and `stage.stageHeight` properties:
+你可以自定义舞台大小.
+这可以通过stage.stageWidth和stage.stageHeight属性来设置:
 
 [source, as3]
 ----
@@ -116,35 +114,35 @@ stage.stageWidth = 1024;
 stage.stageHeight = 768;
 ----
 
-But wait, what does that even mean?
-Is the size of the drawing area now defined by the _viewPort_ or the _stage size_?
+这是什么意思?
+绘图区域的大小现在是由viewPort还是stage大小定义的?
 
-Don't worry, that area is still only set up by the _viewPort_, as described above.
-Modifying the `stageWidth` and `stageHeight` doesn't change the size of the drawing area at all;
-the stage is always stretched across the complete _viewPort_.
-What you are changing, though, is the size of the stage's _coordinate system_.
+不要担心，该区域仍然只由viewPort设置，如上所述.
+修改stageWidth和stageHeight不会改变绘图区域的大小;
+舞台总是会覆盖整个viewPort.
+你改变stageWidth和stageHeight,实际上改变的只是舞台坐标系的大小.
 
-That means that with a stage width of `1024`, an object with an x-coordinate of `1000` will be close to the right edge of the stage; no matter if the viewPort is `512`, `1024`, or `2048` pixels wide.
+这意味着，当舞台宽度为1024时，x坐标为1000的对象将接近舞台的右边缘;无论viewPort的宽度值是512，1024，还是2048像素.
 
-That becomes especially useful when developing for _HiDPI_ screens.
-For example, Apple's _iPad_ exists in a normal and a "retina" version, the latter doubling the number of pixel rows and columns (yielding four times as many pixels).
-On such a screen, the interface elements should not become smaller; instead, they should be rendered more crisply.
+这在开发HiDPI屏幕上的应用程序时特别有用.
+例如，苹果的iPad存在于普通和“视网膜”显示屏版本，后者像素行和列的数量翻倍（产生四倍的像素总量）.
+在这种屏幕上，界面元素不应变得更小;相反，它们应该更清晰.
 
-By differentiating between the _viewPort_ and the _stage size_, this is easily reproduced in Starling.
-On both device types, the stage size will be 1024×768; the viewPort, on the other hand, will reflect the size of the screen in pixels.
-The advantage: you can use the same coordinates for your display objects, regardless of the device on which the application is running.
+通过举例来区分viewPort和舞台大小，这种例子很容易在Starling中出现.
+在以上两种设备类型上，设备显示屏大小相同，其舞台大小都是1024×768;但是，viewPort将以像素为单位反映屏幕的分辨率.
+优点：您可以在显示屏尺寸相同的设备上为显示对象使用相同的坐标，而不管运行应用程序的设备配置了哪种显示屏.
 
 [NOTE]
-.Points vs. Pixels
+.点 vs. 像素
 ====
-If you think this through, you'll see that on such a retina device, an object with an x-coordinate of `1` will actually be two pixels away from the origin.
-In other words, the unit of measurement has changed.
-We are no longer talking about pixels, but _points_!
-On a low-resolution screen, one point equals one pixel; on a HiDPI screen, it's two pixels (or more, depending on the device).
+如果你理解这一点，你会看到在这样的视网膜设备上，x坐标为1的对象实际上离原点两个像素.
+换句话说，用于测量的单位已经改变.
+我们不再谈论'像素'，而是谈论'点'!
+在低分辨率屏幕上，一点等于一个像素; 在HiDPI屏幕上，一点等于两个像素（或更多，取决于设备）.
 ====
 
-To find out the actual width (in pixels) of a point, you can simply divide `viewPort.width` by `stage.stageWidth`.
-Or you use Starling's `contentScaleFactor` property, which does just that.
+要找出点的实际宽度（以像素为单位），您可以简单地将`viewPort.width`除以`stage.stageWidth`.
+或者你使用Starling的`contentScaleFactor`属性，就像这样:
 
 [source, as3]
 ----
@@ -153,118 +151,118 @@ starling.stage.stageWidth = 1024;
 trace(starling.contentScaleFactor); // -> 2.0
 ----
 
-I will show you how to make full use of this concept in the <<Mobile Development>> chapter.
+在“移动开发”一章,我会告诉你如何充分利用这个概念.
 
 === Context3D Profiles
 
-The platforms Starling is running on feature a wide variety of graphics processors.
-Of course, those GPUs have different capabilities.
-The question is: how to differentiate between those capabilities at runtime?
+Starling运行的平台具有各种图形处理器.
+当然，那些图形处理器(GPU)具有不同的能力.
+问题是：如何在运行时区分这些能力?
 
-That's what _Context3D profiles_ (also called _render profiles_) are for.
-
-[NOTE]
-.What is a Context3D?
-====
-When using _Stage3D_, you are interacting with a rendering pipeline that features a number of properties and settings.
-The _context_ is the object that encapsulate that pipeline.
-Creating a texture, uploading shaders, rendering triangles -- that's all done through the context.
-====
-
-Actually, Starling makes every effort to hide any profile limitations from you.
-To ensure the widest possible reach, it was designed to work even with the lowest available profile.
-At the same time, when running in a higher profile, it will automatically make best use of it.
-
-Nevertheless, it might prove useful to know about their basic features.
-Here's an overview of each profile, starting with the lowest.
-
-`BASELINE_CONSTRAINED`:: If a device supports Stage3D at all, it must support this profile. It comes with several mean limitations, e.g. it only supports textures with side-lengths that are powers of two, and the length of shaders is very limited. That profile is mainly found on old desktop computers.
-
-`BASELINE`:: The minimum profile to be found on mobile devices. Starling runs well with this profile; the removal of the power-of-two limitation allows for more efficient memory usage, and the length of shader programs is easily sufficient for its needs.
-
-`BASLINE_EXTENDED`:: Raises the maximum texture size from `2048x2048` to `4096x4096` pixels, which is crucial for high-resolution devices.
-
-`STANDARD_CONSTRAINED`, `STANDARD`, `STANDARD_EXTENDED`:: Starling currently doesn't need any of the features coming with these profiles. They provide additional shader commands and other low-level enhancements.
-
-My recommendation: simply let Starling pick the best available profile (`auto`) and let it deal with the implications.
+这就是Context3D profiles（也称为render profiles）的用途.
 
 [NOTE]
-.Maximum Texture Size
+.什么是Context3D?
 ====
-There's only one thing you need to take care of yourself: making sure that your textures are not too big.
-The maximum texture size is accessible via the property `Texture.maxSize`, but only _after_ Starling has finished initializing.
+当使用Stage3D时，您不可避免的将与渲染管道打交道，而渲染管道具有许多设置和属性.
+context(设置上下文)就是封装这些管道的对象.
+创建纹理，上传着色器，渲染三角形 - 这一切都是通过context完成的.
 ====
 
-=== Native Overlay
+实际上，Starling尽力隐藏任何配置文件限制.
+为了确保最广泛的覆盖范围，它被设计成默认尝试使用最低可用配置文件.
+同时，当运行在含有更高的配置文件环境时，它会自动适配最佳的配置文件.
 
-The main idea behind Starling is to speed up rendering with its Stage3D driven API.
-However, there's no denying it: the classic display list has many features that Starling simply can't offer.
-Thus, it makes sense to provide an easy way to mix-and-match features of Starling and classic Flash.
+然而，了解它们的基本特征终归是有用的.
+以下是每个配置文件的概述，从最低的开始.
 
-The `nativeOverlay` property is the easiest way to do so.
-That's a conventional `flash.display.Sprite` that lies directly on top of Starling, taking _viewPort_ and _contentScaleFactor_ into account.
-If you need to use conventional Flash objects, add them to this overlay.
+`BASELINE_CONSTRAINED`:: 如果设备完全支持Stage3D，它必须支持此配置文件。它有几个限制，例如:它只支持边长为2的幂的纹理，并且着色器的长度非常有限。该配置文件主要出现在旧台式计算机上.
 
-Beware, though, that conventional Flash content on top of _Stage3D_ can lead to performance penalties on some (mobile) platforms. For that reason, always remove all objects from the overlay when you don't need them any longer.
+`BASELINE`:: 在移动设备上出现的最低配置文件。 Starling在此配置文件下运行良好;去除了纹理边长必须是2的幂限制;允许更有效率的使用存储器，并且着色器程序的长度往往满足其需求.
+
+`BASLINE_EXTENDED`:: 将最大纹理尺寸从“2048x2048”提高到“4096x4096”像素，这对高分辨率设备至关重要.
+
+`STANDARD_CONSTRAINED`, `STANDARD`, `STANDARD_EXTENDED`:: Starling当前不需要使用这些配置文件中的任何功能。它们提供额外的着色器命令和其他低级控制能力.
+
+我的建议：让Starling自动选择最好的可用配置文件（`auto`），让它自行处理.
+
+[NOTE]
+.最大纹理尺寸
+====
+有一件事你自己必须小心：确保你的纹理不是太大.
+最大纹理尺寸可以通过属性“Texture.maxSize”访问，前提是在Starling已经完成初始化之后.
+====
+
+=== 原生叠加
+
+Starling背后的主要目标是使用Stage3D驱动的API来加速渲染.
+然而，不可否认的是：经典的显示列表有许多功能，Starling无法提供.
+因此，提供一个简单的方法来综合Starling和经典Flash的功能是有意义的.
+
+`nativeOverlay`属性是最简单的方法.
+这是一个常规的“flash.display.Sprite”，它直接位于Starling层的顶部，使用时请将viewPort和contentScaleFactor因素加以考虑.
+如果您需要使用原生Flash对象，请将它们添加到此叠加层.
+
+但要注意，在Stage3D之上的原生Flash内容可能导致某些（移动）平台的性能损失。 因此，当您不再需要它们时，始终从叠加层中删除所有对象.
 
 [NOTE]
 ====
-Before you ask: no, you can't add any conventional display objects _below_ Starling display objects.
-The Stage3D surface is always at the bottom; there's no way around that.
+假如你有疑问：不，你不能添加任何原生显示对象到Starling显示对象之下.
+是的,Stage3D表面总是位于flash底部; 没有办法越过这道槛.
 ====
 
-=== Skipping Unchanged Frames
+=== 跳过不变帧
 
-It happens surprisingly often in an application or game that a scene stays completely static for several frames.
-The application might be presenting a static screen or wait for user input, for example.
-So why redraw the stage at all in those situations?
+在应用程序或游戏中经常出现几个帧完全相同的情形.
+例如，应用可能正在呈现静态画面或等待用户输入.
+那么有必要在这些情况下重新绘制舞台吗?
 
-That's exactly the point of the `skipUnchangedFrames`-property.
-If enabled, static scenes are recognized as such and the back buffer is simply left as it is.
-On a mobile device, the impact of this feature can't be overestimated.
-There's simply no better way to enhance battery life!
+这正是'skipUnchangedFrames`属性的要点所在.
+如果启用，静态画面会被自动识别，以便后台缓冲区保留原样.
+在移动设备上，此性能的提升虽不能被高估.
+但没有比这更好的方法来提高电池寿命了!
 
-I'm already hearing your objection: if this feature is so useful, why isn't it activated by default?
-There must be a catch, right?
+我已经听到你的反对意见：如果这个功能是如此有用，为什么不是默认激活?
+这里有一个坑，对吧?
 
-Indeed, there is: it doesn't work well with _Render-_ and _VideoTextures_.
-Changes in those textures simply won't show up.
-It's easy to work around that, though: either disable `skipUnchangedFrames` temporarily while using them, or call `stage.setRequiresRedraw()` whenever their content changes.
+确实有：它不能很好地与Render和VideoTextures同时工作.
+这些纹理的变化根本不会被呈现.
+不过这很容易解决：暂时禁用`skipUnchangedFrames`，或每当它们的内容有改变时调用`stage.setRequiresRedraw（）`.
 
-Now that you know about this feature, make it a habit to always activate it!
-In the meantime, I hope that I can solve the mentioned problems in a future Starling version.
+现在你知道了这个功能，那么总是激活它，使它成为一个习惯吧!
+在此期间，我希望我可以在未来的Starling版本中解决上述问题.
 
-IMPORTANT: On mobile platforms, there's another limitation you should be aware of: as soon as there's any content on the native (Flash) stage (e.g. via Starling's `nativeOverlay`), Starling can't skip any frames.
-That's the consequence of a Stage3D limitation.
+IMPORTANT: 在移动平台上，您还应注意另一个限制：只要本机（Flash）舞台上有任何原生显示对象（例如通过Starling的“nativeOverlay”添加的），Starling就不能跳过任何帧.
+这是Stage3D限制的结果.
 
-=== The Statistics Display
+=== 统计显示
 
-When developing an application, you want as much information as possible about what's going on.
-That way, you will be able to spot problems early and maybe avoid running into a dead end later.
-The statistics display helps with that.
+在开发应用程序时，您需要尽可能多的信息来了解发生了什么.
+这样，你能够早点发现问题，并可能由此避免进入死胡同.
+统计显示就是用来干这件事的.
 
 [source, as3]
 ----
 _starling.showStats = true;
 ----
 
-.The statistics display (by default at the top left).
+.统计显示 (默认在左上角).
 image::stats-display.png[The statistics display]
 
-What's the meaning of those values?
+这些值的含义是什么?
 
-* The _framerate_ should be rather self-explanatory: the number of frames Starling managed to render during the previous second.
-* _Standard memory_ is, in a nutshell, what your _AS3_ objects fill up. Whether it's a _String_, a _Sprite_, a _Bitmap_, or a _Function_: all objects require some memory.
-  The value is given in megabytes.
-* _GPU memory_ is separate from that. Textures are stored in graphics memory, as are vertex buffers and shader programs.
-  Most of the time, textures will overshadow everything else.
-* The number of _draw calls_ indicates how many individual "draw"-commands are sent to the GPU in each frame.
-  Typically, a scene renders faster when there are fewer draw calls.
-  We will look in detail at this value when we talk about <<Performance Optimization>>.
+* _framerate_ (帧率)意义应该是相当明确的: Starling统计到在前一秒内渲染的帧数.
+* _Standard memory_ 是内存, 总而言之, 你使用的 _AS3_ 对象, 无论它是 _String_,  _Sprite_,  _Bitmap_, 或者 _Function_: 所有对象都需要一些内存.
+  单位是兆字节(Mb).
+* _GPU memory_ 表示显存，这分几种情况. 纹理存储在图形存储器（显存）中，顶点缓冲和着色器程序也是如此.
+  大多数时候，纹理占据了绝大部分.
+* _draw calls_ 表示绘制调用次数,即每帧向GPU发送多少个单独的“绘制”命令.
+  通常，当绘制调用较少时，场景渲染会更快.
+  当我们谈论<<性能优化>>时，我们将详细解读这个值.
 
-You might notice that the background color of the statistics display alternates between black and dark green.
-That's a subtle clue that's referring to the `skipUnchangedFrames` property:
-whenever the majority of the last couple of frames could be skipped, the box turns green.
-Make sure that it stays green whenever the stage is static; if it doesn't, some logic is preventing frame skipping to kick in.
+您可能会注意到统计显示的背景颜色在黑色和深绿色之间交替.
+这是一个微妙的线索，指的是`skipUnchangedFrames`属性:
+当大部分帧可以跳过时，该框变为绿色.
+每当画面静止时，确保它保持绿色; 如果没有, 一些逻辑导致了Starling不能进入跳帧操作.
 
-TIP: You can customize the location of the statistics display on the screen via the method `showStatsAt`.
+TIP: 您可以通过`showStatsAt`方法在屏幕上自定义统计显示的位置.

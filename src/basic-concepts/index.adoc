@@ -1,19 +1,19 @@
-= Basic Concepts
+= 基本概念
 
-Starling might be a compact framework, but it still boasts a significant number of packages and classes.
-It is built around several basic concepts that are designed to complement and extend each other.
-Together, they provide you with a set of tools that empower you to create any application you can imagine.
+Starling可以说是一个紧凑的框架，但它仍然包含大量的包和类.
+它是围绕以下几个基本概念构建的，它们旨在互补和利于扩展.
+他们组织在一起共同为您提供一套工具，使您能够创建你能想象的任何应用程序.
 
-Display Programming:: Every object that is rendered on the screen is a _display object_, organized in the _display list_.
-Textures & Images:: To bring pixels, forms and colors to the screen, you will learn to use the _Texture_ and _Image_ classes.
-Dynamic Text:: Rendering of dynamic text is a basic task in almost every application.
-Event Handling:: Communication is key! Your display objects need to talk to each other, and they can do that via Starling's powerful event system.
-Animation:: Bring some motion into the picture! There are different strategies to animate your display objects.
-Asset Management:: Learn how to load and organize all kinds of assets, like textures and sounds.
-Special Effects:: Effects and filters that will make your graphics stand out.
-Utilities:: A number of helpers to make your life easier.
+显示编程:: 在屏幕上呈现的每个对象都是显示对象，被组织在显示列表中.
+纹理和图像:: 为了将像素，表单和颜色带到屏幕，你将学习使用纹理和图像类.
+动态文本:: 动态文本的渲染几乎是每个应用程序的基本任务.
+事件处理:: 通信是关键！ 你的显示对象需要彼此通信，他们可以通过Starling强大的事件系统来做到这一点.
+动画:: 给图形带来一些缓动！ 有不同的策略来缓动你的显示对象.
+资源管理:: 了解如何加载和组织各种资源（如纹理和声音）.
+特殊效果:: 效果和过滤器，将使你的图形质量脱颖而出.
+实用工具:: 一些帮助工具类，使你在创作程序时更轻松.
 
-We've got a lot of ground to cover, so, in the words of Super Mario: "Lets-a-go!"
+我们的征途是星辰大海! 所以，用超级马里奥的话说: "Lets-a-go!"
 
 include::configuring-starling.adoc[]
 
@@ -39,10 +39,10 @@ include::sprite3d.adoc[]
 
 include::utilities.adoc[]
 
-== Summary
+== 小结
 
-You are now familiar with all the basic concepts of the Starling Framework.
-This is all the knowledge you need to get started with that game you have in your head, or with that app that's waiting to be created.
+你现在已经熟悉了Starling框架的所有基本概念.
+这是所有你需要准备的知识，以开始你构想中的游戏，及等待被创建的应用程序.
 
-On the other hand, there are still a few tricks up the sleeves of our little bird (birds have sleeves?).
-If you're ready to jump into those advanced topics, please follow my lead.
+另一方面，我们的小鸟还有一些挥舞袖子的技巧（鸟有袖子？）.
+如果你准备好跳进这些高级主题，请跟我来.
