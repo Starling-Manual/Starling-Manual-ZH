@@ -1,36 +1,36 @@
-== Display Programming
+== 显示编程
 ifndef::imagesdir[:imagesdir: ../../img]
 
-With all the setup procedures out of the way, we can start to actually put some content onto the screen!
+完成了所有的设置过程，我们可以开始实际把一些内容到显示到屏幕上！
 
-In every application you create, one of your main tasks will be to split it up into a number of logical units.
-More often than not, those units will have a visual representation.
-In other words: each unit will be a _display object_.
+在您创建的每个应用程序中，您的主要任务之一是将其拆分为多个逻辑单元。
+通常，这些单元将具有可视化表示形式。
+换句话说：每个单元将是一个显示对象。
 
-=== Display Objects
+=== 显示对象
 
-All elements that appear on screen are types of display objects.
-The `starling.display` package includes the abstract _DisplayObject_ class; it provides the basis for a number of different types of display objects, such as images, movie clips, and text fields, to name just a few.
+屏幕上显示的所有元素其类型都是显示对象。
+`starling.display`包包括抽象_DisplayObject_类;它提供了许多不同类型的基本显示对象，例如图像，影片剪辑和文本等等。
 
-The _DisplayObject_ class provides the methods and properties that all display objects share.
-For example, the following properties are used to configure an object's location on the screen:
+_DisplayObject_类提供了所有显示对象共有的方法和属性。
+例如，以下属性用于配置对象在屏幕上的位置：
 
-* `x`, `y`: the position in the current coordinate system.
-* `width`, `height`: the size of the object (in points).
-* `scaleX`, `scaleY`: another way to look at the object size; `1.0` means unscaled, `2.0` doubles the size, etc.
-* `rotation`: the object's rotation around its origin (in radians).
-* `skewX`, `skewY`: horizontal and vertical skew (in radians).
+* `x`，`y`：当前坐标系中的位置。
+* `width`，`height`：对象的大小（以点为单位）。
+* `scaleX`，`scaleY`：另一种方式来查看对象大小; “1.0”表示未缩放，“2.0”将尺寸加倍等。
+* `rotation`：对象绕其原点旋转（以弧度表示）。
+* `skewX`，`skewY`：水平和垂直倾斜（以弧度表示）。
 
-Other properties modify the way the pixels appear on the screen:
+其他属性修改像素在屏幕上的显示方式：
 
-* `blendMode`: determines how the object's pixels are blended with those underneath.
-* `filter`: special GPU programs (shaders) that modify the look of the object. Filters can e.g. blur the object or add a drop shadow.
-* `mask`: masks cut away all parts that are outside a certain area.
-* `alpha`: the opacity of the object, from `0` (invisible) to `1` (fully opaque).
-* `visible`: if false, the object is hidden completely.
+* `blendMode`：确定对象的像素与下面的像素混合。
+* `filter`：修改对象外观的特殊GPU程序（着色器）。过滤器可以模糊对象或添加投影。
+* `mask`：mask删除某个区域外的所有部分。
+* `alpha`：对象的不透明度，从“0”（不可见）到“1”（完全不透明）。
+* `visible`：如果为false，则对象将完全隐藏。
 
-Those are the basics that every display object must support.
-Let's look at the class hierarchy around this area of Starling's API:
+以上这些是每个显示对象必须支持的基本属性。
+下面让我们看看Starling关于这方面的API架构：
 
 [plantuml, class-hierarchy]
 ....
@@ -50,57 +50,57 @@ Quad <|-- Image
 Image <|-- MovieClip
 ....
 
-You'll notice that the diagram is split up in two main sub-branches.
-On the one side, there are a couple of classes that extend `Mesh`: `Quad`, `Image`, and `MovieClip`.
+你会注意到，图表分成两个主要的子分支。
+第一个分支，有一些类扩展自`Mesh`：例如`Quad`，`Image`和`MovieClip`。
 
-Meshes are a fundamental part of Starling's rendering architecture.
-Everything that is drawn to the screen is a mesh, actually!
-_Stage3D_ cannot draw anything but triangles, and a mesh is nothing else than a list of points that spawn up triangles.
+网格是Starling的渲染架构的基本组成部分。
+实际上一切被绘制到屏幕上的对象都是网格！
+_Stage3D_不能绘制任何东西，除了三角形，一个网格其实是一系列的点，这些点按一定的顺序组成三角形。
 
-On the other side, you'll find a couple of classes that extend _DisplayObjectContainer_.
-As its name suggests, this class acts as a container for other display objects.
-It makes it possible to organize display objects into a logical system -- the _display list_.
+第二个分支，你会发现一些扩展自_DisplayObjectContainer_的类。
+顾名思义，这个类充当其他显示对象的容器。
+它可以将显示对象组织成逻辑系统 - _display list_（显示列表）。
 
-=== The Display List
+=== 显示列表
 
-The hierarchy of all display objects that will be rendered is called the _display list_.
-The _Stage_ makes up the root of the display list.
-Think of it as the literal "stage": your users (the audience) will only see objects (actors) that have entered the stage.
-When you start Starling, the stage will be created automatically for you.
-Everything that's connected to the stage (directly or indirectly) will be rendered.
+被渲染的所有显示对象的层次结构称为_display list_。
+_Stage_是显示列表的根容器。
+把"stage"(舞台)按字面上的意思理解：你的用户（观众）只会看到已经进入舞台的对象（演员）。
+当您开始创建Starling时，舞台将自动被创建。
+连接到舞台（直接或间接）的所有内容都将被渲染。
 
-When I say "connected to", I mean that there needs to be a _parent-child_ relationship.
-To make an object appear on the screen, you make it the child of the stage, or any other _DisplayObjectContainer_ that's connected to the stage.
+当我说“连接到”时，我的意思是需要一个_parent-child_关系。
+为了使一个对象出现在屏幕上，你应该把它添加(addChild)到舞台，或任何其他连接到舞台的_DisplayObjectContainer_上。
 
 .Display objects are organized in the display list.
 image::display-list.png[Display List, 350]
 
-The first (and, typically: only) child of the stage is the _application root_: that's the class you pass to the Starling constructor.
-Just like the stage, it's probably going to be a _DisplayObjectContainer_.
-That's where you take over!
+舞台的第一个（通常是唯一的）子对象是_application root_：这是你传递给Starling构造函数的类。
+就像舞台，它可能也是一个_DisplayObjectContainer_。
+你将通过它来接管显示列表！
 
-You will create containers, which in turn will contain other containers, and meshes (e.g. images).
-In the display list, those meshes make up the _leaves_: they cannot have any child objects.
+您将创建容器，其中容器将包含其他容器和网格（例如图片）。
+在树型的显示列表中，这些网格构成叶子：它们不能再包含任何子对象。
 
-Since all of this sounds very abstract, let's look at a concrete example: a speech bubble.
-To create speech bubble, you will need an image (for the bubble), and some text (for its contents).
+这一切听起来似乎很抽象，让我们看一个具体的例子：一个聊天气泡。
+要创建聊天气泡，您需要一个图像（对于气泡）和一些文本（对于讲话内容）。
 
-Those two objects should act as one: when moved, both image and text should follow along.
-The same applies for changes in size, scaling, rotation, etc.
-That can be achieved by grouping those objects inside a very lightweight _DisplayObjectContainer_: the _Sprite_.
+这两个对象应该作为一个整体：当移动时，图像和文本应该跟随。
+同样的，应该一起适应大小，缩放，旋转等的变化。
+我们可以把这些对象放在一个非常轻量级的_DisplayObjectContainer_：_Sprite_中来实现。
 
 [NOTE]
 .DisplayObjectContainer vs. Sprite
 ====
-_DisplayObjectContainer_ and _Sprite_ can be used almost synonymously.
-The only difference between those two classes is that one (_DisplayObjectContainer_) is abstract, while the other (_Sprite_) is not.
-Thus, you can use a _Sprite_ to group objects together without the need of a subclass.
-The other advantage of _Sprite_: it's just much faster to type.
-Typically, that's the main reason why I'm preferring it.
-Like most programmers, I'm a lazy person!
+_DisplayObjectContainer_和_Sprite_可以几乎具有相同的意义。
+这两个类之间的唯一区别是，一个（_DisplayObjectContainer_）是抽象的，而另一个（_Sprite_）不是。
+因此，您可以使用_Sprite_将对象分组在一起，而不需要再创建一个扩展自_DisplayObjectContainer_的子类。
+可以看出_Sprite_的另一个优点：它是更快捷的类型。
+通常，这是我更喜欢它的主要原因。
+像大多数程序员一样，我也是一个懒人！
 ====
 
-So, to group text and image together, you create a sprite and add text and image as _children_:
+因此，要将文本和图像组合在一起，您可以创建一个sprite，并将文本和图像添加为_children_：
 
 [source, as3]
 ----
@@ -110,17 +110,17 @@ var textField:TextField = new TextField(200, 50, "Ay caramba!");
 sprite.addChild(image); // <2>
 sprite.addChild(textField); // <3>
 ----
-<1> Create a sprite.
-<2> Add an _Image_ to the sprite.
-<3> Add a _TextField_ to the sprite.
+<1> 创建sprite。
+<2> 向sprite中添加一个_Image_。
+<3> 向sprite中添加一个_TextField_。
 
-The order in which you add the children is important -- they are placed like layers on top of each other.
-Here, `textField` will appear in front of `image`.
+添加子项的顺序很重要 - 它们按照放置顺序来决定显示层次。
+这里，`textField`将出现在`image`前面。
 
-.A speech bubble, made up by an image and a TextField.
+.一个聊天气泡，由一个图像和一个TextField组成。
 image::speech-bubble.png[Speech Bubble, 600]
 
-Now that those objects are grouped together, you can work with the sprite just as if it was just one object.
+现在那些对象被分组到同一个sprite里了，你可以把sprite当成一个整体来使用。
 
 [source, as3]
 ----
@@ -129,12 +129,12 @@ var totalWidth:Number = sprite.width; // <2>
 sprite.x += 50; // <3>
 sprite.rotation = deg2rad(90); // <4>
 ----
-<1> Query the number of children. Here, the result will be `2`.
-<2> `width` and `height` take into account the sizes and positions of the children.
-<3> Move everything 50 points to the right.
-<4> Rotate the group by 90 degrees (Starling always uses radians).
+<1> 查询子对象个数。 这里，结果将是“2”。
+<2> `width`和`height`计算了子对象的大小和位置。
+<3> 向右移动50点。
+<4> 将组旋转90度（Starling始终使用弧度）。
 
-In fact, _DisplayObjectContainer_ defines many methods that help you manipulate its children:
+实际上，_DisplayObjectContainer_定义了许多方法来帮助你操纵它的子对象：
 
 [source, as3]
 ----
