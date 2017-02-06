@@ -149,44 +149,44 @@ function swapChildren(child1:DisplayObject, child2:DisplayObject):void;
 function swapChildrenAt(index1:int, index2:int):void;
 ----
 
-=== Coordinate Systems
+=== 坐标系
 
-Every display object has its own coordinate system.
-The `x` and `y` properties, for example, are not given in screen coordinates: they are always depending on the current coordinate system.
-That coordinate system, in turn, is depending on your position within the display list hierarchy.
+每个显示对象都有自己的坐标系。
+例如，显示对象的`x`和`y`属性并不是直接针对屏幕坐标系而言，它们总是取决于当前的坐标系。
+该坐标系又取决于对象在显示列表层次结构中的位置。
 
-To visualize this, imagine pinning sheets of paper onto a pinboard.
-Each sheet represents a coordinate system with a horizontal x-axis and a vertical y-axis.
-The position you stick the pin through is the root of the coordinate system.
+为了理解这一点，想象将纸片固定在书签板上。
+每张纸版都表示有水平x轴和垂直y轴的坐标系。
+你插入钉针的位置就是该坐标系的原点。
 
-.Coordinate systems act like the sheets on a pinboard.
+.坐标系统的工作方式类似于书签板.
 image::coordinate-systems.png[Coordinage Systems]
 
-Now, when you rotate the sheet of paper, everything that is drawn onto it (e.g. image and text) will rotate with it -- as do the x- and y-axes.
-However, the root of the coordinate system (the pin) stays where it is.
+现在，当您旋转纸张时，绘制在其上的所有内容（例如图像和文本）将随其一起旋转，如同旋转了它的x和y轴一样。
+然而，坐标系的原点（针）仍保持在它的位置。
 
-The position of the pin therefore represents the point the x- and y-coordinates of the sheet are pointing at, relative to the parent coordinate system (= the pin-board).
+因此，针的位置实际上是纸张相对于其母坐标系统（书签板）所确定的x坐标和y坐标。
 
-Keep the analogy with the pin-board in mind when you create your display hierarchy.
-This is a very important concept you need to understand when working with Starling.
+在创建显示层次结构时，请牢记书签板的例子。
+当采用Starling开发时这是一个你需要理解的非常重要的概念。
 
-=== Custom Display Objects
+=== 自定义显示对象
 
-I mentioned this already: when you create an application, you split it up into logical parts.
-A simple game of chess might contain the board, the pieces, a pause button and a message box.
-All those elements will be displayed on the screen -- thus, each will be represented by a class derived from _DisplayObject_.
+我已经提到过：当你创建一个应用程序时，你把它拆分成不同的逻辑部分。
+一个简单的国际象棋游戏可能包含棋盘，棋子，暂停按钮和消息框等部分。
+所有这些对象将显示在屏幕上 - 因此，每个对象都将由从DisplayObject派生的类来表示。
 
-Take a simple message box as an example.
+以一个简单的消息框为例。
 
-.A game's message box.
+.游戏的消息框。
 image::msgbox.png[Message Box]
 
-That's actually quite similar to the speech bubble we just created; in addition to the background image and text, it also contains two buttons.
+这实际上与我们刚刚创建的讲话泡泡非常相似; 除了背景图像和文本，它还包含两个按钮。
 
-This time, instead of just grouping the object together in a sprite, we want to encapsulate it into a convenient class that hides any implementation details.
+这一次，我们不是仅仅将对象组合在一个sprite中，而是将它封装成一个方便的类，并且隐藏任何实现细节。
 
-To achieve this, we create a new class that inherits from _DisplayObjectContainer_.
-In its constructor, we create everything that makes up the message box:
+为了实现这一点，我们创建一个继承自DisplayObjectContainer的新类。
+在其构造函数中，我们创建构成消息框的所有内容：
 
 [source, as3]
 ----
@@ -226,8 +226,8 @@ public class MessageBox extends DisplayObjectContainer
 }
 ----
 
-Now you have a simple class that contains a background image, two buttons and some text.
-To use it, just create an instance of _MessageBox_ and add it to the display tree:
+现在你有一个简单的类，包含一个背景图像，两个按钮和一些文本。
+要使用它，只需创建一个MessageBox的实例并将其添加到显示列表：
 
 [source, as3]
 ----
@@ -235,15 +235,15 @@ var msgBox:MessageBox = new MessageBox("Really exit?");
 addChild(msgBox);
 ----
 
-You can add additional methods to the class (like `fadeIn` and `fadeOut`), and code that is triggered when the user clicks one of those buttons.
-This is done using Starling's event mechanism, which is shown in a later chapter.
+您可以向类添加其它方法（如fadeIn和fadeOut），以及在用户单击其中一个按钮时触发的代码。
+这是使用Starling的事件机制来完成的，这将在后面的章节中讲到。
 
-=== Disposing Display Objects
+=== 移除显示对象
 
-When you don't want an object to be displayed any longer, you simply remove it from its parent, e.g. by calling `removeFromParent()`.
-The object will still be around, of course, and you can add it to another display object, if you want.
-Oftentimes, however, the object has outlived its usefulness.
-In that case, it's a good practice to dispose it.
+当您不想再显示某个对象时，只需将其从其父级中删除即可。 例如通过调用`removeFromParent()`。
+当然，这种情况下该对象仍然会存在，如果你想复用的话,你可以将它添加到另一个显示对象容器中。
+然而，很多时候，该对象没有继续存在的必要。
+在这种情况下，销毁它是一个好的做法。
 
 [source, as3]
 ----
@@ -251,29 +251,29 @@ msgBox.removeFromParent();
 msgBox.dispose();
 ----
 
-When you dispose display objects, they will free up all the resources that they (or any of their children) have allocated.
-That's important, because many _Stage3D_ related data is not reachable by the garbage collector.
-When you don't dispose that data, it will stay in memory, which means that the app will sooner or later run out of resources and crash.
+当销毁显示对象时，它们将释放其本身（及任何子级）占用的所有资源。
+这很重要，因为许多Stage3D相关的数据是无法被垃圾回收器回收的。
+如果您没有销毁这些数据，它们将一直被保留在内存中，这意味着应用程序迟早会耗尽内存资源而崩溃。
 
-To make things easier, `removeFromParent()` optionally accepts a Boolean parameter to dispose the DisplayObject that is being removed.
-That way, the code from above can be simplified to this single line:
+为了处理起来更简单，`removeFromParent（）`接受一个可选地布尔参数来决定是否销毁该DisplayObject。
+这样，上面的代码可以简化为这一行：
 
 [source, as3]
 ----
 msgBox.removeFromParent(true);
 ----
 
-=== Pivot Points
+=== 枢轴点
 
-Pivot Points are a feature you won't find in the traditional display list.
-In Starling, display objects contain two additional properties: `pivotX` and `pivotY`.
-The pivot point of an object (also known as _origin_, _root_ or _anchor_) defines the root of its coordinate system.
+枢轴点是在传统显示列表中找不到的功能。
+在Starling中，显示对象包含两个附加属性：pivotX和pivotY。
+对象的枢轴点（也称为_origin_，_root_或_anchor_）定义其坐标系的根。
 
-Per default, the pivot point is at `(0, 0)`; in an image, that is the top left position.
-Most of the time, this is just fine.
-Sometimes, however, you want to have it at a different position -- e.g. when you want to rotate an image around its center.
+默认情况下，枢轴点在（0，0）`; 在图像中，即左上角位置。
+大多数时候，这是适合需求的。
+然而，有时，你想要在不同的位置 - 例如。 当您想要围绕其中心旋转图像时。
 
-Without a pivot point, you'd have to wrap the object inside a container sprite in order to do that:
+你必须将对象包装在容器中，以便使用枢轴点：
 
 [source, as3]
 ----
@@ -286,13 +286,13 @@ sprite.addChild(image); // <2>
 
 sprite.rotation = deg2rad(45); // <3>
 ----
-<1> Create a sprite.
-<2> Add an image so that its center is exactly on top of the sprite's origin.
-<3> Rotating the sprite will rotate the image around its center.
+<1> 创建sprite。
+<2> 添加一个图像，使其中心正好在sprite的原点上。
+<3> 旋转sprite会使图像围绕其中心旋转。
 
-Most long-time Flash developers will know this trick; it was needed quite regularly.
-One might argue, however, that it's a lot of code for such a simple thing.
-With the pivot point, the code is reduced to the following:
+大多数有长期Flash开发经验的人员都会知道这个技巧; 并且会定期的使用它。
+然而，有人可能会说，做这样一个很简单的事情也需要写不少代码。
+借助于枢轴点，代码将缩减为以下形式：
 
 [source, as3]
 ----
@@ -301,19 +301,19 @@ image.pivotX = image.width  / 2.0; // <1>
 image.pivotY = image.height / 2.0; // <2>
 image.rotation = deg2rad(45); // <3>
 ----
-<1> Move `pivotX` to the horizontal center of the image.
-<2> Move `pivotY` to the vertical center of the image.
-<3> Rotate around the center.
+<1> 将pivotX移动到图像的水平中心。
+<2> 将`pivotY`移动到图像的垂直中心。
+<3> 绕中心旋转。
 
-No more container sprite is needed!
-To stick with the analogy used in previous chapters: the pivot point defines the position where you stab the pin through the object when you attach it to its parent.
-The code above moves the pivot point to the center of the object.
+不需要创建多余的容器！
+延续前面章节中使用的类比：枢轴点定义当您将其附加到父对象时，钉子穿过的位置。
+上面的代码将枢轴点移动到对象的中心。
 
-.Note how moving the pivot point changes how the object rotates.
+.Note 移动枢轴点会决定对象如何旋转。
 image::pivot-point.png[Pivot Point]
 
-Now that you have learned how to control the pivot point coordinates individually, let's take a look at the method `alignPivot()`.
-It allows us to move the pivot point to the center of the object with just one line of code:
+现在你已经学会了如何单独控制枢轴点坐标，让我们来看看“alignPivot()”方法。
+它允许我们只用一行代码将枢轴点移动到对象的中心：
 
 [source, as3]
 ----
@@ -322,9 +322,9 @@ image.alignPivot();
 image.rotation = deg2rad(45);
 ----
 
-Handy huh?
+方便吗？
 
-Furthermore, if we want the pivot point somewhere else (say, at the bottom right), we can optionally pass alignment arguments to the method:
+此外，如果我们想要把枢轴点置于其它地方（例如，在右下角），我们可以给该方法传递对齐参数：
 
 [source, as3]
 ----
@@ -333,25 +333,25 @@ image.alignPivot(Align.RIGHT, Align.BOTTOM);
 image.rotation = deg2rad(45);
 ----
 
-That code rotates the object around the bottom right corner of the image.
+该代码使图像围绕其右下角旋转。
 
-==== Gotchas
+==== 窍门
 
-Be careful: the pivot point is always given in the _local_ coordinate system of the object.
-That's unlike the `width` and `height` properties, which are actually relative to the _parent_ coordinate system.
-That leads to surprising results when the object is e.g. scaled or rotated.
+注意：枢轴点总是在对象的本地坐标系中给出。
+这与'width'和'height'属性不同，它们实际上是相对于parent坐标系。
+当枢轴点与对象的缩放或旋转等属性同时被设置时，结果会使人诧异。
 
-For example, think of an image that's 100 pixels wide and scaled to 200% (`image.scaleX = 2.0`).
-That image will now return a `width` of 200 pixels (twice its original width).
-However, to center the pivot point horizontally, you'd still set `pivotX` to `50`, not `100`!
-In the _local_ coordinate system, the image is still 100 pixels wide -- it just appears wider in the _parent_ coordinate system.
+例如，想象一个100像素宽，缩放到200％的图像（`image.scaleX = 2.0`）。
+该图像现在返回一个宽度为200像素（宽度的两倍）的宽度。
+但是，要将水平枢轴点居中，您仍然将`pivotX`设置为`50`，而不是`100`！
+因为在本地坐标系中，图像仍然是100像素宽 - 它只是在parent坐标系中显得更宽。
 
-It might be easier to understand when you look back the code from the beginning of this section, where we centered the image within a parent sprite.
-What would happen if you changed the `scale` of the sprite?
-Would this mean that you have to update the position of the image to keep it centered?
-Of course not.
-The scale does not affect what's happening _inside_ the sprite, just how it looks from the _outside_.
-And it's just the same with the pivot point property.
+当你回顾本节开头的代码时，我们可能会更容易理解，我们将图像集中在一个父容器中。
+如果你改变了sprite的`scale`会发生什么？
+这是否意味着您必须更新图像的位置以保持其居中？
+当然不是。
+scale不影响容器内部发生的事情，只是它从外部看起来变化了。
+从这个方面讲它与枢轴点相同。
 
-TIP: If you still get a headache picturing that (as it happens to me, actually), just remember to set the pivot point _before_ changing the scale or rotation of the object.
-That will avoid any problems.
+TIP: 如果你仍然头痛（实际上发生在我身上），只要记住在改变对象的scale或rotation属性之前先设置好枢轴点。
+这将避免所有问题。
