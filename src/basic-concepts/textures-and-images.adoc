@@ -1,25 +1,25 @@
-== Textures & Images
+== 纹理和图像
 
-We came across the _Image_ and _Texture_ classes several times already, and indeed: they are some of the most useful classes in Starling.
-But how are they used, and what's the difference between the two?
+我们几次碰到过图像(Image)和纹理(Texture)类，确实如此：它们是Starling中最有用的类。
+但是如何使用它们，两者之间有什么区别呢？
 
-=== Textures
+=== 纹理
 
-A texture is just the data that describes an image -- like the file that is saved on your digital camera.
-You can't show anybody that file alone: it's all zeros and ones, after all.
-You need an image viewer to look at it, or send it to a printer.
+纹理只是描述图像的数据 - 好比保存在数码相机上的文件。
+你无法直接看到数据文件所记录的图像：毕竟它只是一系列的0和1。
+您需要一个图像查看器来查看它，或将其发送到打印机。
 
-Textures are stored directly in GPU memory, which means that they can be accessed very efficiently during rendering.
-They are typically either created from an embedded class or loaded from a file. You can pick between one of the following file formats:
+纹理直接存储在GPU内存中，这意味着它们可以在渲染期间被高效的访问。
+我们通常是直接嵌入(embed)到类或通过加载文件来得到纹理。您可以选择以下文件格式之一作为纹理格式：
 
-PNG:: The most versatile of them all. Its lossless compression works especially well for images with large areas of solid color. Recommended as default texture format.
+PNG:: 最通用的文件格式。其无损压缩特别适用于具有大面积纯色的图像。建议作为默认纹理格式。
 
-JPG:: Produces smaller files than PNG for photographic (and photo-like) images, thanks to it lossy encoding method. However, the lack of an alpha channel limits its usefulness severely. Recommended only for photos and big background images.
+JPG:: 由于使用有损压缩算法，对于摄影（和照片）图像，文件占用字节数比PNG格式小。然而，缺少alpha通道严重限制了其适用性。仅推荐照片和大背景图片使用这种格式。
 
-ATF:: A format created especially for Stage3D. ATF textures require little texture memory and load very fast; however, their lossy compression is not perfectly suited for all kinds of images. We will look at ATF textures in more detail in a later chapter (see <<ATF Textures>>).
+ATF:: 特别为Stage3D定制的格式。 ATF纹理需要很少的纹理内存并且具有非常快的加​​载速度;然而，它们也是有损压缩的，不能完全适合于所有类型的图像。我们将在后面的章节中更详细地讨论ATF纹理（参见“ATF纹理”）。
 
-The `starling.textures.Texture` class contains a number of factory methods used to instantiate textures.
-Here are few of them (for clarity, I omitted the arguments).
+`starling.textures.Texture` 类包含了许多用于实例化纹理的工厂方法。
+下面列举了几个工厂方法（为了读起来更清楚，我省略了参数）。
 
 [source, as3]
 ----
@@ -35,8 +35,8 @@ public class Texture
 }
 ----
 
-Probably the most common task is to create a texture from a bitmap.
-That couldn't be easier:
+可能最常见的任务是通过位图创建纹理。
+这似乎并不容易:
 
 [source, as3]
 ----
@@ -44,8 +44,8 @@ var bitmap:Bitmap = getBitmap();
 var texture:Texture = Texture.fromBitmap(bitmap);
 ----
 
-It's also very common to create a texture from an embedded bitmap.
-That can be done in just the same way:
+通过嵌入位图创建纹理也很常见。
+这可以用跟上述相同的方式完成：
 
 [source, as3]
 ----
@@ -55,11 +55,11 @@ public static const Mushroom:Class;
 var bitmap:Bitmap = new Mushroom(); // <2>
 var texture:Texture = Texture.fromBitmap(bitmap); // <3>
 ----
-<1> Embed the bitmap.
-<2> Instantiate the bitmap.
-<3> Create a texture from the bitmap.
+<1> 嵌入位图。
+<2> 实例化位图。
+<3> 从位图创建纹理。
 
-However, there is a shortcut that simplifies this further:
+然而，有一个捷径，使工作进一步简化：
 
 [source, as3]
 ----
@@ -68,24 +68,24 @@ public static const Mushroom:Class;
 
 var texture:Texture = Texture.fromEmbeddedAsset(Mushroom); // <2>
 ----
-<1> Embed the bitmap.
-<2> Create a texture right from the class storing the embedded asset.
+<1> 嵌入位图。
+<2> 直接从存储嵌入资源的类创建纹理。
 
 [IMPORTANT]
-.Pro Tip
+.提示
 ====
-This is not only less code, but it will also require less memory!
+这不仅节省代码，还能节省内存！
 
-The `fromEmbeddedAsset` method does some behind-the-scenes magic to guard for a context loss, and does it more efficient than the conventional `fromBitmap` method can do.
-We will come back to this topic later, but for now, just remember that this is the preferred way of creating a texture from an embedded bitmap.
+该`fromEmbeddedAsset`方法通过幕后的一些黑科技来减少性能损失，比传统的`fromBitmap`方法更加高效。
+我们稍后将回到这个主题，但现在，只记得这是从嵌入式位图创建纹理的首选方法。
 ====
 
-Another feature of the _Texture_ class is hidden in the inconspicuous `fromTexture` method.
-It allows you to set up a texture that points to an area within another texture.
+Texture类的另一个特性隐藏在不显眼的`fromTexture`方法中。
+它允许您使用另一个纹理中指定区域的局部纹理。
 
-What makes this so useful is the fact that no pixels are copied in this process.
-Instead, the created _SubTexture_ stores just a reference to its parent texture.
-That's extremely efficient!
+是什么原因让这个特性很有用？事实上，在这个过程中没有任何像素被复制。
+相反，创建的SubTexture仅存储对其父纹理的引用。
+这种方案非常高效！
 
 [source, as3]
 ----
@@ -94,14 +94,14 @@ var subTexture:Texture = Texture.fromTexture(
         texture, new Rectangle(10, 10, 41, 47));
 ----
 
-Shortly, you will get to know the _TextureAtlas_ class; it's basically built exactly around this feature.
+很快，你会知道_TextureAtlas_类; 它基本上围绕这个功能构建。
 
-=== Images
+=== 图像
 
-We've got a couple of textures now, but we still don't know how to display it on the screen.
-The easiest way to do that is by using the _Image_ class or one of its cousins.
+我们现在有了一些纹理，但我们仍然不知道如何在屏幕上显示它们。
+最简单的方法是使用_Image_类或其直系亲属之一。
 
-Let's zoom in on that part of the family tree.
+让我们聚焦此族谱中的这一部分。
 
 [plantuml, mesh-classes]
 ....
@@ -112,15 +112,15 @@ Quad <|-- Image
 Image <|-- MovieClip
 ....
 
-* A _Mesh_ is a flat collection of triangles (remember, the GPU can only draw triangles).
-* A _Quad_ is a collection of at least two triangles spawning up a rectangle.
-* An _Image_ is just a quad with a convenient constructor and a few additional methods.
-* A _MovieClip_ is an image that switches textures over time.
+* Mesh是三角形的平面集合（记住，GPU只能绘制三角形）。
+* 一个Quad是一个至少有两个三角形的集合，它构成一个四边形。
+* 一个Image只是一个有着方便的构造函数和一些额外方法的四边形。
+* MovieClip是一种随时间切换纹理的图像。
 
-While all of these classes are equipped to handle textures, you will probably work with the _Image_ class most often.
-That's simply because rectangular textures are the most common, and the _Image_ class is the most convenient way to work with them.
+虽然所有这些类都自带运用纹理的方法，但是你经常使用的可能是Image类。
+这是因为矩形纹理是最常见的，而Image类是使用它们的最简便的方式。
 
-To demonstrate, let me show you how to display a texture with a _Quad_ vs. an _Image_.
+为了演示，让我告诉你如何通过Quad和Image显示一个纹理。
 
 [source, as3]
 ----
@@ -133,64 +133,64 @@ addChild(quad);
 var image:Image = new Image(texture); // <2>
 addChild(image);
 ----
-<1> Create a quad with the appropriate size and assign the texture, or:
-<2> Create an image with its standard constructor.
+<1> 创建具有适当大小的四边形并分配纹理，或：
+<2> 使用其标准构造函数创建图像。
 
-Personally, I'd always pick the approach that saves me more keystrokes.
-What's happening behind the scenes is exactly the same in both cases, though.
+虽然在上述两种情况下，幕后发生的事情是完全相同的。
+就个人而言，我总是选择能够节省一些代码的方法。
 
-.A texture is mapped onto a quad.
+.纹理映射到四边形。
 image::texture-mapping.png[Texture-Mapping]
 
-=== One Texture, multiple Images
+=== 一个纹理，多个图像
 
-It's important to note that a texture can be mapped to any number of images (meshes).
-In fact, that's exactly what you should do: load a texture only once and then reuse it across the lifetime of your application.
+需要强调的是一个纹理可以映射到任意数量的图像（网格）。
+事实上，这正是你应该做的：加载一个纹理，然后在应用程序的整个生命周期重复使用它。
 
 [source, as3]
 ----
-// do NOT do this!!
+// 不要这样做！！
 var image1:Image = new Image(Texture.fromEmbeddedAsset(Mushroom));
 var image2:Image = new Image(Texture.fromEmbeddedAsset(Mushroom));
 var image3:Image = new Image(Texture.fromEmbeddedAsset(Mushroom));
 
-// instead, create the texture once and keep a reference:
+// 正确的做法是，创建一次纹理，保留引用并重复使用：
 var texture:Texture = Texture.fromEmbeddedAsset(Mushroom));
 var image1:Image = new Image(texture);
 var image2:Image = new Image(texture);
 var image3:Image = new Image(texture);
 ----
 
-Almost all your memory usage will come from textures; you will quickly run out of RAM if you waste texture memory.
+几乎所有的内存占用都来自纹理;如果你浪费了纹理内存，你将很快耗尽RAM。
 
-=== Texture Atlases
+=== 纹理图集
 
-In all the previous samples, we loaded each texture separately.
-However, real applications should actually not do that.
-Here's why.
+在之前所有的示例中，我们都是分别加载每个纹理。
+然而，真正的应用程序实际上不应该这样做。
+这是为什么呢？
 
-* For efficient GPU rendering, Starling batches the rendered _Meshes_ together. Batch processing is disrupted, however, whenever the texture changes.
-* In some situations, _Stage3D_ requires textures to have a width and height that are powers of two.
-  Starling hides this limitation from you, but you will nevertheless use more memory if you do not follow that rule.
+* 对于高效的GPU渲染，Starling将渲染的Meshes一起进行批处理。但是，当纹理改变时，批处理被中断。
+* 在某些情况下，Stage3D需要纹理的宽度和高度是2的幂。
+  Starling规避了这个限制，但是如果你不遵守这个规则，你会使用更多的内存。
 
-By using a texture atlas, you avoid both the texture switches and the power-of-two limitation.
-All textures are within one big "super-texture", and Starling takes care that the correct part of this texture is displayed.
+通过使用纹理图集，您可以避免纹理切换和二次方的限制。
+所有纹理都在一个大的“超级纹理”内，而Starling会关注显示这个纹理的正确部分。
 
-.A texture atlas.
+.纹理图集。
 image::penguflip-atlas.png[Texture Atlas]
 
-The trick is to have _Stage3D_ use this big texture instead of the small ones, and to map only a part of it to each quad that is rendered.
-This will lead to a very efficient memory usage, wasting as little space as possible.
-(Some other frameworks call this feature _Sprite Sheets_.)
+诀窍是让Stage3D使用这个大纹理而不是小的纹理，并且只将大纹理的一部分映射到对应的每个四边形。
+这将非常有效的节省内存使用，浪费尽可能小的空间。
+（一些其他框架调用此功能，例如Sprite Sheets。）
 
 ifdef::backend-html5[]
-TIP: The team from "Texture Packer" actually created a nice introduction video about sprite sheets.
-Watch it here: http://www.codeandweb.com/what-is-a-sprite-sheet[What is a Sprite Sheet?]
+TIP: “Texture Packer”的团队实际上创建了一个关于sprite sheet的介绍视频。
+在这里观看: http://www.codeandweb.com/what-is-a-sprite-sheet[Sprite Sheet]
 endif::[]
 
-==== Creating the Atlas
+==== 创建纹理图集
 
-The positions of each _SubTexture_ are defined in an XML file like this one:
+每个SubTexture在XML文件中像这样定义：
 
 [source, xml]
 ----
@@ -201,21 +201,21 @@ The positions of each _SubTexture_ are defined in an XML file like this one:
 </TextureAtlas>;
 ----
 
-As you can see, the XML references one big texture and defines multiple named _SubTextures_, each pointing to an area within that texture.
-At runtime, you can reference these _SubTextures_ by their name and they will act just as if they were independent textures.
+如你所见，XML引用一个大纹理并定义多个SubTextures，每个SubTexture指向该纹理内的一个区域。
+在运行时，你可以通过他们的名字引用这些SubTextures，就像它们本来就是独立的纹理一样。
 
-But how do you combine all your textures into such an atlas?
-Thankfully, you don't have to do that manually; there are lots of tools around that will help you with that task.
-Here are two candidates, but _Google_ will bring up many more.
+但是怎么将所有的纹理合并成这样的图集？
+幸运的是，你不必手动做; 有很多工具，将帮助你完成这项任务。
+这里有两个候选人，但Google会带来更多。
 
-* https://www.codeandweb.com/texturepacker/starling?source=gamua[TexturePacker] is my personal favorite. You won't find any tool that allows for so much control about your sprite sheets, and its Starling support is excellent (ATF textures, anyone?).
-* http://renderhjs.net/shoebox/[Shoebox] is a free tool built with _AIR_. While it doesn't have as many options for atlas creation as _TexturePacker_, it contains lots of related functionality, like bitmap font creation or sprite extraction.
+* https://www.codeandweb.com/texturepacker/starling?source=gamua[TexturePacker] 是我个人的最爱。 你不会找到任何工具，能够这么完善的控制你的精灵图集，同时对Starling的支持是这么友好（ATF纹理，还有其它工具吗？）。
+* http://renderhjs.net/shoebox/[Shoebox] 是一个用AIR构建的免费工具。 虽然它没有TexturePacker一样多的选项来创建纹理图集，但它包含许多相关功能，如位图字体创建和精灵提取。
 
-==== Using the Atlas
+==== 使用纹理图集
 
-Okay: you've got a texture atlas now.
-But how do you use it?
-Let's start with embedding the texture and XML data.
+好吧：你现在有一个纹理图集。
+但是你怎么用呢？
+让我们从嵌入纹理和XML数据开始。
 
 [source, as3]
 ----
@@ -225,14 +225,14 @@ public static const AtlasXml:Class;
 [Embed(source="atlas.png")] // <2>
 public static const AtlasTexture:Class;
 ----
-<1> Embed the atlas XML. Don't forget to specify the _mimeType_.
-<2> Embed the atlas texture.
+<1> 嵌入图集描述文件XML。 不要忘记指定mimeType。
+<2> 嵌入图集纹理。
 
-NOTE: Alternatively, you can also load these files from an URL or from the disk (if we are talking about _AIR_).
-We will look at that in detail when we discuss Starling's _AssetManager_.
+NOTE: 或者，您也可以从URL或磁盘加载这些文件（如果我们在谈论AIR）。
+当我们讨论Starling的AssetManager时，我们将详细讨论。
 
-With those two objects available, we can create a new _TextureAtlas_ instance and access all _SubTextures_ through the method `getTexture()`.
-Create the atlas object once when the game is initialized and reference it throughout its lifetime.
+有了这两个对象，我们可以创建一个新的TextureAtlas实例，并通过getTexture()方法访问所有SubTextures。
+在游戏初始化时创建一次atlas对象，并在其生命周期中引用它。
 
 [source, as3]
 ----
@@ -243,18 +243,18 @@ var atlas:TextureAtlas = new TextureAtlas(texture, xml);
 var moonTexture:Texture = atlas.getTexture("moon"); // <2>
 var moonImage:Image = new Image(moonTexture);
 ----
-<1> Create the atlas.
-<2> Display a _SubTexture_.
+<1> 创建图集。
+<2> 显示子纹理(SubTexture).
 
-It's as simple as that!
+就这么简单！
 
-=== Render Textures
+=== 渲染纹理
 
-The _RenderTexture_ class allows creating textures dynamically.
-Think of it as a canvas on which you can paint any display object.
+RenderTexture类允许动态创建纹理。
+把它想象成一个画布，你可以在其上绘制任何显示对象。
 
-After creating a render texture, just call the `drawObject` method to render an object directly onto the texture.
-The object will be drawn onto the texture at its current position, adhering its current rotation, scale and alpha properties.
+创建渲染纹理后，只需调用`drawObject`方法将对象直接渲染到纹理上。
+对象将被绘制到当前位置的纹理上，并附带其当前旋转，缩放和透明度等属性。
 
 [source, as3]
 ----
@@ -267,22 +267,22 @@ brush.rotation = 1.41;
 
 renderTexture.draw(brush); // <3>
 ----
-<1> Create a new _RenderTexture_ with the given size (in points). It will be initialized with fully transparent pixels.
-<2> In this sample, we're referencing a display object depicting a brush. We move it to a certain location.
-<3> The brush object will be drawn to the texture with its current position and orientation settings.
+<1> 创建一个具有给定大小（以点为单位）的新RenderTexture。 它将用完全透明的像素初始化。
+<2> 在这个示例中，我们引用了一个描述画笔的显示对象。 我们将它移动到某个位置。
+<3> 画刷对象将以其当前的位置和方向被绘制到纹理中。
 
-Drawing is done very efficiently, as it is happening directly in graphics memory.
-After you have drawn objects onto the texture, the performance will be just like that of a normal texture -- no matter how many objects you have drawn.
+绘图过程非常高效，因为它直接发生在图形存储器中。
+在将对象绘制到渲染纹理上之后，其性能将像普通纹理一样 - 无论您绘制多少对象。
 
 [source, as3]
 ----
 var image:Image = new Image(renderTexture);
 addChild(image); // <1>
 ----
-<1> The texture can be used like any other texture.
+<1> 此纹理可以像任何其他纹理一样使用。
 
-If you draw lots of objects at once, it is recommended to bundle the drawing calls in a block via the `drawBundled` method, as shown below.
-This allows Starling to skip a few rather costly operations, speeding up the process immensely.
+如果你一次绘制大量对象，建议通过`drawBundled`方法将绘图调用捆绑在一个块中，如下所示。
+这使得Starling可以跳过几个相当昂贵的操作，极大地加快了这个过程。
 
 [source, as3]
 ----
@@ -295,10 +295,10 @@ renderTexture.drawBundled(function():void // <1>
     }
 });
 ----
-<1> Activate bundled drawing by encapsulating all draw-calls in a function.
-<2> Inside the function, call `draw` just like before.
+<1> 通过将所有绘图调用封装在一个函数中来激活绑定的绘图。
+<2> 在此函数内部，像以前一样调用`draw`来绘制对象。
 
-To erase parts of a render texture, you can use any display object like a "rubber" by setting its blend mode to BlendMode.ERASE.
+要擦除渲染纹理的某些部分，可以使用任何显示对象（如“橡皮擦”）,通过设置其混合模式为BlendMode.ERASE来达到目的。
 
 [source, as3]
 ----
@@ -306,17 +306,17 @@ brush.blendMode = BlendMode.ERASE;
 renderTexture.draw(brush);
 ----
 
-To wipe it completely clean, use the `clear` method.
+要彻底擦除它，使用`clear`方法。
 
 [CAUTION]
-.Context Loss
+.设备丢失
 ====
-Unfortunately, render textures have one big disadvantage: they lose all their contents when the render context is lost.
-<<Context Loss>> is discussed in detail in a later chapter; in a nutshell, it means that _Stage3D_ may lose the contents of all its buffers in certain situations.
-(Yes, that is as nasty as it sounds.)
+不幸的是，渲染纹理有一个很大的缺点：当渲染设备丢失时，它们会丢失所有内容。
+<<设备丢失>> 将在后面的章节中详细讨论; 简而言之，这意味着Stage3D在某些情况下可能会丢失其缓冲区的所有内容。
+（是的，虽然听起来令人讨厌。）
 
-Thus, if it is really important that the texture's contents is persistent (i.e. it's not just eye candy), you will need to make some arrangements.
-We will look into possible strategies in the mentioned chapter -- I just wanted to mention this fact here so it doesn't hit you by surprise.
+因此，如果纹理的内容是持久的（即它不只是过眼云烟）,这个问题真的很重要，你将需要做一些额外的处理。
+我们将在上述章节中探讨可能的策略 - 在这里我只是想提到这个事实，碰见它时才不会措手不及。
 ====
 
 // TODO: Mipmaps
