@@ -1,13 +1,13 @@
-== Dynamic Text
+== 动态文本
 ifndef::imagesdir[:imagesdir: ../../img]
 
-Text is an important part of every application.
-You can only convey so much information with images; some things simply need to be described with words, dynamically at run-time.
+文本是每个应用程序的重要组成部分。
+你用图像传达的信息很有限; 一些事情只能依靠运行时动态地用语言描述。
 
 === TextFields
 
-Starling makes it easy to display dynamic text.
-The _TextField_ class should be quite self explanatory!
+Starling可以方便地显示动态文本。
+TextField类字面意思应该非常明确！
 
 [source, as3]
 ----
@@ -16,27 +16,27 @@ textField.format.setTo("Arial", 12, Color.RED); // <2>
 textField.format.horizontalAlign = Align.RIGHT; // <3>
 textField.border = true; // <4>
 ----
-<1> Create a TextField with a size of 100×20 points, displaying the text "text".
-<2> We set the format to "Arial" with a size of 12 points, in red.
-<3> The text is aligned to the right.
-<4> The border property is mainly useful during development: it will show the boundaries of the TextField.
+<1> 创建一个大小为100×20点的TextField，显示文本“text”。
+<2> 我们将格式设置为“Arial”，大小为12点，红色。
+<3> 文本向右对齐。
+<4> border属性在主要开发阶段有用：它将显示TextField的边界。
 
-NOTE: Note that the style of the text is set up via the `format` property, which points to a `starling.text.TextFormat` instance.
+NOTE: 注意，文本的样式是通过`format`属性设置的，它指向`starling.text.TextFormat`的一个实例。
 
-Once created, you can use a _TextField_ just like you'd use an image or quad.
+一旦创建TextField，您可以像使用图像(Image)或四边形(Quad)一样使用它。
 
-.A few samples of Starling's text rendering capabilities.
+.Starling的文本呈现功能的一些示例。
 image::textfield-samples.png[TextField Samples, 320]
 
-=== TrueType Fonts
+=== TrueType字体
 
-Per default, Starling will use system fonts to render text.
-For example, if you set up your TextField to use "Arial", it will use the one installed on the system (if it is).
+默认情况下，Starling将使用系统字体来渲染文本。
+例如，如果设置TextField使用“Arial”字体，它将使用系统上安装的（如果系统中包含）。
 
-However, the rendering quality of that approach is not optimal; for example, the font might be rendered without anti-aliasing.
+然而，该方法的渲染质量不是最优的; 例如，可以在没有抗锯齿的情况下呈现字体。
 
-For a better output, you should embed your _TrueType_ fonts directly into the SWF file.
-Use the following code to do that:
+为了获得更好的输出，应该将TrueType字体直接嵌入到SWF文件中。
+使用以下代码：
 
 [source, as3]
 ----
@@ -52,50 +52,50 @@ private static const ArialItalic:Class; // <3>
 [Embed(source="Arial.ttf", embedAsCFF="false", fontFamily="Arial", unicodeRange = "U+0020-U+007e")]
 private static const ArialJustLatin:Class; // <4>
 ----
-<1> Embedding the standard _Arial_ font. Note the _embedAsCFF_ part: don't skip it! Otherwise, the font simply won't show up.
-<2> Bold and italic styles must be embedded separately. Note the _fontWeight_ attribute here,
-<3> and the _fontStyle_ attribute here.
-<4> You can also define which glyphs to include, which is useful for big fonts when you don't need all _Unicode_ letters.
-    The range shown here is for basic Latin (upper- and lowercase chars, numerals and common symbols/punctuations).
+<1> 嵌入标准Arial字体。注意embedAsCFF部分：不要跳过！否则，字体根本不会显示。
+<2> 粗体和斜体样式必须单独嵌入。注意fontWeight属性在这里，
+<3> fontStyle属性也在这里。
+<4> 当您不需要所有Unicode字符时，您还可以定义要包括哪些字形，这对于大字符集语言字体库很有用。
+    此处显示的范围是基本拉丁语（大写和小写字符，数字和公共符号/标点符号）。
 
-After embedding the font, any TextField that is set up with a corresponding font name (font family) and weight will use it automatically.
-There's nothing else to set up or configure.
+嵌入字体后，所有使用相应字体名称（字体系列）和权重设置的TextField都将自动使用嵌入字体。
+除此之外不需要其他设置或配置。
 
-TIP: Beware of the big footprint when embedding all glyphs of a font.
-The "unicodeRange" shown above mitigates this problem. You can generate the ranges using e.g. http://renaun.com/blog/2011/10/flash-embed-font-unicode-range-generator[Unicode Range Generator].
+TIP: 当嵌入字体的所有字形时，当心占用过大的空间。
+上面显示的“unicodeRange”减轻了这个问题。您可以使用例如 http://renaun.com/blog/2011/10/flash-embed-font-unicode-range-generator[Unicode Range Generator].
 
-TIP: If your text is clipped or does not appear at the correct position, have a look at your current `stage.quality` setting.
-A low quality value often causes Flash/AIR to report incorrect values regarding the text bounds, and Starling depends on those values when it draws the text.
-(I'm talking about the Flash stage here; and this applies only to TrueType fonts.)
+TIP: 如果您的文本被裁剪或出现在错误的位置，请查看您当前的“stage.quality”设置。
+低品质通常导致Flash / AIR返回不正确的文本边界值，而Starling在绘制文本时取决于这些值。
+（在这里谈论的是指Flash原生stage,以上只适用于TrueType字体。）
 
-=== Bitmap Fonts
+=== 位图字体
 
-Using _TrueType_ fonts as shown above is adequate for text that does not change very often.
-However, if your TextField constantly changes its contents, or if you want to display a fancy font that's not available in TrueType format, you should use a bitmap font instead.
+使用如上所示的TrueType字体适用于不经常更改的文本。
+但是，如果您的TextField不断更改其内容，或者如果要显示TrueType格式不可用的花哨字体，则应使用位图字体。
 
-A bitmap font is a texture containing all the characters you want to display.
-Similar to a _TextureAtlas_, an XML file stores the positions of the glyphs inside the texture.
+位图字体是包含要显示的所有字符的纹理。
+与TextureAtlas类似，XML文件存储着字形处于纹理中的位置。
 
-This is all Starling needs to render bitmap fonts.
-To create the necessary files, there are several options:
+这是Starling渲染的位图字体的所有必要条件。
+要创建所需的文件，有几个途径：
 
-* http://kvazars.com/littera/[Littera], a full-featured free online bitmap font generator.
-* http://www.angelcode.com/products/bmfont/[Bitmap Font Generator], a tool provided by AngelCode that lets you create a bitmap font out of any TrueType font. It is, however, only available for Windows.
-* http://glyphdesigner.71squared.com[Glyph Designer] for _macOS_, an excellent tool that allows you to add fancy special effects to your fonts.
-* http://www.bmglyph.com[bmGlyph], also exclusive for _macOS_, available on the App Store.
+* http://kvazars.com/littera/[Littera], 一个功能齐全的免费在线位图字体生成器。
+* http://www.angelcode.com/products/bmfont/[Bitmap Font Generator], 一个由AngelCode提供的工具，它允许您使用任何TrueType字体创建位图字体。但是，它仅适用于Windows。
+* http://glyphdesigner.71squared.com[Glyph Designer] 为macOS，一个优秀的工具，允许你添加漂亮的特殊效果到您的字体。
+* http://www.bmglyph.com[bmGlyph], 也专用于macOS，在App Store上可用。
 
-The tools are all similar to use, allowing you to pick one of your system fonts and optionally apply some special effects.
-On export, there are a few things to consider:
+这些工具使用方法都类似，允许您选择一个系统字体并可选地应用一些特殊效果。
+导出文件时，有几件事要注意：
 
-* Starling requires the XML variant of the ".fnt" format.
-* Make sure to pick the right set of glyphs; otherwise, your font texture will grow extremely big.
+* Starling需要“.fnt”格式的XML变体。
+* 确保选择正确的字形集;否则，你的字体纹理可能会变得非常大。
 
-The result is a ".fnt" file and an associated texture containing the characters.
+结果是“.fnt”文件和包含字符的关联纹理。
 
-.A bitmap font that has color and drop shadow included.
+.包含颜色和阴影的位图字体。
 image::desyrel-font.png[Bitmap Font, 400]
 
-To make such a font available to Starling, you can embed it in the SWF and register it at the TextField class.
+要使这样的字体可用于Starling，您可以将其嵌入到SWF中并将其注册到TextField类。
 
 [source, as3]
 ----
@@ -111,12 +111,12 @@ var font:BitmapFont = new BitmapFont(texture, xml); // <1>
 
 TextField.registerCompositor(font); // <2>
 ----
-<1> Create an instance of the _BitmapFont_ class.
-<2> Register the font at the _TextField_ class.
+<1> 创建BitmapFont类的实例。
+<2> 在TextField类中注册字体。
 
-Once the bitmap font instance has been registered at the _TextField_ class, you don't need it any longer.
-Starling will simply pick up that font when it encounters a _TextField_ that uses a font with that name.
-Like here:
+一旦位图字体实例在TextField类中完成注册，则无需再进一步处理它。
+Starling将在遇到使用具有该名称的字体的TextField时，简单地拾取该字体。
+像这样：
 
 [source, as3]
 ----
@@ -124,30 +124,30 @@ var textField:TextField = new TextField(100, 20, "Hello World");
 textField.format.font = "fontName"; // <1>
 textField.format.fontSize = BitmapFont.NATIVE_SIZE; // <2>
 ----
-<1> To use the font, simply reference it by its name. By default, that's what is stored in the `face`-attribute within the XML file.
-<2> Bitmap fonts look best when they are displayed in the exact size that was used to create the font texture. You could assign that size manually -- but it's smarter to let Starling do that, via the `NATIVE_SIZE` constant.
+<1> 要使用字体，只需引用字体名称。默认情况下，名称存储在XML文件的`face`属性中。
+<2> 当字体大小与创建字体纹理时的实际字体大小一致时，位图字体看起来最好。你可以手动分配这个大小 - 但更好的做法是通过`NATIVE_SIZE`常量来设置。
 
-==== Gotchas
+==== 窍门
 
-There's one more thing you need to know: if your bitmap font uses just a single color (like a normal TrueType font, without any color effects), your glyphs need to be exported in pure white.
-The `format.color` property of the TextField can then be used to tint the font into an arbitrary color at runtime (simply by multiplication with the RGB channels of the texture).
+还有一件事你需要知道：如果你的位图字体只使用一种颜色（像一个正常的TrueType字体，没有任何颜色效果），你的字形需要导出为纯白色。
+然后，通过设置TextField的`format.color`属性可以用来在运行时将字体颜色调整为任意颜色（简单地通过与纹理的RGB通道相乘）。
 
-On the other hand, if your font does contains colors (like the sample image above), it's the TextField's `format.color` property that needs to be set to white (`Color.WHITE`).
-That way, the color tinting of the TextField will not affect the texture color.
+另一方面，如果你的字体包含颜色（像上面的示例图像），需要将TextField的`format.color`属性设置为白色（`Color.WHITE`）。
+这样，TextField的颜色着色将不会影响纹理颜色。
 
-TIP: For optimal performance, you can even add font textures to your texture atlas!
-That way, your texts may be batched together with regular images, reducing draw calls even more.
+TIP: 为了获得最佳性能，您甚至可以向纹理图集中添加字体纹理！
+这样，您的文本可以与常规图像一起批处理，减少drawCall的调用。
 
-==== The MINI Font
+==== MINI字体
 
-Starling actually comes with one very lightweight bitmap font included.
-It probably won't win any beauty contests -- but it's perfect when you need to display text in a prototype, or maybe for some debug output.
+Starling实际上带有一个非常轻量级的位图字体。
+它可能不会赢得任何选美比赛 - 但当你仅仅需要显示最基本的文本，或者作为一些调试输出时，它是最合适的。
 
-.The "MINI" bitmap font.
+.“MINI”位图字体。
 image::mini-font.png[BitmapFont.MINI, 396]
 
-When I say lightweight, I mean it: each letter is only 5 pixels high.
-There is a trick, though, that will scale it up to exactly 200% its native size.
+当我说轻便的，我的意思是：每个字母只有5像素高。
+有一个窍门，但是，它会扩展到正好200％的原生大小。
 
 [source, as3]
 ----
@@ -155,5 +155,5 @@ var textField:TextField = new TextField(100, 10, "The quick brown fox ...");
 textField.format.font = BitmapFont.MINI; // <1>
 textField.format.fontSize = BitmapFont.NATIVE_SIZE * 2; // <2>
 ----
-<1> Use the MINI font.
-<2> Use exactly twice the native size. Since the font uses nearest neighbor scaling, it will stay crisp!
+<1> 使用MINI字体
+<2> 使用原始大小的两倍。 由于字体使用最近邻的缩放，它仍然保持清晰！
