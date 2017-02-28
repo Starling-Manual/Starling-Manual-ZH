@@ -1,20 +1,20 @@
-== Event Handling
+== 事件处理
 
-You can think of events as occurrences of any kind that are of interest to you as a programmer.
+您可以将事件视为您作为程序员感兴趣的任何类型的事件。
 
-* For example, a mobile app might notify you that the device orientation has changed, or that the user just touched the screen.
-* On a lower level, a button might indicate that it was triggered, or a knight that he has run out of health points.
+* 例如，移动应用可能会通知您设备方向已更改，或者用户刚刚触摸了屏幕。
+* 最基本的，可能表示一个按钮被触发，或一个骑士，他已经用尽了生命值。
 
-That's what Starling's event mechanism is for.
+这就是Starling的事件机制。
 
-=== Motivation
+=== 动机
 
-The event mechanism is a key feature of Starling's architecture.
-In a nutshell, events allow objects to communicate with each other.
+事件机制是Starling架构的一个关键特性。
+简而言之，事件允许对象彼此进行通信。
 
-You might think: we already have a mechanism for that -- methods!
-That's true, but methods only work in one direction.
-For example, look at a _MessageBox_ that contains a _Button_.
+你可能会想：我们已经有了一个机制 - 方法！
+确实如此，但方法只能在同一个线性方向上工作。
+例如，查看包含Button的MessageBox。
 
 [ditaa, messagebox-calls-button]
 ....
@@ -29,7 +29,7 @@ For example, look at a _MessageBox_ that contains a _Button_.
   \--------/
 ....
 
-The message box _owns_ the button, so it can use its methods and properties, e.g.
+消息框本身包含了按钮这个对象，因此可以直接使用其方法和属性，例如：
 
 [source, as3]
 ----
@@ -43,14 +43,14 @@ public class MessageBox extends DisplayObjectContainer
     }
 }
 ----
-<1> Communicate with the _Button_ via a property.
+<1> 通过属性与Button通信。
 
-The _Button_ instance, on the other hand, does not own a reference to the message box.
-After all, a button can be used by any component -- it's totally independent of the _MessageBox_ class.
-That's a good thing, because otherwise, you could only use buttons inside message boxes, and nowhere else. Ugh!
+另一方面，Button实例没有对消息框的引用。
+毕竟，一个按钮可以被任何组件使用 - 它完全独立于MessageBox类。
+这是一件好事，否则，你只能在消息框中使用按钮，而在其他地方就只能呵呵了!
 
-Still: the button is there for a reason -- if triggered, it needs to tell somebody about it!
-In other words: the button needs to be able to send messages to its owner, whoever that is.
+进一步说，按钮这样设计是有原因的 - 如果触发，它需要告诉别人！
+换句话说：按钮需要能够发送消息给它的所有者，无论谁。
 
 [ditaa, button-dispatches-to-messagebox]
 ....
