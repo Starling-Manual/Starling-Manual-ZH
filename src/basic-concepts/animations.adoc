@@ -61,7 +61,7 @@ NOTE: 术语“Tween”来自手工绘制的动画，其中铅笔插画将绘制
 .渐变帧。
 image::soccer-tween.png[Soccer Tween]
 
-有了足够的理论，让我们举个例子：
+了解了这些理论，接下来我们举个例子：
 
 [source, as3]
 ----
@@ -72,17 +72,17 @@ tween.animate("scale", 2.0);
 tween.animate("alpha", 0.0);
 ----
 
-This tween describes an animation that moves the `ball` object to `x = 20`, scales it to twice its size and reduces its opacity until it is invisible.
-All those changes will be carried out simultaneously over the course of half a second.
-The start values are simply the current values of the specified properties.
+这个补间描述了一个动画，将“ball”对象移动到“x = 20”，将其放大两倍，并降低其不透明度，直到它不可见。
+所有这些变化将在半秒内同时进行。
+起始值仅仅是指定属性的当前值。
 
-This sample showed us that
+这个示例告诉我们：
 
-* you can animate arbitrary properties of an object, and that
-* you can combine multiple animations in one tween object.
+* 你可以对一个对象的任意属性进行动画处理
+* 您可以在一个补间对象中组合多个动画。
 
-Apropos: since scaling, fading and movement are done so frequently, the _Tween_ class provides specific methods for that, too.
-So you can write the following instead:
+Apropos: 由于缩放，淡入淡出和移动的频率很高，所以Tween类也提供了更为具体的方法。
+你可以这样写:
 
 [source, as3]
 ----
@@ -91,13 +91,13 @@ tween.scaleTo(2);    // animate "scale"
 tween.fadeTo(0);     // animate "alpha"
 ----
 
-An interesting aspect of tweens is that that you can change the way the animation is executed, e.g. letting it start slow and get faster over time.
-That's done by specifying a transition type.
+补间动画的一个有趣的功能是，你可以改变动画的执行方式，例如。 让它先慢后快。
+这是通过指定过渡类型做到的。
 
-.The available transition types. The default, `linear`, was omitted.
+.可用的过渡类型。 缺省值为“linear”。
 image::transitions.png[Transitions]
 
-The following example shows how to specify such a transition and introduces a few more tricks the class is capable of.
+以下示例显示如何指定这样的转换，并介绍此类的更多功能。
 
 [source, as3]
 ----
@@ -110,16 +110,16 @@ tween.repeatCount = 3; // <4>
 tween.reverse = true;
 tween.nextTween = explode; // <5>
 ----
-<1> Specify the transition via the third constructor argument.
-<2> These callbacks are executed when the tween has started, each frame, or when it has finished, respectively.
-<3> Wait two seconds before starting the animation.
-<4> Repeat the tween three times, optionally in yoyo-style (`reverse`). If you set `repeatCount` to zero, the tween will be repeated indefinitely.
-<5> Specify another tween to start right after this one is complete.
+<1> 通过第三个构造函数参数指定过渡类型。
+<2> 这些回调在补间启动时，每帧更新时或完成时执行。
+<3> 延迟两秒钟再执行动画。
+<4> 重复播放动画三次，可选择以yoyo风格（`reverse`）。 如果将`repeatCount`设置为零，动画将被无限重复。
+<5> 指定下一个动画补间，在此动画完成后立即开始。
 
-We just created and configured a tween -- but nothing is happening yet.
-A tween object _describes_ the animation, but it does not _execute_ it.
+我们刚刚创建和配置了一个补间动画 - 但什么也没有发生。
+一个tween对象描述了动画如何运行，但它并未开始运行。
 
-You could do that manually via the tweens `advanceTime` method:
+你可以通过tweens`advanceTime`方法手动执行：
 
 [source, as3]
 ----
