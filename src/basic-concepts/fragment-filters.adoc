@@ -1,16 +1,16 @@
-== Fragment Filters
+== 片段过滤器
 
-Up until now, everything we rendered were meshes with (or without) textures mapped onto them.
-You can move meshes around, scale them, rotate them, and maybe tint them in a different color.
-All in all, however, the possibilities are rather limited -- the look of the game is solely defined by its textures.
+到目前为止，我们所有的渲染都是映射到包含（或不包含）贴图的网格。
+你可以移动网格，缩放它们，旋转它们，也许以不同的颜色着色。
+总而言之，可能性是相当有限的 - 游戏的外观完全决定于纹理。
 
-At some point, you will run into the limits of this approach; perhaps you need a variant of an image in multiple colors, blurred, or with a drop shadow.
-If you add all of those variants into your texture atlas, you will soon run out of memory.
+在某些时候，你会遇到这种方法的极限; 也许你需要一个图像的变体，多种颜色，模糊或阴影。
+如果将所有这些变体添加到纹理图集中，您将很快耗尽内存。
 
-_Fragment filters_ can help with that.
-A filter can be attached to any display object (including containers) and can completely change its appearance.
+Fragment filters(片段过滤器)可以帮助你解决上述问题。
+过滤器可以附加到任何显示对象（包括容器），并且可以完全改变其外观。
 
-For example, let's say you want to add a Gaussian blur to an object:
+例如，假设您要向对象添加高斯模糊：
 
 [source, as3]
 ----
