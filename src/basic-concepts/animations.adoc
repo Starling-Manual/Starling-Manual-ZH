@@ -133,41 +133,41 @@ tween.advanceTime(0.25); // -> ball.x =  75
 tween.advanceTime(0.25); // -> ball.x = 100
 ----
 
-Hm, that works, but it's a little cumbersome, isn't it?
-Granted, one could call `advanceTime` in an `ENTER_FRAME` event handler, but still: as soon as you've got more than one animation, it's bound to become tedious.
+嗯，它们正常工作了，但这样编码有点麻烦，不是吗？
+虽然可以在一个`ENTER_FRAME`事件响应函数中调用`advanceTime`，但是只要你有多个动画，它仍然一定会变得繁琐。
 
-Don't worry: I know just the guy for you.
-He's really good at handling such things.
+别担心：我知道有个好家伙。
+他真的善于处理这样的事情。
 
 === Juggler
 
-The juggler accepts and executes any number of animatable objects.
-Like any true artist, it will tenaciously pursue its true passion, which is: continuously calling `advanceTime` on everything you throw at it.
+Juggler(魔术师)接受并执行任意数量的动画对象。
+像任何真正的艺术家一样，它将以饱满的热情坚定地追求其生命价值：连续调用`advanceTime`。
 
-There is always a default juggler available on the active Starling instance.
-The easiest way to execute an animation is through the line below -- just add the animation (tween) to the default juggler and you are done.
+在活动Starling实例上总是有一个默认的juggler。
+执行动画的最简单的方法是通过下面这行代码 - 只要将动画分配给默认的魔术师，你就完成了。
 
 [source, as3]
 ----
 Starling.juggler.add(tween);
 ----
 
-When the tween has finished, it will be thrown away automatically.
-In many cases, that simple approach will be all you need!
+当动画完成后，它将被自动释放，无需后续设置。
+在许多情况下，这种简单的方法将是你需要的！
 
-In other cases, though, you need a little more control.
-Let's say your stage contains a game area where the main action takes place.
-When the user clicks on the pause button, you want to pause the game and show an animated message box, maybe providing an option to return to the menu.
+在某些情况下，你需要更多的控制。
+假设你的舞台包含一个主要动作发生的游戏区域。
+当用户点击暂停按钮时，您想要暂停游戏并显示一个消息框（消息框本身也有动画），也许再提供一个选项返回到游戏菜单。
 
-When that happens, the game should freeze completely: none of its animations should be advanced any longer.
-The problem: the message box itself use some animations, too, so we can't just stop the default juggler.
+当这种情况发生时，游戏应该完全冻结：它的动画不应该再继续。
+问题是消息框本身也使用一些动画，所以我们不能只让默认的魔术师停止工作。
 
-In such a case, it makes sense to give the game area its own juggler.
-As soon as the exit button is pressed, this juggler should just stop animating anything.
-The game will freeze in its current state, while the message box (which uses the default juggler, or maybe another one) animates just fine.
+在这种情况下，给游戏区域额外分配一个魔术师就变得有必要。
+一旦按下退出按钮，这个魔术师应该停止一切工作。
+游戏将冻结在当前画面，而消息框（使用默认的魔术师，或者可能是另一个）动画仍然在工作。
 
-When you create a custom juggler, all you have to do is call its `advanceTime` method in every frame.
-I recommend using jugglers the following way:
+当你创建一个自定义的魔术师，你所要做的就是在每一帧中调用它的“advanceTime”方法。
+我建议通过以下方式使用jugglers：
 
 [source, as3]
 ----
@@ -194,34 +194,34 @@ public class GameArea
     }
 }
 ----
-<1> In your Game's root class, listen to `Event.ENTER_FRAME`.
-<2> Advance the `gameArea` only when there is no active message box.
-<3> The _GameArea_ contains its own juggler. It will manage all in-game animations.
-<4> The juggler is advanced in its `advanceTime` method (called by _Game_).
+<1> 在你的游戏的根类，监听`Event.ENTER_FRAME`。
+<2> 仅当没有活动消息框时才推进`gameArea'。
+<3> GameArea包含自己的魔术师。 它将管理所有的游戏内动画。
+<4> 玩家在其“advanceTime”方法（由Game调用）中前进。
 
-That way, you have neatly separated the animations of the game and the message box.
+这样，你已经完美地分离了游戏的动画和消息框。
 
-By the way: the juggler is not restricted to Tweens.
-As soon as a class implements the `IAnimatable` interface, you can add it to the juggler.
-That interface has only one method:
+顺便说一下：魔术师不限于Tweens家族。
+只要一个类实现了“IAnimatable”接口，就可以将它列入到魔术师阵营。
+该接口只有一个方法：
 
 [source, as3]
 ----
 function advanceTime(time:Number):void;
 ----
 
-By implementing this method, you could e.g. create a simple MovieClip-class yourself.
-In its `advanceTime` method, it would constantly change the texture that is displayed.
-To start the movie clip, you'd simply add it to a juggler.
+通过实现此接口，您可以 自己创建一个简单的MovieClip类。
+在它的“advanceTime”方法中，它会不断地改变显示的纹理。
+要启动影片剪辑，您只需将其分配给魔术师。
 
-This leaves one question, though: when and how is an object removed from the juggler?
+这留下一个问题，那就是：什么时候并且如何从魔术师中删除一个动画对象？
 
-==== Stopping Animations
+==== 停止动画
 
-When a tween finishes, it is removed from the juggler automatically.
-If you want to abort the animation before it is finished, you simply remove it from the juggler.
+当动画完成后，它会自动移除。
+如果要在动画完成之前中止动画，则只需从魔术师中删除这个动画。
 
-Let's say you just created a tween that animates a ball and added it to the default juggler:
+让我们看看一个例子，创建一个动画：球移动，并将它分配给默认魔术师：
 
 [source, as3]
 ----
@@ -230,8 +230,8 @@ tween.moveTo(x, y);
 Starling.juggler.add(tween);
 ----
 
-There are several ways you can abort that animation.
-Depending on the circumstances, simply pick the one that suits your game logic best.
+下面列举了几种可以中止该动画方法。
+你只需选择最适合您的当前游戏逻辑的一个。
 
 [source, as3]
 ----
@@ -242,20 +242,20 @@ Starling.juggler.removeTweens(ball); // <2>
 Starling.juggler.removeByID(animID); // <3>
 Starling.juggler.purge(); // <4>
 ----
-<1> Remove the tween directly. This works with any `IAnimatable` object.
-<2> Remove all tweens that affect the ball. Only works for tweens!
-<3> Remove the tween by its ID. Useful when you don't have access to the _Tween_ instance.
-<4> If you want to abort everything, purge the juggler.
+<1> 直接删除动画。 这适用于任何`IAnimatable`对象。
+<2> 删除影响球的所有动画。 只适用于tweens！
+<3> 通过其ID删除动画。 当您无法访问Tween实例时很有用。
+<4> 如果你想中止一切，让魔术师停止工作。
 
-Be a little careful with the `purge` method, though: if you call it on the default juggler, another part of your code might suddenly be faced with an aborted animation, bringing the game to a halt.
-I recommend you use `purge` only on your custom jugglers.
+但是有一点小心，“purge”的方法，会使你的所有依赖默认魔术师的动画嘎然而止，显得很突兀。
+我建议你只在自定义的魔术师身上使用“purge”方法。
 
-==== Automatic Removal
+==== 自动删除
 
-You might have asked yourself how the _Tween_ class manages to have tweens removed from the juggler automatically once they are completed.
-That's done with the `REMOVE_FROM_JUGGLER` event.
+你可能已经问自己，如何知道Tween类在动画完成后自动从运行时中删除了？
+这可以通过`REMOVE_FROM_JUGGLER`事件来获取通知。
 
-Any object that implements `IAnimatable` can dispatch such an event; the juggler listens to those events and will remove the object accordingly.
+实现“IAnimatable”的任何对象都可以调度这样的事件; 玩家监听这些事件并相应地删除对象。
 
 [source, as3]
 ----
@@ -268,11 +268,11 @@ public class MyAnimation extends EventDispatcher implements IAnimatable
 }
 ----
 
-==== Single-Command Tweens
+==== 单命令Tweens
 
-While the separation between tween and juggler is very powerful, it sometimes just stands in the way, forcing you to write a lot of code for simple tasks.
-That's why there is a convenience method on the juggler that allows you to create and execute a tween with a single command.
-Here's a sample:
+虽然tween和juggler的分离是非常强大的功能，但它有时这个分离反而迫使你为简单的任务写了很多代码。
+这就是为什么在魔术师身上有一个方便的方法，允许您使用单个命令创建和执行补间。
+下面是一个示例：
 
 [source, as3]
 ----
@@ -284,44 +284,44 @@ juggler.tween(msgBox, 0.5, {
 });
 ----
 
-This will create a tween for the `msgBox` object with a duration of 0.5 seconds, animating both the `x` and `rotation` properties.
-As you can see, the `{}`-parameter is used to list all the properties you want to animate, as well as the properties of the Tween itself.
-A huge time-saver!
+这将为`msgBox`对象创建一个动画，持续时间为0.5秒，同时为`x`和`rotation`属性生成动画。
+正如你所看到的，`{}`-parameter用来列出你想要动画的所有属性，以及Tween本身的属性。
+非常节省时间！
 
-=== Delayed Calls
+=== 延迟调用
 
-Technically, we have now covered all the animation types Starling supports.
-However, there's actually another concept that's deeply connected to this topic.
+从技术上讲，我们现在已经涵盖了Starling支持的所有动画类型。
+然而，实际上还有另一个概念与这个主题密切相关。
 
-Remember _Einstein_, our dog-hero who introduced us to the event system?
-The last time we saw him, he had just lost all his health points and was about to call `gameOver`.
-But wait: don't call that method immediately -- that would end the game too abruptly.
-Instead, call it with a delay of, say, two seconds (time enough for the player to realize the drama that is unfolding).
+记住Einstein，给我们介绍事件系统的那位智能狗？
+最后一次我们看到他，他刚刚失去了所有的健康点，并打算叫“gameOver”。
+但等待：不要立即调用该方法 - 这将突然结束游戏。
+相反，调用它的延迟，例如，两秒钟（足够的时间，让玩家实现正在展开的剧情）。
 
-To implement that delay, you could use a native _Timer_ or the `setTimeout`-method.
-However, you can also use the juggler, and that has a huge advantage: you remain in full control.
+要实现该延迟，您可以使用flash自带的Timer或`setTimeout`方法。
+然而，你也可以使用魔术师，这有一个巨大的优势：你完全掌控一切。
 
-It becomes obvious when you imagine that the player hits the "Pause" button right now, before those two seconds have passed.
-In that case, you not only want to stop the game area from animating; you want this delayed `gameOver` call to be delayed even more.
+当你想象玩家现在点击“暂停”按钮，在这两秒过去之前变得很明显。
+在这种情况下，你不仅想要停止游戏区的动画;你希望这个延迟的`gameOver`调用被延迟更多。
 
-To do that, make a call like the following:
+为此，请进行如下操作：
 
 [source, as3]
 ----
 juggler.delayCall(gameOver, 2);
 ----
 
-The `gameOver` function will be called two seconds from now (or longer if the juggler is disrupted).
-It's also possible to pass some arguments to that method.
-Want to dispatch an event instead?
+`gameOver`函数将从现在开始调用两秒钟（如果魔术师工作被中断，则更长时间）。
+也可以给这个函数传递一些参数。
+想要派发事件吗？
 
 [source, as3]
 ----
 juggler.delayCall(dispatchEventWith, 2, "gameOver");
 ----
 
-Another handy way to use delayed calls is to perform periodic actions.
-Imagine you want to spawn a new enemy once every three seconds.
+使用延迟调用的另一种方便的方法是执行周期性操作。
+想象你想要每三秒产生一个新的敌人。
 
 [source, as3]
 ----
@@ -330,11 +330,11 @@ juggler.repeatCall(spawnEnemy, 3);
 
 [NOTE]
 ====
-Behind the scenes, both `delayCall` and `repeatCall` create an object of type _DelayedCall_.
-Just like the `juggler.tween` method is a shortcut for using tweens, those methods are shortcuts for creating delayed calls.
+在幕后，`delayCall`和`repeatCall`都创建一个DelayedCall类型的对象。
+就像juggler.tween方法是使用tweens的快捷方式，这些方法是创建延迟调用的快捷方式。
 ====
 
-To abort a delayed call, use one of the following methods:
+要中止延迟调用，请使用以下方法之一：
 
 [source, as3]
 ----
@@ -344,20 +344,20 @@ juggler.removeByID(animID);
 juggler.removeDelayedCalls(gameOver);
 ----
 
-=== Movie Clips
+=== 影片剪辑
 
-You might have noticed the _MovieClip_ class already when we looked at the class diagram surrounding _Mesh_.
-That's right: a _MovieClip_ is actually just a subclass of _Image_ that changes its texture over time.
-Think of it as Starling's equivalent of an animated GIF!
+当我们查看关于Mesh的类图的时候，你可能已经注意到MovieClip类。
+事实如此：MovieClip实际上只是Image的一个子类，随着时间的推移改变其纹理。
+可以认为他是Starling中的一个GIF动画！
 
-==== Acquiring Textures
+==== 获取纹理
 
-It is recommended that all frames of your movie clip are from one texture atlas, and that all of them have the same size (if they have not, they will be stretched to the size of the first frame).
-You can use tools like _Adobe Animate_ to create such an animation; it can export directly to Starling's texture atlas format.
+建议您的影片剪辑的所有帧都来自一个纹理图集，并且所有帧都具有相同的大小（如果没有，它们将被拉伸到第一帧的大小）。
+您可以使用像Adobe Animate这样的工具来创建这样的动画; 它可以直接导出为Starling的纹理图集格式。
 
-This is a sample of a texture atlas that contains the frames of a movie clip.
-First, look at the XML with the frame coordinates.
-Note that each frame starts with the prefix `flight_`.
+这是包含影片剪辑的帧的纹理图集的示例。
+首先，看看带有帧坐标的XML。
+请注意，每个帧都以前缀`flight_`开头。
 
 [source, xml]
 ----
@@ -370,15 +370,15 @@ Note that each frame starts with the prefix `flight_`.
 </TextureAtlas>
 ----
 
-Here is the corresponding texture:
+这里是相应的纹理：
 
-.The frames of our MovieClip.
+.MovieClip的帧。
 image::flight-animation.png[Flight Animation]
 
-==== Creating the MovieClip
+==== 创建影片剪辑
 
-Now let's create the MovieClip.
-Supposing that the `atlas` variable points to a _TextureAtlas_ containing all our frames, that's really easy.
+现在让我们创建影片剪辑。
+假设“atlas”变量指向包含上述影片剪辑所有帧的TextureAtlas，这很容易。
 
 [source, as3]
 ----
@@ -392,29 +392,29 @@ movie.stop();
 
 Starling.juggler.add(movie); // <4>
 ----
-<1> The `getTextures` method returns all textures starting with a given prefix, sorted alphabetically.
-<2> That's ideal for our _MovieClip_, because we can pass those textures right to its constructor. The second parameter depicts how many frames will be played back per second.
-<3> Those are the methods controlling playback of the clip. It will be in "play" mode per default.
-<4> Important: just like any other animation in Starling, the movie clip needs to be added to the juggler!
+<1> `getTextures`方法返回从给定前缀开始的所有纹理，按字母顺序排序。
+<2> 这是我们MovieClip的理想选择，因为我们可以将这些纹理传递给它的构造函数。第二个参数描述了每秒播放多少帧。
+<3> 这些是控制剪辑的回放的方法。默认情况下，它将处于“播放”模式。
+<4> 重要提示：就像Starling中的任何其他动画一样，影片剪辑需要分配给魔术师！
 
-Did you notice how we referenced the textures from the atlas by their prefix `flight_`?
-That allows you to create a mixed atlas that contains other movie clips and textures, as well.
-To group the frames of one clip together, you simply use the same prefix for all of them.
+你注意到我们通过他们的前缀`flight_`引用了图集的纹理吗？
+这允许您创建包含其他影片剪辑和纹理的混合图集。
+要将一个剪辑的帧组合在一起，您只需对所有剪辑使用相同的前缀。
 
-The class also supports executing a sound or an arbitrary callback whenever a certain frame is reached.
-Be sure to check out its API reference to see what's possible!
+该类还支持在达到某个帧时执行声音或任意回调。
+请务必查看其API参考，了解可能的情况！
 
-==== More Complex Movies
+==== 更复杂的电影
 
-A downside of this animation technique has to be mentioned, though: you will run out of texture memory if your animations are either very long or if the individual frames are very big.
-If your animations take up several big texture atlases, they might not fit into memory.
+这个动画技术的一个缺点必须提及，如果你的动画很长或者单个帧非常大，你将会耗尽纹理内存。
+如果你的动画占用了几个大的纹理图集，它们可能因占用太多内存而不合适。
 
-For these kinds of animations, you need to switch to a more elaborate solution: skeletal animation.
-This means that a character is split up into different parts (bones); those parts are then animated separately (according to the character's skeleton).
-This is extremely flexible.
+对于这些类型的动画，您需要切换到更复杂的解决方案：骨骼动画。
+这意味着一个角色被分割成不同的部分（骨骼）;然后对于那些部分分别制作动画（根据角色的骨架）。
+这是非常灵活的。
 
-Support for such animations isn't part of Starling itself, but there are several other tools and libraries coming to the rescue.
-All of the following work really well with Starling:
+支持这样的动画不是Starling本身的一部分，但是有一些其他工具和库来协助。
+以下所有的工作与Starling完全一样：
 
 * http://esotericsoftware.com/[Spine]
 * https://github.com/threerings/flump[Flump]
