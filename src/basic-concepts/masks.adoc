@@ -1,12 +1,12 @@
-== Masks
+== 遮罩
 
-Masks can be used to cut away parts of a display object.
-Think of a mask as a "hole" through which you can look at the contents of another display object.
-That hole can have an arbitrary shape.
+遮罩可以用于切除显示对象的一部分。
+不妨将遮罩视为一个“洞”，透过它可以看到另一个显示对象的内容。
+该“洞”可以具有任意形状。
 
-If you've used the "mask" property of the classic display list, you'll feel right at home with this feature.
-Just assign a display object to the new mask property, as shown below.
-Any display object can act as a mask, and it may or may not be part of the display list.
+如果你已经使用了经典显示列表的“mask”属性，你会觉得这个功能非常熟悉。
+只需将一个显示对象分配给新的mask属性，如下所示。
+任何显示对象可以用作掩码，并且它可以是或可以不是显示列表的一部分。
 
 [source, as3]
 ----
@@ -16,40 +16,40 @@ mask.x = mask.y = 50;
 sprite.mask = mask; // ← use the quad as a mask
 ----
 
-This will yield the following result:
+这将产生以下结果：
 
-.Using a rectangular mask.
+.使用矩形遮罩。
 image::mask-rectangular.png[Rectangular Mask]
 
-The logic behind masks is simple: a pixel of a masked object will only be drawn if it is within the mask's polygons.
-This is crucial: the shape of the mask is defined by its polygons -- not its texture!
-Thus, such a mask is purely binary: a pixel is either visible, or it is not.
+遮罩的逻辑很简单：如果被遮罩对象的像素在遮罩的多边形内，会被绘制，否则不会被绘制。
+遮罩的形状由它的多边形决定 - 而不是它的纹理！这是至关重要的!
+因此，这样的遮罩是纯二元的：一个像素要么可见，要么不可见。
 
 [IMPORTANT]
 .Masks and AIR
 ====
-For masks to work in an AIR application, you will need to activate the stencil buffer in the application descriptor.
-Add the following setting to the `initialWindow` element:
+要使binary在AIR应用程序中工作，您需要在应用程序描述文件中激活模板缓冲区。
+将以下设置添加到`initialWindow`元素：
 
 [source, xml]
 ----
 <depthAndStencil>true</depthAndStencil>
 ----
 
-But don't worry, Starling will print a warning to the console if you forget to do so.
+但不要担心，如果您忘记这样做，Starling会向控制台打印警告。
 ====
 
-=== Canvas and Polygon
+=== 画布和多边形
 
-"This mask feature looks really nice", you might say, "but how the heck am I going to create those arbitrary shapes you were talking about?!"
-Well, I'm glad you ask!
+“这个遮罩功能看起来真的很好”，你可能会问，“但是我怎么创造关于你刚说的任意形状？”
+好，你问这个问题我很高兴！
 
-Indeed: since masks rely purely on geometry, not on any textures, you need a way to draw your mask-shapes.
-In a funny coincidence, there are actually two classes that can help you with exactly this task: _Canvas_ and _Polygon_.
-They go hand-in-hand with stencil masks.
+事实上：由于遮罩完全依赖于几何体，而不是任何纹理，所以你需要一种绘制遮罩形状的方法。
+恰巧有两个类可以帮助你完成这个任务：Canvas(画布)和Polygon(多边形)。
+他们都与掩模板有密切的联系。
 
-The API of the Canvas class is similar to Flash's _Graphics_ object.
-This will e.g. draw a red circle:
+Canvas类的API类似于Flash的Graphics对象。
+例如,画一个红圈：
 
 [source, as3]
 ----
@@ -59,17 +59,17 @@ canvas.drawCircle(0, 0, 120);
 canvas.endFill();
 ----
 
-There are also methods to draw an ellipse, a rectangle or an arbitrary polygon.
+还有一些方法来绘制椭圆，矩形或任意多边形。
 
-NOTE: Other than those basic methods, the _Canvas_ class is rather limited; don't expect a full-blown alternative to the _Graphics_ class just yet.
-This might change in a future release, though!
+NOTE: 除了这些基本方法，Canvas类的功能是相当有限的; 不要期待一个完整的Graphics替代类,还没有。
+这可能会在未来的版本中改变！
 
-That brings us to the _Polygon_ class.
-A _Polygon_ (package `starling.geom`) describes a closed shape defined by a number of straight line segments.
-It's a spiritual successor of Flash's _Rectangle_ class, but supporting arbitrary shapes.footnote:[The only limitation: line segments must not intersect one another.]
+我们来讲讲Polygon类。
+Polygon（包`starling.geom`）描述由多个直线段定义的闭合形状。
+它是Flash的Rectangle类的功能继承者，但是支持任意形状.footnote:[唯一的限制：线段不能相交.]
 
-Since _Canvas_ contains direct support for polygon objects, it's the ideal companion of _Polygon_.
-This pair of classes will solve all your mask-related needs.
+而Canvas支持绘制多边形对象，它是Polygon的理想伴侣。
+这两个类将解决所有与遮罩相关的需求。
 
 [source, as3]
 ----
@@ -81,27 +81,27 @@ canvas.beginFill(0xff0000);
 canvas.drawPolygon(polygon); // <2>
 canvas.endFill();
 ----
-<1> This polygon describes a triangle.
-<2> Draw the triangle to a canvas.
+<1> 此多边形描述一个三角形。
+<2> 将三角形绘制到画布上。
 
-There are a few more things about masks I want to note:
+我想提醒一下关于遮罩的几个注意事项：
 
-Visibility::
-The mask itself is never visible.
-You always only see it indirectly via its effect on the masked display object.
+是否可见::
+遮罩本身永远不可见。
+你总是通过被遮罩的显示对象的效果间接地看到它。
 
-Positioning::
-If the mask is not part of the display list (i.e. it has no parent), it will be drawn in the local coordinate system of the masked object: if you move the object, the mask will follow.
-If the mask _is_ part of the display list, its location will be calculated just as usual.
+位置::
+如果遮罩不是显示列表的一部分（即它没有父对象），则它将在被遮罩对象的局部坐标系中绘制：如果对象移动，遮罩将跟随。
+如果遮罩是显示列表的一部分，其位置将像往常一样计算。
 
-Stencil Buffer::
-Behind the scenes, masks use the _stencil buffer_ of the GPU, making them very lightweight and fast.
-One mask requires two draw calls: one to draw the mask into the stencil buffer and one to remove it when all the masked content has been rendered.
+模板缓冲::
+在幕后，遮罩使用GPU的模板缓冲实现，它们非常轻量和快速。
+一个遮罩需要两次绘制调用：一个将遮罩绘制到模板缓冲区中，一个在渲染完所有被遮罩内容后删除遮罩。
 
-Scissor Rectangle::
-If the mask is an untextured _Quad_ parallel to the stage axes, Starling can optimize its rendering.
-Instead of the _stencil buffer_, it will then use the _scissor rectangle_ -- sparing you one draw call.
+矩形裁剪::
+如果遮罩是与舞台坐标轴平行的无纹理四方形对象(Quad)，Starling可以优化其渲染。
+它将使用GPU的矩形裁剪,而不是模板缓冲， - 结果是仅有一次绘制调用。
 
-Texture Masks::
-If a simple vector shape just doesn't cut it, there is an extension that allows you to use the alpha channel of a texture as a stencil mask.
-It's called _Texture Mask_ and is found in the http://wiki.starling-framework.org/extensions/texture_mask[Starling Wiki].
+纹理遮罩::
+如果一个简单的矢量形状并且不能裁剪，有一个扩展，允许你使用纹理的alpha通道作为模板掩码。
+它叫做Texture Mask，查看这里: http://wiki.starling-framework.org/extensions/texture_mask[Starling Wiki].
