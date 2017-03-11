@@ -40,7 +40,7 @@ private function onEnterFrame(event:Event, passedTime:Number):void // <2>
 <1> 您可以在任何地方向此事件添加侦听器，但构造函数是一个很好的选择。
 <2> 这是对应的事件侦听器的样子。
 
-方法`onEnterFrame`每帧被调用一次，并且它沿着自上一帧以来已经过去的时间传递。
+方法`onEnterFrame`每帧被调用一次，并且传递自上一帧以来已经过去的时间参数。
 有了这些信息，你可以移动你的敌人，更新太阳的高度，或做任何其他需要。
 
 这个事件背后的蕴含力量是，每次事件发生时你可以做完全不同的事情。
@@ -414,7 +414,7 @@ Starling.juggler.add(movie); // <4>
 这是非常灵活的。
 
 支持这样的动画不是Starling本身的一部分，但是有一些其他工具和库来协助。
-以下所有的工作与Starling完全一样：
+以下工具或库都可以与Starling完美的协同工作:
 
 * http://esotericsoftware.com/[Spine]
 * https://github.com/threerings/flump[Flump]
