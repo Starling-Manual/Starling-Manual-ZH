@@ -17,105 +17,105 @@ Fragment filters(片段过滤器)可以帮助你解决上述问题。
 var filter:BlurFilter = new BlurFilter(); // <1>
 object.filter = filter; // <2>
 ----
-<1> Create and configure an instance of the desired filter class.
-<2> Assign the filter to the `filter` property of a display object.
+<1> 创建并配置所需滤镜的实例。
+<2> 将滤镜分配给显示对象的`filter`属性。
 
-With a filter assigned, rendering of a display object is modified like this:
+使用分配的滤镜，显示对象的呈现将被修改为这样：
 
-* Each frame, the target object is rendered into a texture.
-* That texture is processed by a fragment shader (directly on the GPU).
-* Some filters use multiple passes, i.e. the output of one shader is fed into the next.
-* Finally, the output of the last shader is drawn to the back buffer.
+* 每帧，目标对象都呈现为一个纹理。
+* 纹理由片段着色器（直接在GPU上）处理。
+* 一些滤镜使用多遍，即一个着色器的输出作为下一次的输入。
+* 最后一个着色器的输出被绘制到后台缓冲区。
 
-.The render pipeline of fragment filters.
+.片段过滤器的渲染管道。
 image::filter-pipeline.png[Filter Pipeline, 700]
 
-This approach is extremely flexible, allowing to produce all kinds of different effects (as we will see shortly).
-Furthermore, it makes great use of the GPU's parallel processing abilities; all the expensive per-pixel logic is executed right on the graphics chip.
+这种方法非常灵活，允许产生各种不同的效果（我们将很快看到）。
+此外，它极大地利用了GPU的并行处理能力;所有昂贵的逐像素处理逻辑都在图形芯片上执行。
 
-That said: filters break batching, and each filter step requires a separate draw call.
-They are not exactly cheap, both regarding memory usage and performance.
-So be careful and use them wisely.
+也就是说：滤镜会中断批处理，每个滤镜工作时需要单独的绘制调用。
+无论是内存使用和还是渲染性能，他们消耗都不低。
+所以要小心，明智地使用它们。
 
-=== Showcase
+=== 展示
 
-Out of the box, Starling comes with a few very useful filters.
+Starling有一些非常有用且易用的滤镜。
 
-==== BlurFilter
+==== 模糊滤镜
 
-Applies a Gaussian blur to an object. The strength of the blur can be set for x- and y-axis separately.
+对显示对象应用高斯模糊。可以分别对x轴和y轴设置模糊的强度。
 
-* Per blur direction, the filter requires at least one render pass (draw call).
-* Per strength unit, the filter requires one render pass (a strength of `1` requires one pass, a strength of `2` two passes, etc).
-* Instead of raising the blur strength, it's often better to lower the filter resolution. That has a similar effect, but is much cheaper.
+* 每个模糊方向，滤镜需要至少一个渲染过程（绘制调用）。
+* 每个强度单位，滤镜需要一次pass（1的强度需要一次pass，2的强度通过2次pass）。
+* 通过降低滤波器分辨率，而不是提高模糊强度, 来达到相似的模糊效果，这样会节省更多的性能。
 
-.The _BlurFilter_ in action.
+.激活的模糊滤镜。
 image::filter-blur.png[BlurFilter, 600]
 
-==== ColorMatrixFilter
+==== 颜色矩阵滤镜
 
-Dynamically alters the color of an object. Change an object's brightness, saturation, hue, or invert it altogether.
+动态地更改对象的颜色。更改对象的亮度，饱和度，色调或将其完全反转。
 
-This filter multiplies the color and alpha values of each pixel with a 4 × 5 matrix.
-That's a very flexible concept, but it's also quite cumbersome to get to the right matrix setup.
-For this reason, the class contains several helper methods that will set up the matrix for the effects you want to achieve (e.g. changing hue or saturation).
+该滤镜将每个像素的颜色和α值乘以4×5矩阵。
+这是一个非常灵活的设计，但是设置相应的矩阵也很麻烦。
+为此，该类包含几个方法，帮助您设置想要实现效果的矩阵（例如，更改色调或饱和度）。
 
-* You can combine multiple color transformations in just one filter instance.
-  For example, to change both brightness and saturation, call both of the corresponding methods on the filter.
-* This filter always requires exactly one pass.
+* 您可以在一个滤镜实例中组合多个颜色转换。
+  例如，要更改亮度和饱和度，请调用滤镜内置的相应方法。
+* 此滤镜总是需要一次pass。
 
-.The _ColorMatrixFilter_ in action.
+.激活的颜色矩阵滤镜。
 image::filter-colormatrix.png[ColorMatrixFilter, 600]
 
 ==== DropShadow- and GlowFilter
 
-These two filters draw the original object in the front and add a blurred and tinted variant behind it.
+这两个滤镜在前面绘制原始对象，并在其后添加一个模糊和着色的变体。
 
-* That also makes them rather expensive, because they add an additional render pass to what's required by a pure _BlurFilter_.
+* 这也使它们相当昂贵，因为他们还需要给模糊滤镜添加一次额外的pass。
 
-._DropShadow-_ and _GlowFilter_ in action.
+.激活的阴影和发光滤镜.
 image::filter-dropshadow+glow.png[DropShadow and Glow filter, 300]
 
-==== DisplacementMapFilter
+==== 置换滤镜
 
-Displaces the pixels of the target object depending on the colors in a _map texture_.
+根据贴图中的颜色来替换目标对象的像素。
 
-* Not exactly easy to use, but very powerful!
-* Reflection on water, a magnifying glass, the shock wave of an explosion -- this filter can do it.
+* 不是很容易使用，但非常强大！
+* 水面反射，放大镜，爆炸的冲击波 - 这个滤镜都可以做到。
 ifdef::target-handbook[]
-* We will look at the details of this filter in a later chapter.
+* 我们将在后面的章节中讨论这个滤镜的细节。
 endif::[]
 
-.The _DisplacementMapFilter_ using a few different maps.
+.包含几个不同贴图的置换滤镜。
 image::filter-displacementmap.png[Other filters, 450]
 
-==== FilterChain
+==== 滤镜链
 
-To combine several filters on one display object, you can chain them together via the _FilterChain_ class.
-The filters will be processed in the given order; the number of draw calls per filter are simply adding up.
+要在一个显示对象上组合多个滤镜，可以通过FilterChain类将它们链接在一起。
+滤镜将按给定顺序处理;每个滤镜的绘制调用的数量简单地相加。
 
-._ColorMatrix-_ and _DropShadowFilter_ chained together.
+.颜色矩阵和阴影滤镜链接在一起。
 image::filter-chain.png[FilterChain, 150]
 
-=== Performance Tips
+=== 性能提示
 
-I mentioned it above: while the GPU processing part is very efficient, the additional draw calls make fragment filters rather expensive.
-However, Starling does its best to optimize filters.
+我上面提到它：虽然GPU处理部分是非常高效的，但额外的绘制调用使片段过滤器相当昂贵。
+但是，Starling尽力优化滤镜性能。
 
-* When an object does not change its position relative to the stage (or other properties like scale and color) for two successive frames, Starling recognizes this and will automatically cache the filter output.
-  This means that the filter won't need to be processed any more; instead, it behaves just like a single image.
-* On the other hand, when the object is constantly moving, the last filter pass is always rendered directly to the back buffer instead of a texture.
-  That spares one draw call.
-* If you want to keep using the filter output even though the object is moving, call `filter.cache()`.
-  Again, this will make the object act just like a static image.
-  However, for any changes of the target object to show up, you must call `cache` again (or `uncache`).
-* To save memory, experiment with the `resolution` and `textureFormat` properties.
-  This will reduce image quality, though.
+* 当一个对象接连两帧不改变它相对于舞台的位置（或其他属性，比如尺度和颜色），Starling识别到这一点，会自动缓存过滤器输出。
+  这意味着滤镜将不再需要被处理;相反，它的行为就像一个单一的图像。
+* 另一方面，当对象不断移动时，最后的滤镜总是通过后台缓冲区直接呈现而不是纹理。
+  这只有一次绘制调用。
+* 如果你想继续使用滤镜输出，即使对象在移动，调用`filter.cache（）`。
+  同样，这将使对象的行为就像一个静态图像。
+  但是，如果目标对象图像有任何更改，您必须再次调用`cache`（或`uncache`）。
+* 为了节省内存，不妨试试'resolution'和'textureFormat'属性。
+  但这将降低图像质量。
 
-=== More Filters
+=== 更多滤镜
 
-Would you like to know how to create your own filters?
-Don't worry, we will investigate that topic a <<Custom Filters, little later>>.
+您想知道如何创建自己的滤镜吗？
+不要担心，我们将探讨该主题<<自定义滤镜,稍后...>>。
 
-In the meantime, you can try out filters created by other Starling developers.
-An excellent example is the https://github.com/devon-o/Starling-Filters[filter collection] by devon-o.
+在此期间，您可以尝试使用由其他Starling开发人员创建的滤镜。
+一个很好的例子是 https://github.com/devon-o/Starling-Filters[filter collection] by devon-o.
