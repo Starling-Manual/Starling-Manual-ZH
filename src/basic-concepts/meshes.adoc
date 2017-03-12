@@ -1,12 +1,12 @@
-== Meshes
+== 网格
 
-_Mesh_ is the basic building block of all tangible display objects.
-With "tangible", I mean a "leaf" object in the display list: an object that is not a container but is rendered directly to the back buffer.
-Since it is so important, I want to look at this class in a little more detail.
+Mesh是所有有形显示对象的基本构建块。
+“有形”是指显示列表中的一个“叶”对象：一个不是容器但直接呈现给后台缓冲区的对象。
+因为它是如此重要，我想更详细地谈谈这个类。
 
-In a nutshell, a _Mesh_ represents a list of triangles to be rendered via _Stage3D_.
-It was mentioned a few times already, since it's the base class of _Quad_ and _Image_.
-As a reminder, here is the class hierarchy we are talking about:
+简而言之，Mesh表示通过Stage3D渲染的三角形列表。
+它已经被提到了几次，因为它是Quad和Image的基类。
+作为提醒，先列出我们正在谈论的类层次结构：
 
 [plantuml, mesh-classes-from-display-object]
 ....
@@ -17,8 +17,8 @@ Mesh <|-- Quad
 Quad <|-- Image
 ....
 
-_Mesh_ is not an abstract class; nothing prevents you from instantiating it directly.
-Here's how:
+Mesh不是一个抽象类; 没有什么阻止你直接实例化它。
+就是这样：
 
 [source, as3]
 ----
@@ -34,32 +34,32 @@ var mesh:Mesh = new Mesh(vertexData, indexData);
 addChild(mesh);
 ----
 
-As you can see, we first needed to instantiate two more classes: _VertexData_ and _IndexData_.
-They represent collections of vertices and indices, respectively.
+正如你所看到的，我们首先需要实例化两个类：VertexData和IndexData。
+它们分别表示顶点和索引的集合。
 
-* _VertexData_ efficiently stores the attributes of each vertex, e.g. its position and color.
-* _IndexData_ stores indices to those vertices. Every three indices will make up a triangle.
+* VertexData有效地存储每个顶点的属性，例如。其位置和颜色。
+* IndexData存储这些顶点的索引。每三个指数将构成一个三角形。
 
-That way, the code above created the most basic drawing primitive: a triangle.
-We did this by defining three vertices and referencing them clockwise.
-After all, that's what a GPU can do best: drawing triangles -- lots of them.
+这样，上面的代码创建了最基本的绘图单元：三角形。
+我们通过定义三个顶点并顺时针引用它们来做到这一点。
+毕竟，GPU非常擅长做这件事：绘制三角形 - 非常多的三角形。
 
-.The triangle we just created.
+.我们刚刚创建的三角形。
 image::triangle.png[Triangle, 180]
 
-=== Extending Mesh
+=== 扩展网格
 
-Working directly with _VertexData_ and _IndexData_ would be quite bothersome over time.
-It makes sense to encapsulate the code in a class that takes care of setting everything up.
+直接使用VertexData和IndexData将是相当麻烦的。
+将所需要的设置代码封装在一个类中是有意义的。
 
-To illustrate how to create custom meshes, we will now write a simple class called _NGon_.
-Its task: to render a regular n-sided polygon with a custom color.
+为了说明如何创建自定义网格，我们现在将编写一个名为NGon的简单类。
+它的任务：用自定义颜色渲染常规的n边形。
 
-.These are the kinds of regular polygons we want to draw.
+.这些是我们要绘制的普通多边形的种类。
 image::polygons.png[Polygons]
 
-We want the class to act just like a built-in display object.
-You instantiate it, move it to a certain position and then add it to the display list.
+我们希望此类用起来像一个flash内置的显示对象。
+您实例化它，将其移动到某个位置，然后将其添加到显示列表。
 
 [source, as3]
 ----
@@ -68,33 +68,33 @@ ngon.x = 60;
 ngon.y = 60;
 addChild(ngon);
 ----
-<1> The constructor arguments define radius, number of edges, and color.
+<1> 构造函数参数定义半径，边数和颜色。
 
-Let's look at how we can achieve this feat.
+让我们看看我们如何能够实现这个功绩。
 
-=== Vertex Setup
+=== 顶点设置
 
-Like all other shapes, our regular polygon can be built from just a few triangles.
-Here's how we could set up the triangles of a pentagon (an n-gon with `n=5`).
+像所有其他形状，我们的正多边形也是由几个三角形构成。
+下面是我们如何设置一个五边形的三角形（一个n边多边形，n = 5）。
 
-.A pentagon and its vertices.
+.五边形及其顶点。
 image::pentagon.png[Pentagon, 200]
 
-The pentagon is made up of six vertices spanning up five triangles.
-We give each vertex a number between 0 and 5, with 5 being in the center.
+五边形由六个顶点构成，横跨五个三角形。
+我们给每个顶点一个在0和5之间的数字，5在中心。
 
-As mentioned, the vertices are stored in a _VertexData_ instance.
-_VertexData_ defines a set of named attributes for each vertex.
-In this sample, we need two standard attributes:
+如上所述，顶点存储在VertexData实例中。
+VertexData为每个顶点定义一组属性。
+在这个示例中，我们需要两个标准属性：
 
-* `position` stores a two-dimensional point (x, y).
-* `color` stores an RGBA color value.
+* `position`存储一个二维点（x，y）。
+* `color`存储RGBA颜色值。
 
-The _VertexData_ class defines a couple of methods referencing those attributes.
-That allows us to set up the vertices of our polygon.
+VertexData类定义了一些访问这些属性的方法。
+这允许我们设置多边形的顶点。
 
-Create a new class called _NGon_ that extends _Mesh_.
-Then add the following instance method:
+创建一个名为NGon的新类，​​扩展自Mesh。
+然后添加以下实例方法：
 
 [source, as3]
 ----
@@ -116,25 +116,25 @@ private function createVertexData(
     return vertexData;
 }
 ----
-<1> Set up center vertex (last index).
-<2> Set up edge vertices.
+<1> 设置中心顶点（最后一个索引）。
+<2> 设置边顶点。
 
-Since our mesh has a uniform color, we assign the the same color to each vertex.
-The positions of the edge vertices (the corners) are distributed along a circle with the given radius.
+由于我们的网格有一个统一的颜色，我们为每个顶点分配相同的颜色。
+边缘顶点（拐角）的位置沿着具有给定半径的圆分布。
 
-=== Index Setup
+=== 索引设置
 
-So much for the vertices.
-Now we need to define the triangles that make up the polygon.
+这么多的顶点。
+现在，我们需要定义组成多边形的三角形。
 
-_Stage3D_ wants a simple list if indices, with each three successive indices referencing one triangle.
-It's a good practice to reference the indices clockwise; that convention indicates that we are looking at the front side of the triangle.
-Our pentagon's list would look like this:
+Stage3D想要一个简单的列表，即索引列表，每三个连续的索引组成一个三角形。
+顺时针参考指标是一个好的做法; 这个约定表示我们正在看三角形的前侧。
+我们的五边形的列表将如下所示：
 
     5, 0, 1,   5, 1, 2,   5, 2, 3,   5, 3, 4,   5, 4, 0
 
-In Starling, the _IndexData_ class is used to set up such a list.
-The following method will fill an _IndexData_ instance with the appropriate indices.
+在Starling中，IndexData类用于设置索引列表。
+以下方法将使用适当的索引填充IndexData实例。
 
 [source, as3]
 ----
@@ -149,11 +149,11 @@ private function createIndexData(numEdges:int):IndexData
 }
 ----
 
-=== NGon constructor
+=== NGon构造函数
 
-This is actually all we need for our _NGon_ class!
-Now we just need to make use of the above methods in the constructor.
-All the other responsibilities of a display object (hit testing, rendering, bounds calculations, etc.) are handled by the superclass.
+这实际上是我们需要的NGon类！
+现在我们只需要在构造函数中使用上面的方法。
+显示对象的所有其他职责（碰撞测试，渲染，边界计算等）由超类处理。
 
 [source, as3]
 ----
@@ -172,29 +172,29 @@ public class NGon extends Mesh
 }
 ----
 
-That's rather straight-forward, isn't it?
-This approach works for any shape you can think of.
+这很直接，不是吗？
+这种方法适用于你可以想到的任何形状。
 
 [TIP]
 ====
-When working with custom meshes, also look at the _Polygon_ class (in the `starling.geom` package).
-It helps with converting an arbitrary, closed shape (defined by a number of vertices) into triangles.
-We look at it in more detail in the <<Masks>> section.
+当使用自定义网格时，还要查看Polygon类（在`starling.geom`包中）。
+它有助于将任意封闭形状（由多个顶点定义）转换为三角形。
+我们在<< 遮罩 >>部分更详细地讨论它。
 ====
 
-=== Adding a Texture
+=== 添加纹理
 
-Wouldn't it be nice if we were able to map a texture onto this polygon, as well?
-The base class, _Mesh_, already defines a `texture` property; we're only lacking the required _texture coordinates_.
+如果我们能够将纹理映射到这个多边形，不是很好吗？
+基类Mesh已经定义了一个`texture`属性;我们只缺少所需的纹理坐标。
 
-Through texture coordinates, you define which part of a texture gets mapped to a vertex.
-They are often called _UV-coordinates_, which is a reference to the names that are typically used for their coordinate axes (_u_ and _v_).
-Note that the UV range is defined to be within _0_ and _1_, regardless of the actual texture dimensions.
+通过纹理坐标，您可以定义纹理的哪个部分映射到哪个顶点。
+它们通常称为UV坐标，它是对通常用于其坐标轴（u和v）的名称的引用。
+请注意，UV范围定义在0和1内，是一个比值，与实际纹理尺寸无关。
 
-.The texture coordinates of the polygon are in the range 0-1.
+.多边形的纹理坐标在0-1的范围内。
 image::pentagon-texcoords.png[Pentagon Texture Coordinates, 250]
 
-With this information, we can update the `createVertexData` method accordingly.
+有了这些信息，我们可以相应地更新`createVertexData`方法。
 
 [source, as3]
 ----
@@ -220,11 +220,11 @@ function createVertexData(
     return vertexData;
 }
 ----
-<1> The texture coordinates of the center vertex: `0.5, 0.5`.
-<2> The origin of the n-gon is in the center, but the texture coordinates must be all positive.
-    So we move the vertex coordinates to the right (by `radius`) and divide them by `2 * radius` to end up in the range `0-1`.
+<1> 中心顶点的纹理坐标：`0.5，0.5`。
+<2> 正多边形的原点在中心，但纹理坐标必须都为正。
+    因此，我们将顶点坐标向右移动（通过`radius`），并将它们除以`2 * radius`，结束在范围`0-1`内。
 
-When a texture is assigned, the rendering code will automatically pick up those values.
+当分配纹理时，渲染代码将自动选取这些值。
 
 [source, as3]
 ----
@@ -233,64 +233,64 @@ ngon.texture = assets.getTexture("brick-wall");
 addChild(ngon);
 ----
 
-.Our textured pentagon.
+.我们的纹理五边形。
 image::pentagon-textured.png[Textured Pentagon, 230]
 
-=== Anti-Aliasing
+=== 抗锯齿
 
-If you look closely at the edges of our n-gon, you will see that the edges are quite jagged.
-That's because the GPU treats a pixel either within the n-gon, or outside -- there are no in-betweens.
-To fix that, you can enabled anti-aliasing: there's a property with that name on the _Starling_ class.
+如果你仔细观察我们的正多边形的边缘，你会看到边缘锯齿相当严重。
+这是因为GPU处理正多边形内部或外部的像素时 - 并没有平滑像素化边缘。
+要解决这个问题，您可以启用反锯齿：在Starling类中有一个具有该名称的属性。
 
 [source, as3]
 ----
 starling.antiAliasing = 4;
 ----
 
-The value correlates to the number of subsamples _Stage3D_ uses on rendering.
-Using more subsamples requires more calculations to be performed, making anti-aliasing a potentially very expensive option.
-Furthermore, _Stage3D_ doesn't support anti-aliasing on all platforms.
+该值与Stage3D在渲染时使用的子样本数相关。
+使用更多的子样本数需要执行更多的计算，使得抗锯齿可能成为非常昂贵的选项。
+此外，Stage3D并非在所有平台上的都支持抗锯齿。
 
-NOTE: On mobile, anti-aliasing currently only works within _RenderTextures_.
+NOTE: 在移动设备上，目前抗锯齿仅在RenderTextures中有效。
 
-Thus, it's not an ideal solution.
-The only consolation I can offer: the typical pixel-density of screens is constantly on the rise.
-On modern, high end mobile phones, the pixels are now so small that aliasing is rarely an issue any longer.
+因此，它不是一个理想的解决方案。
+我可以提供的唯一的好消息：屏幕的像素密度不断上升。
+在现代高端手机上，像素如此之小，以致于锯齿很少成为一个问题。
 
-.Anti-Aliasing can smooth pixelated edges.
+.抗锯齿可以平滑像素化边缘。
 image::anti-aliasing.png[Anti-Aliasing, 380]
 
-// TODO: describe RenderTexture-workaround in "Pro-Tips" chapter and link to it here.
+// TODO: 在“Pro-Tips”章节中描述渲染纹理解决方案，并链接到这里。
 
-=== Mesh Styles
+=== 网格样式
 
-You now know how to create textured meshes with arbitrary shapes.
-For this, you are using the standard rendering mechanics built into Starling.
+你现在知道该如何创建任意形状的纹理网格了。
+如果仅仅如此，您使用Starling内置的标准渲染机制就可以了。
 
-However, what if you want to customize the rendering process itself?
-The properties and methods of the _Mesh_ class provide a solid foundation -- but sooner or later, you will want more than that.
+然而，如果你想自定义渲染过程呢？
+虽然Mesh类的属性和方法提供了坚实的基础 - 但迟早，你会觉得这些还不够。
 
-Coming to the rescue: Starling's _mesh styles_.
+Starling的网格样式可以解决这种问题。
 
-Styles are a brand new addition to Starling (introduced in version 2.0) and are the recommended way to create custom, high performance rendering code.
-In fact, all rendering in Starling is now done via mesh styles.
+样式是Starling的新增内容（在2.0版中引入），是创建自定义高性能渲染代码的推荐方式。
+事实上，Starling中的所有渲染都是通过网格样式完成的。
 
-* A style can be assigned to any mesh (instances of the _Mesh_ class or its subclasses).
-* Per default, the style of each mesh is an instance of the base _MeshStyle_ class.
-* The latter provides the standard rendering capabilities of Starling: drawing colored and textured triangles.
+* 样式可以分配给任何网格物体（Mesh类或其子类的实例）。
+* 默认情况下，每个网格的样式是基本MeshStyle类的实例。
+* 后者提供了Starling的标准渲染功能：绘制彩色或有纹理映射的三角形。
 
-To teach your meshes new tricks, you can extend _MeshStyle_.
-This allows you to create custom shader programs for all kinds of interesting effects.
-For example, you could implement fast color transformations or multi-texturing.
+要使用新的网格样式，你可以扩展MeshStyle。
+这允许您为各种有趣的效果创建自定义着色器程序。
+例如，您可以实现快速颜色转换或多纹理。
 
 [TIP]
 ====
-One of the most impressive samples of a style is the http://wiki.starling-framework.org/extensions/dynamic_lighting[Dynamic Lighting extension].
-With the help of a normal map (a texture encoding surface normals), it can provide realistic real-time lighting effects.
-Be sure to check out this extension in the Starling Wiki to see it in action!
+一个最令人印象深刻的样式之一是 http://wiki.starling-framework.org/extensions/dynamic_lighting[动态照明扩展].
+借助于法线贴图（针对表面法线编码的纹理），它可以提供逼真的实时照明效果。
+一定要在Starling Wiki看看这个扩展！
 ====
 
-To use a style, instantiate it and assign it to the `style` property of the mesh:
+要使用样式，实例化它并将其分配给网格的“style”属性：
 
 [source, as3]
 ----
@@ -299,25 +299,25 @@ var lightStyle:LightStyle = new LightStyle(normalTexture);
 image.style = lightStyle;
 ----
 
-.The Dynamic Lighting extension in action.
+.动态照明扩展。
 image::dynamic-lighting.png[Dynamic Lighting]
 
-Styles are extremely versatile; their possible applications are almost without limit.
-And since meshes with the same style can be batched together, you do not sacrifice performance in any way.
-In this respect, they are much more efficient than _fragment filters_ (which serve a similar purpose).
+样式几乎无所不能;它们的应用无极限。
+并且由于具有相同样式的网格可以分批在一起，您不必担心因此牺牲性能。
+在这方面，它们比片段过滤器（它们具有类似的目的）更高效。
 
-The main downsides of styles are simply that they can only be assigned to a mesh (not, say, a sprite), and that they can only act within the actual mesh area (making things like a blur impossible).
-Furthermore, it's not possible to combine several styles on one mesh.
+样式的主要缺点是它们只能被分配给一个网格物体（不是一个精灵），并且它们只能在实际的网格区域内作用（比如模糊效果就不能实现）。
+此外，不能在一个网格上组合几个样式。
 
-Still: styles are a powerful tool that any Starling developer should be familiar with.
-Stay tuned: in a <<Custom Styles, later section>>, I'll show you how to create your own mesh style from scratch, shaders and all!
+虽然如此，样式仍然是任何Starling开发人员都应该熟悉的一个强大的工具。
+在“自定义样式，稍后部分”中，我将向您介绍如何从头开始创建自己的网格样式，着色器等等！敬请期待!
 
 [NOTE]
 ====
-If you're still a little confused about the differences between a _Mesh_ and a _MeshStyle_, think of it like this:
-the _Mesh_ is nothing more than a list of vertices, and how those vertices spawn up triangles.
+如果你对于Mesh和MeshStyle之间的区别仍然有点困惑，可以这样想：
+Mesh只是一个存储顶点列表，以及描述这些顶点如何构成三角形的对象。
 
-A style may add additional data to each vertex and use it on rendering.
-The standard _MeshStyle_ provides color and texture coordinates; a _MultiTextureStyle_ might add an additional set of texture coordinates, etc.
-But a style should never modify the original shape of the object; it won't add or remove vertices or change their positions.
+MeshStyle则可以向每个顶点添加附加数据，并在渲染时使用它们。
+标准MeshStyle提供颜色和纹理坐标; MultiTextureStyle可能会添加一组额外的纹理坐标等。
+但是样式不应该修改对象的原始形状;它不会添加或删除顶点或更改其位置。
 ====
