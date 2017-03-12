@@ -1,11 +1,11 @@
-== Utilities
+== 实用工具
 
-The `starling.utils` package contains several useful little helpers that shouldn't be overlooked.
+`starling.utils`包包含几个有用的小助手，不应该被忽视。
 
-=== Colors
+=== 颜色
 
-In both conventional Flash and Starling, colors are specified in hexadecimal format.
-Here are a few examples:
+在常规Flash和Starling中，颜色以十六进制格式指定。
+这里有几个例子：
 
 [source, as3]
 ----
@@ -17,7 +17,7 @@ var white:Number = 0xffffff;
 var black:Number = 0x000000; // or simply 0
 ----
 
-The Color class contains a list of named color values; furthermore, you can use it to easily access the components of a color.
+Color类包含一些常用的颜色值的列表; 此外，您可以使用它来轻松访问各颜色通道数值。
 
 [source, as3]
 ----
@@ -31,14 +31,14 @@ var red:int   = Color.getRed(color);   // ->  64 <3>
 var green:int = Color.getGreen(color); // -> 128
 var blue:int  = Color.getBlue(color);  // -> 192
 ----
-<1> A few common colors are predefined.
-<2> Any other color can be created with this method. Just pass the RGB values to this method (range: 0 - 255).
-<3> You can also extract the integer value of each channel.
+<1> 预定义几种常见的颜色。
+<2> 可以使用此方法创建任何其他颜色。 只需将RGB值传递给此方法（范围：0 - 255）。
+<3> 您还可以提取每个通道的整数值。
 
-=== Angles
+=== 角度
 
-Starling expects all angles in radians (different to Flash, which uses degrees in some places and radians in others).
-To convert between degrees and radians, you can use the following simple functions.
+Starling期望所有角度以弧度表示（不同于Flash，在某些地方使用度数，在其他地方使用弧度）。
+要在度数和弧度之间进行转换，可以使用以下简单函数。
 
 [source, as3]
 ----
@@ -48,7 +48,7 @@ var radians:Number = deg2rad(180);     // -> PI
 
 === StringUtil
 
-You can use the `format` method to format Strings in _.Net/C#_ style.
+你可以使用`format`方法来格式化.Net/C#风格的字符串。
 
 [source, as3]
 ----
@@ -56,7 +56,7 @@ StringUtil.format("{0} plus {1} equals {2}", 4, 3, "seven");
   // -> "4 plus 3 equals seven"
 ----
 
-The same class also contains methods that trim whitespace from the start and end of a string -- a frequent operation whenever you need to process user input.
+相同的类还包含从字符串的开头和结尾去除空格的方法 - 每当需要处理用户输入时进行频繁操作。
 
 [source, as3]
 ----
@@ -65,8 +65,8 @@ StringUtil.trim("  hello world\n"); // -> "hello world"
 
 === SystemUtil
 
-It's often useful to find out information about the environment an app or game is currently executed in.
-The _SystemUtil_ contains some methods and properties helping with that task.
+了解应用或游戏当前执行环境的信息通常很有用。
+SystemUtil包含一些帮助执行该任务的方法和属性。
 
 [source, as3]
 ----
@@ -78,7 +78,7 @@ SystemUtil.platform; // WIN, MAC, LNX, IOS, AND
 
 === MathUtil
 
-While that class is mainly designed to help with some geometric problems, it also contains the following very useful helper methods:
+虽然该类主要是为了帮助处理一些几何问题，它还包含以下非常有用的帮助方法：
 
 [source, as3]
 ----
@@ -86,29 +86,29 @@ var min:Number = MathUtil.min(1, 10); // <1>
 var max:Number = MathUtil.max(1, 10); // <2>
 var inside:Number = MathUtil.clamp(-5, 1, 10); // <3>
 ----
-<1> Get the smallest of two numbers. Result: `1`
-<2> Get the biggest of two numbers. Result: `10`
-<3> Move the number (first argument) into a specific range. Result: `1`
+<1> 获取两个数字中最小的数字。结果：`1`
+<2> 获取两个数字中最大的。结果：`10`
+<3> 将数字（第一个参数）移动到特定范围。结果：`1`
 
-If you have worked with _AS3_ in the past, you might wonder why I made the effort of writing those methods when similar ones are already provided in the native `Math` class.
+如果你以前使用过AS3，你可能会想知道为什么我写了这些方法，提供了类似原生的数学类。
 
-Unfortunately, those equivalent methods have a side effect: each time you call e.g. `Math.min`, it creates a temporary object (at least when you compile your app for _iOS_, that is).
-Those alternatives do not have this side effect, so you should always prefer them.
+不幸的是，这些等价方法有副作用：每次您调用`Math.min`，它创建一个临时对象（至少当你为iOS编译你的应用程序时）。
+这些替代品没有这种副作用，所以你应该总是喜欢他们。
 
-=== Pooling
+=== 池
 
-Now that we touched the topic of temporary objects, it's the perfect time to introduce you to the _Pool_ class.
+现在我们碰到了临时对象的主题，这是介绍你Pool类的最佳时机。
 
-Experienced AS3 developers know that any object allocation comes at a price: the object needs to be garbage collected later.
-This happens completely behind the scenes; you won't even notice it most of the time.
+经验丰富的AS3开发人员知道任何对象分配都有一个代价：对象需要被垃圾回收。
+这完全在幕后发生;你甚至大部分时间不会注意到它。
 
-However, when the cleanup process takes up too much time, your app will freeze for a short moment.
-If that happens often, it quickly becomes a nuisance to your users.
+但是，当清理过程占用太多时间时，您的应用程序将卡住一段时间。
+如果这种情况经常发生，它很快就会成为您的用户的一个烦恼。
 
-One tactic to avoid this problem is to recycle your objects and use them repeatedly.
-For example, classes like _Point_ and _Rectangle_ are often just needed for a short moment: you create them, fill them with some data, and then throw them away.
+避免这个问题的一个策略是回收您的对象并反复使用它们。
+例如，像Point和Rectangle这样的类通常只需要很短的使用时间：创建它们，用一些数据填充它们，然后丢弃它们。
 
-From now on, let Starling's _Pool_ class handle those objects.
+从现在开始，让Starling的Pool类处理这些对象。
 
 [source, as3]
 ----
@@ -120,16 +120,16 @@ var rect:Rectangle = Pool.getRectangle(); // <1>
 doSomethingWithRectangle(rect);
 Pool.putRectangle(rect); // <2>
 ----
-<1> Get an object from the pool. That replaces calling `new` on the class.
-<2> Put it back into the pool when you do not need it any longer.
+<1> 从池中获取对象。 它替换了类上调用'new'。
+<2> 当你不再需要它时，把它放回池中。
 
-The class also supports _Vector3D_, _Matrix_, and _Matrix3D_, in a similar style.
+该类还以类似的样式支持Vector3D，Matrix和Matrix3D。
 
-IMPORTANT: Always make sure that the _get_ and _put_-calls are balanced.
-If you put too many objects into the pool and never retrieve them, it will fill up over time, using more and more memory.
+IMPORTANT: 始终确保get和put调用是平衡的。
+如果你把太多的对象放入池中，从来不检取它们，它将随着时间的推移而填满，使用越来越多的内存。
 
-=== Furthermore ...
+=== 此外 ...
 
-The `starling.utilities` package contains more helpers than I can possibly list here.
-For a complete list of methods and classes, refer to the http://doc.starling-framework.org/core/starling/utils/package-detail.html[API Reference].
-It will definitely pay off to take a look!
+`starling.utilities`包包含更多的帮助，我可能一并在这里列出。
+有关方法和类的完整列表，请参阅http://doc.starling-framework.org/core/starling/utils/package-detail.html [API参考]。
+它值得一看！
