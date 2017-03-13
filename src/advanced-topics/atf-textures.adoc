@@ -1,31 +1,31 @@
-== ATF Textures
+== ATF纹理
 
-In conventional Flash, most developers use the _PNG_ format for their images, or _JPG_ if they don't need transparency.
-Those are very popular in Starling, too.
-However, _Stage3D_ offers an alternative that has several unique advantages: the _Adobe Texture Format_, which can store _compressed_ textures.
+在常规Flash中，大多数开发人员使用PNG图像格式，如果不需要透明度，则使用JPG。
+那些图像格式在Starling中也同样受欢迎。
+但是，Stage3D提供了一个具有几个独特优点的替代方法：Adobe Texture Format，它可以存储compressed纹理。
 
-* Compressed textures require just a fraction of their conventional counterparts.
-* Decompression is done directly on the GPU.
-* Uploading to graphics memory is faster.
-* Uploading can be done asynchronously: you can load new textures without interrupting gameplay.footnote:[Beginning with AIR 24 and Starling 2.2, this is possible with conventional textures, as well.]
+* 压缩纹理占用更小的存储空间。
+* 直接在GPU上完成解压缩。
+* 上传到显存更快。
+* 上传可以异步完成：您可以加载新的纹理，而不中断游戏.footnote:[从AIR 24和Starling 2.2开始，这种纹理将变得很常用]
 
-=== Graphics Memory
+=== 显存
 
-Before we go on, it might be interesting to know how much memory is required by a texture, anyway.
+在我们继续之前，可能有兴趣了解一个纹理到底需要多少内存。
 
-A _PNG_ image stores 4 channels for every pixel: _red_, _green_, _blue_, and _alpha_, each with 8 bit (that makes 256 values per channel).
-It's easy to calculate how much space a 512 × 512 pixel texture takes up:
-
-====
-Memory footprint of a 512 × 512 RGBA texture: +
-512 × 512 pixels × 4 bytes = 1,048,576 bytes ≈ 1 MB
-====
-
-When you've got a _JPG_ image, it's similar; you just spare the alpha channel.
+PNG图像为每个像素存储4个通道：red，green，blue和alpha，每个具有8位（每通道256个值）。
+很容易计算512×512像素纹理占用的空间：
 
 ====
-Memory footprint of a 512 × 512 RGB texture: +
-512 × 512 pixels × 3 bytes = 786,432 bytes ≈ 768 kB
+512×512 RGBA纹理的内存占用：+
+512×512像素×4字节= 1,048,576字节≈1MB
+====
+
+JPG图像基实也是类似的;不同的是它不需要alpha通道。
+
+====
+512×512 RGB纹理的内存占用：+
+512×512像素×3字节= 786,432字节≈768kB
 ====
 
 Quite a lot for such a small texture, right?
