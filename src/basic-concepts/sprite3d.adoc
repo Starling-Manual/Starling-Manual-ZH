@@ -1,25 +1,25 @@
 == Sprite3D
 ifndef::imagesdir[:imagesdir: ../../img]
 
-All display objects that we looked at in the previous sections represent pure two-dimensional objects.
-That's to be expected -- Starling is a 2D engine, after all.
-However, even in a 2D game, it's sometimes nice to add a simple 3D effect, e.g. for transitioning between two screens or to show the backside of a playing card.
+在前面的章节中我们看到的所有显示对象都是纯二维对象。
+理所当然 - 毕竟Starling是一个2D引擎。
+然而，即使在2D游戏中，有时也可以添加一个简单的3D效果，例如。用于在两个屏幕之间转换或显示纸牌的背面。
 
-For this reason, Starling contains a class that makes it easy to add basic 3D capabilities: _Sprite3D_.
-It allows you to move your 2D objects around in a three dimensional space.
+因此，Starling包含一个类，可以很容易地添加基本的3D功能,它就是：Sprite3D。
+它允许您在三维空间中移动2D对象。
 
-=== Basics
+=== 基本属性
 
-Just like a conventional _Sprite_, you can add and remove children to this container, which allows you to group several display objects together.
-In addition to that, however, _Sprite3D_ offers several interesting properties:
+就像一个常规的Sprite，你可以在这个容器中添加和删除子对象，这允许你将多个显示对象组合在一起。
+除此之外，Sprite3D还提供了几个有趣的属性：
 
-  * *z* -- Moves the sprite along the z-axis (which points away from the camera).
-  * *rotationX* -- Rotates the sprite around the x-axis.
-  * *rotationY* -- Rotates the sprite around the y-axis.
-  * *scaleZ* -- Scales the sprite along the z-axis.
-  * *pivotZ* -- Moves the pivot point along the z-axis.
+  * *z* -- 沿z轴（指向远离相机）移动精灵。
+  * *rotationX* -- 围绕x轴旋转精灵。
+  * *rotationY* -- 围绕y轴旋转精灵。
+  * *scaleZ* -- 沿z轴缩放精灵。
+  * *pivotZ* -- 沿z轴移动枢轴点。
 
-With the help of these properties, you can place the sprite and all its children in the 3D world.
+在这些属性的帮助下，您可以将精灵及其所有的子对象放在3D世界中。
 
 [source, as3]
 ----
@@ -35,58 +35,58 @@ sprite.rotationX = Math.PI / 4.0;
 
 addChild(sprite); // <4>
 ----
-<1> Create an instance of _Sprite3D_.
-<2> Add a few conventional 2D objects to the sprite.
-<3> Set up position and orientation of the object in 3D space.
-<4> As usual, add it to the display list.
+<1> 创建Sprite3D的实例。
+<2> 向Sprite3D实例中添加一些常规2D对象。
+<3> 在3D空间中设置对象的位置和方向。
+<4> 像平常一样，将其添加到显示列表。
 
-As you can see, it's not difficult to use a Sprite3D: you simply have a few new properties to explore.
-Hit-testing, animations, custom rendering -- everything works just like you're used to from other display objects.
+如你所见，使用Sprite3D并不困难：你只需要探索几个新的属性。
+碰撞测试，动画，自定义渲染 - 一切都像你使用其他显示对象一样。
 
-=== Camera Setup
+=== 相机设置
 
-Of course, if you're displaying 3D objects, you also want to be able to configure the perspective with which you're looking at those objects.
-That's possible by setting up the camera; and in Starling, the camera settings are found on the stage.
+当然，如果你正在显示3D对象，你也希望能够设置这些对象的透视图。
+这可以通过设置相机来达到目的;在Starling中，通过starling的舞台来设置相机。
 
-The following stage properties set up the camera:
+以下舞台属性可设置相机：
 
-* *fieldOfView* -- Specifies an angle (radian, between zero and PI) for the field of view (FOV).
-* *focalLength* -- The distance between the stage and the camera.
-* *projectionOffset* -- A vector that moves the camera away from its default position, which is right in front of the center of the stage.
+* *fieldOfView* -- 指定视野（FOV）的角度（零和PI之间的弧度）。
+* *focalLength* -- 舞台和相机之间的距离。
+* *projectionOffset* -- 一个矢量，它将相机移动离开其默认位置，它在舞台中心的右边。
 
-.Those are the properties that set up the camera.
+.这些都是可供设置的相机属性。
 image::camera-diagram.png[Camera Diagram, 450]
 
-Starling will always make sure that the stage will fill the entire viewport.
-If you change the field of view, the focal length will be modified to adhere to this constraint, and the other way round.
-In other words: _fieldOfView_ and _focalLength_ are just different representations of the same property.
+Starling将始终确保舞台填充整个视口。
+如果更改视野，焦距也将被修改以遵守此约束，反之亦然。
+换句话说：fieldOfView和focalLength只是相同属性的不同表示。
 
-Here's an example of how different _fieldOfView_ values influence the look of the cube from the Starling demo:
+下面是一个例子，说明fieldOfView的值如何影响Starling演示中的立方体外观：
 
-.Different values for _fieldOfView_ (in degrees).
+.不同的fieldOfView值（以度为单位）。
 image::fov.png[Field-of-View, 550]
 
-Per default, the camera will always be aligned so that it points towards the center of the stage. The _projectionOffset_ allows you to change the perspective away from this point; use it if you want to look at your objects from another direction, e.g. from the top or bottom.
-Here's the cube again, this time using different settings for `projectionOffset.y`:
+默认情况下，相机将始终指向舞台中心。 projectionOffset允许你切换成远离这一点的透视图;如果你想从另一个方向看你的对象，例如，从顶部或底部，可以使用projectionOffset。
+还是这个立方体，这次针对`projectionOffset.y`使用不同的值：
 
-.Different values for _projectionOffset.y_.
+.不同的projectionOffset.y值。
 image::proj-offset.png[Projection Offset, 550]
 
-=== Limitations
+=== 局限
 
-Starling is still a 2D engine at its heart, and this means that there are a few limitations you should be aware of:
+Starling的核心关注点决定它仍然是一个2D引擎，这意味着你应该注意一些限制：
 
-* Starling does not make any depth tests. Visibility is determined solely by the order of children.
-* You need to be careful about the performance. Each _Sprite3D_ instance interrupts batching.
+* Starling不做任何深度测试。可见或遮盖由各显示对象的层级决定。
+* 你需要注意性能，渲染每个Sprite3D实例都会中断批处理。
 
-However, there's a trick that mitigates the latter problem in many cases: when the object is not actually 3D transformed, i.e. you're doing nothing that a 2D sprite couldn't do just as well, then Starling treats it just like a 2D object -- with the same performance and batching behavior.
+但是，在许多情况下，有一个技巧可以减轻后一个问题：当对象实际上并没有进行3D转换时，即，如果你没有做任何2D精灵不能做的事情，那么Starling将它当作一个2D对象 - 具有相同的性能和批处理能力。
 
-This means that you don't have to avoid having a huge number of Sprite3D instances; you just have to avoid that too many of them are 3D-transformed at the same time.
+这意味着你无需刻意减少Sprite3D实例数量;你只需要避免同一时间做过多的3D变换。
 
-=== Sample Project
+=== 示例项目
 
-I created a video tutorial that demonstrates how this feature can be used in a real-life project.
-It shows you how to move a 2D game of concentration into the third dimension.
+我创建了一个视频教程，演示如何在真实的项目中使用这个功能。
+它显示了如何让2D游戏的看起来有强烈的立体感。
 
-* Watch the video on https://vimeo.com/109564325[Vimeo].
-* Get the complete source code from https://github.com/PrimaryFeather/Memory3D[GitHub].
+* 观看视频 https://vimeo.com/109564325[Vimeo].
+* 从这里获取完整的源代码 https://github.com/PrimaryFeather/Memory3D[GitHub].
