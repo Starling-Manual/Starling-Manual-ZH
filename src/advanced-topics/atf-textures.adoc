@@ -28,47 +28,47 @@ JPG图像基实也是类似的;不同的是它不需要alpha通道。
 512×512像素×3字节= 786,432字节≈768kB
 ====
 
-Quite a lot for such a small texture, right?
-Beware that the built-in file compression of _PNG_ and _JPG_ does not help: the image has to be decompressed before _Stage3D_ can handle it.
-In other words: the file size does not matter; the memory consumption is always calculated with the above formula.
+非常多这样的小纹理，不是吗？
+请注意，PNG和JPG的内置文件压缩对显存优化不起作用：因为图像必须在上传给显卡之前解压缩。
+换句话说：纹理所占用的显存总是使用上面的公式计算，而与文件本身大小无关。
+  
+尽管如此：如果你的纹理很容易适应图形内存的存储方式 - 继续使用它们！
+这些格式很容易使用，在许多情况下工作良好，尤其你的应用程序是针对桌面硬件的情况下。
 
-Nevertheless: if your textures easily fit into graphics memory that way -- go ahead and use them!
-Those formats are very easy to work with and will be fine in many situations, especially if your application is targeting desktop hardware.
+但是，在开发阶段，您的内存消耗可能会比设备上可用的内存消耗更高。
+现在，是时候来看看ATF格式了。
 
-However, there might come a moment in the development phase where your memory consumption is higher than what is available on the device.
-This is the right time to look at the ATF format.
+=== 压缩纹理
 
-=== Compressed Textures
+上面，我们了解到传统纹理文件大小与其占用内存之间的关系;大量压缩的JPG将与纯BMP格式占用一样多的空间。
 
-Above, we learned that the file size of a conventional texture has nothing to do with how much graphics memory it uses; a massively compressed _JPG_ will take up just as much space as the same image in pure _BMP_ format.
+这对于压缩纹理来说结果就不一样了：压缩纹理可以直接在GPU上压缩。
+这意味着，根据压缩设置，您可以加载多达十倍的纹理。
+惊呆了，对吧？
 
-This is not true for compressed textures: they can be processed directly on the GPU.
-This means that, depending on the compression settings, you can load up to ten times as many textures.
-Quite impressive, right?
+不幸的是，每个GPU供应商都认为自己可以比其他厂商做得更好，因此压缩纹理有几种不同的格式。
+换句话说：根据你的游戏运行所依赖的硬件环境不同，它将需要一种不同格式的纹理。
+你如何确定要包括哪种格式的文件呢？有点麻烦。
 
-Unfortunately, each GPU vendor thought he could do better than the others, and so there are several different formats for compressed textures.
-In other words: depending on where your game is running, it will need a different kind of texture.
-How should you know beforehand which file to include?
+ATF出场了。
+这是Adobe为Stage3D特别创建的格式;实际上，它是一个容器文件，可以包括多达四个不同版本的纹理。
 
-This where ATF comes to the rescue.
-It is a format that Adobe created especially for _Stage3D_; actually, it is a container file that can include up to four different versions of a texture.
+* *PVRTC*（PowerVR纹理压缩）用于PowerVR GPU。它支持所有的iPhone，iPod Touch和iPad。
+* *DXT1/5* （S3纹理压缩）最初由S3 Graphics开发。它现在由Nvidia和AMD GPU支持，因此可在大多数台式计算机以及一些Android手机上使用。
+* *ETC* （爱立信纹理压缩）用于许多手机，最著名的是Android。
+* *ETC2* 提供更高质量的RGB和RGBA压缩。所有支持OpenGL ES 3的Android和iOS设备都支持它。
 
-* *PVRTC* (PowerVR Texture Compression) is used in PowerVR GPUs. It is supported by all generations of the iPhone, iPod Touch, and iPad.
-* *DXT1/5* (S3 Texture Compression) was originally developed by S3 Graphics. It is now supported by both Nvidia and AMD GPUs, and is thus available on most desktop computers, as well as some Android phones.
-* *ETC* (Ericsson Texture Compression) is used on many mobile phones, most notably on Android.
-* *ETC2* provides higher quality RGB and RGBA compression. It is supported by all Android and iOS devices that also support OpenGL ES 3.
+我之前写的ATF是一个container格式。这意味着它可以包括上述格式的任何组合。
 
-I wrote before that ATF is a _container_ format. That means that it can include any combination of the the above formats.
-
-.An ATF file is actually a container for other formats.
+.ATF文件实际上是其他格式的容器。
 image::atf-container.png[ATF container]
 
-When you include all formats (which is the default), the texture can be loaded on any Stage3D-supporting device, no matter if your application is running on iOS, Android, or on the Desktop.
-You don't have to care about the internals!
+当您包含所有格式（这是默认格式）时，纹理可以在任何支持Stage3D的设备上使用，无论应用程序所在的操作系统是在iOS，Android或桌面。
+你完全不需要关心纹理内部是什么！
 
-However, if you know that your game will only be deployed to, say, iOS devices, you can omit all formats except PVRTC.
-Or if you're only targeting high end mobile devices (with at least _OpenGL ES 3_), include only ETC2; that works on both Android and iOS.
-That way, you can optimize the download size of your game.
+但是，如果您知道您的游戏只会部署到iOS设备，您可以忽略除PVRTC之外的所有格式。
+或者，如果您只定位到高端移动设备（至少有OpenGL ES 3），则只需包含ETC2即可在Android和iOS上使用。
+这样，你可以优化游戏安装包的下载体积。
 
 [NOTE]
 ====
