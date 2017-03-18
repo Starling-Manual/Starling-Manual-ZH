@@ -72,84 +72,84 @@ image::atf-container.png[ATF container]
 
 [NOTE]
 ====
-The difference between DXT1 and DXT5 is just that the latter supports an alpha channel.
-Don't worry about this, though: the ATF tools will choose the right format automatically.
+DXT1和DXT5之间的区别只是后者支持alpha通道。
+不过不要担心，ATF工具会自动选择正确的格式。
 
-ETC1 actually does not support an alpha channel, but Stage3D works around this by using two textures internally. Again, this happens completely behind the scenes.
+ETC1实际上不支持Alpha通道，但Stage3D通过在内部使用两个纹理来解决这个问题。再次，这完全发生在幕后。
 ====
 
-=== Creating an ATF texture
+=== 创建ATF纹理
 
-Adobe provides a set of command line tools to convert to and from ATF and to preview the generated files.
-They are part of the AIR SDK (look for the `atftools` folder).
+Adobe提供了一组命令行工具，用于转换到ATF和从ATF转换，以及预览生成的文件。
+它们是AIR SDK的一部分（查找`atftools`文件夹）。
 
-Probably the most important tool is `png2atf`.
-Here is a basic usage example; it will compress the texture with the standard settings in all available formats.
+最重要的工具可能是“png2atf”。
+这里是一个基本的使用示例;输入png,输出压缩纹理atf,这种设置方法默认包含了所有可用的纹理格式。
 
 ----
 png2atf -c -i texture.png -o texture.atf
 ----
 
-If you tried that out right away, you probably received the following error message, though:
+如果您立即尝试，您可能会收到以下错误消息：
 
 ----
-Dimensions not a power of 2!
+尺寸不是2的幂！
 ----
 
-That's a limitation I have not mentioned yet: ATF textures are required to always have side-lengths that are powers of two.
-While this is a little annoying, it's actually rarely a problem, since you will almost always use them for atlas textures.
+这是我还没有提到的限制：ATF纹理总是要求边长是2的幂。
+这虽然有点讨厌，但它实际上并不是一个大问题，因为你几乎总是使用它们的atlas纹理图集。
 
-TIP: Most atlas generators can be configured so that they create power-of-two textures.
+提示：大多数图集生成器可以通过配置导出二次幂纹理。
 
-When the call succeeds, you can review the output in the _ATFViewer_.
+当调用成功后，您可以查看ATFViewer中的输出。
 
-.The _ATFViewer_ tool.
+.ATFViewer 工具.
 image::atf-viewer.png[ATFViewer]
 
-In the list on the left, you can choose which internal format you want to view.
-Furthermore, you see that, per default, all mipmap variants have been created.
+在左侧的列表中，您可以选择要查看的内部格式。
+此外，您看到，默认情况下，所有mipmap变体已创建。
 
-NOTE: We will discuss mipmaps in the <<Memory Management>> chapter.
+NOTE: 我们将在“内存管理”一章中讨论mipmap。
 
-You will probably also notice that the image quality has suffered a bit from the compression.
-This is because all those compression formats are _lossy_: the smaller memory footprint comes at the prize of a reduced quality.
-How much the quality suffers is depending on the type of image: while organic, photo-like textures work well, comic-like images with hard edges can suffer quite heavily.
+你可能会注意到，图像质量已经遭受了一点压缩。
+这是因为所有这些压缩格式都是lossy：质量降低的奖励便是带来了较小的内存。
+质量损失严重程度取决于图像类型：有机、照片级的纹理压缩后看起来还不错，但具有硬边缘的漫画般的图像可能遭受相当大的影响。
 
-The tool provides a lot of different options, of course.
-E.g. you can let it package only the PVRTC format, perfect for iOS:
+当然，该工具提供了很多不同的选项。
+例如。你可以让它只打包PVRTC格式(p)，完美适配iOS：
 
 ----
 png2atf -c p -i texture.png -o texture.atf
 ----
 
-Or you can tell it to omit mipmaps in order to save memory:
+或者你可以为了节省内存告诉它忽略mipmaps(-n 0,0)：
 
 ----
 png2atf -c -n 0,0 -i texture.png -o texture.atf
 ----
 
-Another useful utility is called `atfinfo`.
-It displays details about the data that's stored in a specific ATF file, like the included texture formats, the number of mipmaps, etc.
+另一个有用的实用程序叫“atfinfo”。
+它能显示ATF文件数据详细信息，如包括的纹理格式，mipmap的数量等。
 
 ----
 > atfinfo -i texture.atf
 
-File Name          : texture.atf
-ATF Version        : 2
-ATF File Type      : RAW Compressed With Alpha (DXT5+ETC1/ETC1+PVRTV4bpp)
-Size               : 256x256
-Cube Map           : no
-Empty Mipmaps      : no
-Actual Mipmaps     : 1
-Embedded Levels    : X........ (256x256)
-AS3 Texture Class  : Texture (flash.display3D.Texture)
-AS3 Texture Format : Context3DTextureFormat.COMPRESSED_ALPHA
+文件名             : texture.atf
+ATF版本            : 2
+ATF文件类型        : RAW Compressed With Alpha (DXT5+ETC1/ETC1+PVRTV4bpp)
+尺寸               : 256x256
+立方体贴图         : 无
+空Mipmap           : 无
+实际Mipmap         : 1
+嵌入级别		   : X........ (256x256)
+AS3纹理类型		   : Texture (flash.display3D.Texture)
+AS3纹理格式		   : Context3DTextureFormat.COMPRESSED_ALPHA
 ----
 
-=== Using ATF Textures
+=== 使用ATF纹理
 
-Using a compressed texture in Starling is just as simple as any other texture.
-Pass the byte array with the file contents to the factory method `Texture.fromAtfData()`.
+在Starling中使用压缩纹理与其他任何纹理一样简单。
+将带有文件内容的字节数组传递给工厂方法Texture.fromAtfData（）。
 
 [source, as3]
 ----
@@ -157,15 +157,15 @@ var atfData:ByteArray = getATFBytes(); // <1>
 var texture:Texture = Texture.fromATFData(atfData); // <2>
 var image:Image = new Image(texture); // <3>
 ----
-<1> Get the raw data e.g. from a file.
-<2> Create the ATF texture.
-<3> Use it like any other texture.
+<1> 获取原始数据。例如从文件获取。
+<2> 创建ATF纹理。
+<3> 像任何其他纹理一样使用它。
 
-That's it! This texture can be used like any other texture in Starling.
-It's also a perfectly suitable candidate for your atlas texture.
+就像这样！ 这种纹理可以像Starling中的任何其他纹理一样使用。
+它也是你的图集纹理的完美候选人。
 
-However, the code above will upload the texture synchronously, i.e. AS3 execution will pause until that's done.
-To load the texture asynchronously instead, pass a callback to the method:
+然而，上面的代码将同步上传纹理，即AS3执行将暂停，直到完成。
+要以异步方式上传纹理，请将回调函数传递给方法：
 
 [source, as3]
 ----
@@ -176,11 +176,11 @@ Texture.fromATFData(atfData, 1, true,
     });
 ----
 
-Parameters two and three control the scale factor and if mipmaps should be used, respectively.
-The fourth one, if passed a callback, will trigger asynchronous loading: Starling will be able to continue rendering undisturbed while that happens.
-As soon as the callback has been executed (but not any sooner!), the texture will be usable.
+参数二和三分别控制缩放和是否应使用mipmaps。
+第四个，如果传递一个回调，将触发异步加载：Starling将能够在这种情况下不中断其它渲染。
+一旦回调被执行（不能更早！），纹理将可用。
 
-Of course, you can also embed the ATF file directly in the AS3 source.
+当然，您也可以直接在AS3源码中嵌入ATF文件。
 
 [source, as3]
 ----
@@ -190,11 +190,11 @@ public static const CompressedData:Class;
 var texture:Texture = Texture.fromEmbeddedAsset(CompressedData);
 ----
 
-Note, however, that asynchronous upload is not available in this case.
+但请注意，在这种情况下，异步上传将不可用。
 
-=== Other Resources
+=== 其他资源
 
-You can find out more about this topic in the following sources:
+您可以从以下来源中找到更多有关此主题的信息：
 
-* https://www.adobe.com/devnet/archive/flashruntimes/articles/introducing-compressed-textures.html[Introducing Compressed Textures]
-* https://www.adobe.com/devnet/archive/flashruntimes/articles/atf-users-guide.html[ATF Tools User's Guide]
+* https://www.adobe.com/devnet/archive/flashruntimes/articles/introducing-compressed-textures.html[介绍压缩纹理]
+* https://www.adobe.com/devnet/archive/flashruntimes/articles/atf-users-guide.html[ATF工具用户指南]
