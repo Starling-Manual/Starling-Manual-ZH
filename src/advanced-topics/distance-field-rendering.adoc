@@ -1,66 +1,66 @@
-== Distance Field Rendering
+== 距离场渲染
 
-As mentioned multiple times, bitmap fonts are the fastest way to render text in Starling.
-However, if you need to display text in multiple sizes, you will soon discover that bitmap fonts do not scale well.
-Scaling up makes them blurry, scaling down introduces aliasing problems.
-Thus, for best results, one has to embed the font in all the sizes used within the application.
+如前所述，位图字体是在Starling中渲染文本的最快方式。
+但是，如果您需要显示多种大小的文本，您很快就会发现位图字体无法很好地缩放。
+放大使它们模糊，缩小引入混叠问题。
+因此，为了获得最佳结果，必须字体嵌入应用程序中,字体需要包含应用程序需要的全部尺寸。
 
-_Distance Field Rendering_ solves this issue: it allows bitmap fonts and other single-color shapes to be drawn without jagged edges, even at high magnifications.
-The technique was first introduced in a http://tinyurl.com/AlphaTestedMagnification[SIGGRAPH paper] by Valve Software.
-Starling contains a _MeshStyle_ that adds this feature to Starling.
+Distance Field Rendering解决了这个问题：它允许GPU对位图字体和其他单色形状绘制出无锯齿边缘，即使在高放大倍率时仍不失真。
+该技术首先由Valve Software在SIGGRAPH文章中介绍： http://tinyurl.com/AlphaTestedMagnification.
+Starling包含一个MeshStyle，支持将此功能添加到Starling。
 
-To understand how it works, I will start by showing you how to use it on a single image.
-This could e.g. be an icon you want to use throughout your application.
+为了理解它的工作原理，我将首先展示如何在单个图像上使用它。
+例如，您希望在整个应用程序中使用的图标。
 
-=== Rendering a single Image
+=== 呈现单个图像
 
-We had plenty of birds in this manual already, so let's go for a predator this time!
-My cat qualifies for the job.
-I've got her portrait as a black vector outline, which is perfect for this use-case.
+我们在这本手册中已经遇到了很多鸟，这一次我们去捕食一只！
+我的猫能胜任这项工作。
+我用一个黑色的矢量轮廓作为她的肖像，用于这个示例简直完美。
 
-.Say hello to "Seven of Nine", my cat!
-image::cat.png[Cat, 200]
+.你好 "七九", 我的猫!
+image::cat.png[猫, 200]
 
-Unfortunately, Starling can't display vector images; we need Seven as a bitmap texture (PNG format).
-That works great as long as we want to display the cat in roughly the original size (`scale == 1`).
-However, when we enlarge the image, it quickly becomes blurry.
+不幸的是，Starling不能显示矢量图像;我们需要Seven的位图纹理（PNG格式）。
+只要我们想显示原始大小的猫（`scale == 1`），这个方法能很好的工作。
+然而，当我们放大图像，它很快变得模糊。
 
-.Conventional textures become blurry when scaled up.
-image::cat-scale.png[Scaled Cat, 400]
+.常规纹理在放大时变得模糊。
+image::cat-scale.png[缩放的猫, 400]
 
 // Image credits: https://thenounproject.com/search/?q=cat&i=657985
 
-This is exactly what we can avoid by converting this image into a distance field texture.
-Starling actually contains a handy little tool that takes care of this conversion process.
-It's called the "Field Agent" and can be found in the `util` directory of the Starling repository.
+我们可以通过将这个图像转换为距离场纹理来避免模糊。
+Starling实际上包含一个方便的小工具，处理这个转换过程。
+它被称为“Field Agent”，可以在Starling存储库的`util`目录中找到。
 
-NOTE: You need both _Ruby_ and _ImageMagick_ installed to use the field agent.
-Look at the accompanying `README` file to find out how to install those dependencies.
-The tool works both on Windows and macOS.
+NOTE: 您需要安装Ruby和ImageMagick才能使用Field Agent。
+查看随附的“README”文件，了解这些依赖项以便正确安装。
+该工具既可以Windows上工作，也可以在macOS工作。
 
-I started with a high-resolution PNG version of the cat and passed that to the field agent.
+我从一个高分辨率PNG版本的猫开始，并传递给Field Agent。
 
   ruby field_agent.rb cat.png cat-df.png --scale 0.25 --auto-size
 
-This will create a distance field texture with 25% of the original size.
-The field agent works best if you pass it a high resolution texture and let it scale that down.
-The distance field encodes the details of the shape, so it can be much smaller than the input texture.
+这将创建一个具有原始大小的25％的距离场纹理。
+如果你给它一个高分辨率的纹理，让它缩小，Field Agent工作效果最好。
+Field Agent编码形状的细节，因此它可以比输入纹理小得多。
 
-.The resulting distance field texture.
+.得到的距离场纹理。
 image::cat-distance-field.png[Cat Distance Field Texture]
 
-The original, sharp outline of the cat has been replaced with a blurry gradient.
-That's what a distance field is about: in each pixel, it encodes the distance to the closest edge in the original shape.
+猫原来尖锐的轮廓已被替换为模糊渐变。
+这就是距离场：它编码每个像素到原始形状中最接近边缘的距离。
 
-NOTE: This texture is actually just pure white on a transparent background; I colored the background black just so you can see the result better.
+NOTE: 这个纹理实际上是在透明背景上的纯白色;我在此把背景着成黑色，是为了让你看到更好的效果。
 
-The amount of blurriness is called _spread_.
-The field agent uses a default of eight pixels, but you can customize that.
-A higher spread allows better scaling and makes it easier to add special effects (more on those later), but its possible range depends on the input image.
-If the input contains very thin lines, there's simply not enough room for a high spread.
+模糊量称为spread。
+Field Agent默认使用八个像素，但您可以自定义。
+较高的模糊量允许更好的缩放，并且更容易添加特殊效果（稍后更多），但是其可能的范围取决于输入图像。
+如果输入包含非常细的线，则没有足够的空间用于高模糊量。
 
-To display this texture in Starling, we simply load the texture and assign it to an image.
-Assigning the _DistanceFieldStyle_ will make Starling switch to _distance field_ rendering.
+要在Starling中显示此纹理，我们只需加载纹理并将其分配给Image即可。
+分配DistanceFieldStyle将使Starling切换到distance field rendering。
 
 [source, as3]
 ----
@@ -71,23 +71,23 @@ image.color = 0x0; // we want a black cat
 addChild(image);
 ----
 
-With this style applied, the texture stays perfectly crisp even with high scale values.
-You only see small artifacts around very fine-grained areas (like Seven's haircut).
+应用此样式，纹理保持完美清晰，即使具有高缩放值。
+你能看到周围非常细小的区域的细节（如Seven的发型）。
 
-.Scaling up a distance field texture.
-image::cat-scale-df.png[Scaled cat using a distance field texture, 400]
+.放大距离场纹理。
+image::cat-scale-df.png[使用距离场纹理的缩放的猫, 400]
 
-Depending on the "spread" you used when creating the texture, you might need to update the `softness` parameter to get the sharpness / smoothness you'd like to have.
-That's the first parameter of the style's constructor.
+根据创建纹理时使用的“spread”，您可能需要更新“softness”参数以获得您想要的锐度/平滑度。
+这是样式的构造函数的第一个参数。
 
-TIP: Rule of thumb: `softness = 1.0 / spread`.
+TIP: 经验法则：`softness = 1.0 / spread'。
 
-==== Render Modes
+==== 渲染模式
 
-That's actually just the most basic use of distance field textures.
-The distance field style supports a couple of different render modes; namely an outline, a drop shadow, and a glow.
-Those effects are all rendered in a specific fragment shader, which means that they do not require any additional draw calls.
-In other words, these effects are basically coming for free, performance wise!
+这实际上只是距离场纹理最基本的应用。
+距离场样式支持几种不同的渲染模式;即阴影、轮廓和发光。
+这些效果都在特定的片段着色器中渲染，这意味着它们不需要任何额外的绘制调用。
+换句话说，这些效果基本上是免费的，性能优越的！
 
 [source, as3]
 ----
@@ -97,38 +97,38 @@ style.setupOutline(); // or
 style.setupGlow();
 ----
 
-.Different modes of the distance field style.
-image::cat-modes.png[Cat rendered with different modes, 500]
+.距离场样式的不同模式。
+image::cat-modes.png[用不同模式呈现的猫, 500]
 
-Pretty cool, huh?
+很酷，是不是？
 
-NOTE: The only limitation: you cannot combine two modes, e.g. to have both outline and drop shadow.
-You can still resort back to fragment filters for that, though.
+注意：唯一的限制：您不能组合两种模式，例如。同时有轮廓和阴影。
+你仍然可以通过片段过滤器实现，如果有需要的话。
 
-=== Distance Field Fonts
+=== 距离场字体
 
-The characteristics of distance field rendering makes it perfect for text.
-Good news: Starling's standard bitmap font class works really well with the distance field style.
-It's just a little cumbersome to create the actual font texture, I'm afraid.
+距离场渲染的特点使其非常适合文本。
+好消息：Starling的标准位图字体类与距离场样式非常吻合。
+不过创建实际的字体纹理，恐怕有点麻烦。
 
-Remember, a bitmap font consists of an atlas-texture that contains all the glyphs and an XML file describing the attributes of each glyph.
-You can't simply use _field agent_ to convert the texture in a post-processing step (at least not easily), since each glyph requires some padding around it to make up for the _spread_.
+记住，位图字体包含一个包含所有字形的图集纹理，以及一个描述每个字形属性的XML文件。
+你不能简单地使用Field Agent处理转换纹理（至少不容易），因为每个字形需要一些填充来弥补模糊量spread。
 
-Therefore, it's best to use a bitmap font tool that supports distance field textures natively.
-Here are some possible candidates:
+因此，最好使用支持距离场纹理的位图字体工具。
+以下列举了一些可供选择的方式：
 
-* http://kvazars.com/littera/[Littera] -- a free online bitmap font generator.
-* http://github.com/libgdx/libgdx/wiki/Hiero[Hiero] -- a cross platform tool.
-* http://www.angelcode.com/products/bmfont/[BMFont] -- Windows-only, from AngelCode.
+* http://kvazars.com/littera/[Littera] -- 一个免费的在线位图字体生成器。
+* http://github.com/libgdx/libgdx/wiki/Hiero[Hiero] -- 一个跨平台工具。
+* http://www.angelcode.com/products/bmfont/[BMFont] -- 仅限Windows，来自AngelCode。
 
-Personally, I achieved the best results with _Hiero_, although its user interface isn't exactly a joy to work with.
-I hope that the offerings will improve in the future.
+就个人而言，我使用Hiero获得了最好的结果，虽然它的用户界面并不友好。
+我希望未来的产品会有所改善。
 
-TIP: As for _Hiero_, https://github.com/libgdx/libgdx/wiki/Distance-field-fonts[here] is a very good introduction describing the process.
-Unfortunately, _Hiero_ can't export the XML format that Starling requires; this little https://gist.github.com/tluyben/4984856[perl script] might help, though.
+TIP: 对于Hiero, https://github.com/libgdx/libgdx/wiki/Distance-field-fonts[这里] 是一个很好的介绍。
+不幸的是，Hiero不能导出Starling要求的XML格式;不过，这个小脚本可能有所帮助。https://gist.github.com/tluyben/4984856[perl 脚本].
 
-Whatever tool or process you use: at the end, you will have a texture and a `.fnt`-file, just as usual.
-As a reminder, here's the code to create and register a bitmap font:
+无论使用什么工具或过程：最后，你将有一个纹理和一个`.fnt`文件，就像往常一样。
+小小提示，下面是创建和注册位图字体的代码：
 
 [source, as3]
 ----
@@ -148,8 +148,8 @@ textField.format.setTo(font.name, BitmapFont.NATIVE_SIZE);
 addChild(textField);
 ----
 
-Up until this point, there's nothing new.
-To switch to distance field rendering, we attach the appropriate style right to the TextField.
+一直到这里，都没有什么新的东西需要处理，不过，马上有了。
+要切换到距离场渲染，我们将适当的样式附加到TextField。
 
 [source, as3]
 ----
@@ -157,8 +157,8 @@ var style:DistanceFieldStyle = new DistanceFieldStyle();
 textField.style = style;
 ----
 
-The reward for all this hard work: such a font can now be used at almost any scale, and with all the flexible render modes I showed above.
+作为以上辛勤工作的奖励：这种字体现在可以适应任何缩放值，并可以应用之前所述所有灵活的渲染模式。
 
-.A bitmap font using distance fields looks great at any scale.
+.使用距离场字体在任何比例下看起来很棒。
 image::distance-field-scale.png[Scaled TextField with a Bitmap Font]
 
