@@ -1,45 +1,45 @@
-== Custom Styles
+== 自定义样式
 
-Now that we have tapped the raw power of _Stage3D_, let's continue on this road!
-In this section, we will write a simple mesh style.
-In Starling 2, all rendering is done through styles; by creating your own style, you can create special effects without sacrificing performance in any way.
+现在我们已经发掘了Stage3D的原始力量，让我们继续沿着这条道路前进！
+在本节中，我们将编写一个简单的网格样式。
+在Starling 2中，所有渲染都通过样式完成;通过创建自己的网格样式，您可以创建特殊效果，而不必担心带来任何性能损失。
 
-NOTE: Before you continue, please make sure you have read through the section <<Custom Filters>>, as well.
-Filters and styles share many concepts, so it makes sense to start with the simpler of the two.
-Below, I'll assume that you are familiar with everything that's shown in that other section.
+NOTE: 在继续之前，请确保您已经阅读过<<自定义滤镜>>那一节内容。
+滤镜和样式存在许多类似的概念，所以从两个更简单的例子开始是有意义的。
+下面，我假设你已经熟悉在相关章节介绍过的所有内容。
 
-=== The Goal
+=== 目标
 
-The goal is just the same as the one we were shooting for with the _ColorOffsetFilter_; we want to allow adding an offset to the color value of every rendered pixel.
-Only this time, we're doing it with style! We'll call it ... _ColorOffsetStyle_.
+目标是：最终效果和我们用ColorOffsetFilter得到的一样!我们希望为每个像素的颜色值添加一个偏移量。
+只是这一次，我们用网格样式来达到目的！我们将它称为... ColorOffsetStyle。
 
-.Applying a color offset with style.
+.应用颜色偏移样式。
 image::customfilter-offset.png[Offset with a Style]
 
-Before we continue, it's crucial that you understand the difference between a filter and a style.
+在继续之前，了解滤镜和样式之间的区别至关重要。
 
-==== Filters vs. Styles
+==== 滤镜与样式
 
-As mentioned before, a filter works on a per-pixel-level: the object is rendered into a texture, and the filter processes that texture in some way.
-A style, on the other hand, has access to all the original geometry of the object, or to be more precise: to the object's vertices.
+如前所述，滤镜是像素级的工作：对象被渲染为纹理，然后滤镜以某种方式处理该纹理。
+另一方面，样式可以访问对象的所有原始几何数据，或者更精确地说：访问对象的顶点。
 
-While that limits styles in some ways (e.g. you can't achieve a blur effect with a style), it makes them much more efficient.
-First, because you don't need that first step of drawing the object into a texture.
-Second, and most importantly: this allows styled meshes to be batched.
+虽然样式在某些方面受到了限制（例如，你不能通过样式实现模糊效果），但样式工作起来更高效。
+首先，因为你不需要将对象绘制到纹理这一步。
+第二，更重要的是：网格样式可以被批次渲染。
 
-As you know, keeping the number of draw calls down is very important for a high frame rate.
-To make sure that happens, Starling batches as many objects together as possible before drawing them.
-Question is, how to decide which objects may be batched together?
-This is where the style comes into play: only objects with the same style can be batched together.
+如你所知，保持较低的绘制调用的次数对于高帧率运行是非常重要的。
+为了确保发生这种情况，Starling在绘制之前将尽可能多的把对象集中在一起。
+问题是，如何决定把哪些对象分配到同一个批次？
+这也是网格样式发挥作用的地方：只有具有相同样式的对象可以分批在一起。
 
-If you add three images to the stage that have a _ColorOffsetFilter_ applied to them, you'll see at least three draw calls.
-Add three objects with a _ColorOffsetStyle_ instead, and you'll have just one.
-That makes styles a little more difficult to write — but that's also what makes it worth the effort!
+如果您向舞台添加了三个应用了ColorOffsetFilter的图片，您将看到至少三次绘图调用。
+同样是这三个对象，而改用ColorOffsetStyle，就只需要一次绘制调用。
+虽然网格样式写起来并不是那么简便 - 但这个努力是值得付出的！
 
-=== Extending MeshStyle
+=== 扩展网格样式
 
-The base class for all styles is `starling.styles.MeshStyle`.
-This class provides all the infrastructure we need. Let's look at a stub first:
+所有网格样式的基类是`starling.styles.MeshStyle`。
+这个类提供了我们需要的所有基础功能。让我们先看一个示例：
 
 [source, as3]
 ----
@@ -72,7 +72,7 @@ public class ColorOffsetStyle extends MeshStyle
 
     override public function copyFrom(meshStyle:MeshStyle):void
     {
-        // TODO
+        // 待实现
     }
 
     override public function createEffect():MeshEffect
@@ -92,7 +92,7 @@ public class ColorOffsetStyle extends MeshStyle
 
     private function updateVertices():void
     {
-        // TODO
+        // 待实现
     }
 
     public function get redOffset():Number { return _offsets[0]; }
@@ -102,7 +102,7 @@ public class ColorOffsetStyle extends MeshStyle
         updateVertices();
     }
 
-    // the other offset properties need to be implemented accordingly.
+    // 其他偏移属性需要相应地实现。
 
     public function get/set greenOffset():Number;
     public function get/set blueOffset():Number;
@@ -110,35 +110,35 @@ public class ColorOffsetStyle extends MeshStyle
 }
 ----
 
-That's our starting point.
-You'll see that there's already going on a little more than in our initial filter class from the last example.
-So let's have a look at the individual parts of that code.
+这是我们的出发点。
+你会看到，已经比我们上次看到的最后一个初始滤镜类的例子多出了很多代码。
+让我们来看看代码的各个部分。
 
-==== Vertex Formats
+==== 顶点格式
 
-The first thing that's notable is the vertex format constant at the very top of the class.
-I mentioned already that styles work on a vertex level, giving you access to all the geometry of an object.
-The _VertexData_ class stores that geometry, but we never actually discussed how that class knows _which_ data is stored in this class, and _how_.
-That's defined by the _VertexDataFormat_.
+第一件值得注意的事：位于类顶部的顶点格式常量。
+我已经提到样式是顶点级别的工作，让您访问对象的所有几何数据。
+VertexData类存储该几何数据，但我们从未实际讨论过该类具体把几何数据存放在哪里，以及是如何存放的。
+这是由VertexDataFormat定义的。
 
-The default format used by _MeshStyle_ is the following:
+MeshStyle使用的默认格式如下：
 
   position:float2, texCoords:float2, color:bytes4
 
-The syntax of this string should seem familiar; it's a list of attributes with certain data types.
+这个字符串的语法看起来应该是熟悉的;它是具有某些数据的属性列表
 
-* The `position` attribute stores two floats (for the x- and y-coordinates of a vertex).
-* The `texCoords` attribute stores two floats, as well (for the texture coordinates of the vertex).
-* The `color` attribute stores four bytes for the color of the vertex (one byte for each channel).
+* `position`属性存储两个浮点（顶点的x和y坐标）。
+* `texCoords`属性存储两个浮点数（顶点的纹理坐标）。
+* `color`属性存储顶点颜色的四个字节（每个通道一个字节）。
 
-A _VertexData_ instance with this format will store those attributes for each vertex of the mesh, using the exact same order as in the format string.
-This means that each vertex will take up 20 bytes (8 + 8 + 4).
+具有此格式的VertexData实例将为网格的每个顶点存储这些属性，属性存放的顺序与上述字符串显示的完全一致。
+这意味着每个顶点将占用20个字节（8 + 8 + 4）。
 
-When you create a mesh and don't assign any style in particular, it will be rendered by the standard _MeshStyle_, forcing exactly this format onto its vertices.
-That's all the information you need to draw a textured, colored mesh, after all.
+当创建网格并且没有特别指定任何样式时，将交由默认的MeshStyle来渲染，顶点格式则采用上述标准格式。
+你绘制纹理或彩色网格,所有必要的信息都存放在这里了。
 
-But for our _ColorOffsetStyle_, that's not enough: we need to store our color offset as well.
-Thus, we need to define a new format that adds an `offset` attribute consisting of four float values.
+但是对于我们的ColorOffsetStyle，这还不够：我们还需要存储我们的颜色偏移。
+因此，我们需要定义一个新的格式，它添加一个由四个浮点值组成的“offset”属性。
 
 [source, as3]
 ----
@@ -146,15 +146,15 @@ MeshStyle.VERTEX_FORMAT.extend("offset:float4");
 // => position:float2, texCoords:float2, color:bytes4, offset:float4
 ----
 
-Now, you may ask: _Why do we need this?_ The filter worked just fine without a custom vertex format, after all.
+现在，你可能会问：为什么需要这么做？滤镜没有自定义顶点格式，不也是能正常工作吗？
 
-That's a very good question, I'm glad you ask!
-The answer lies in Starling's batching code.
-When we assign our style to some subsequent meshes, they will be batched together -- that's the whole reason we make this effort, right?
+这是一个很好的问题，我很高兴你问！
+答案在于Starling的批处理代码。
+当我们将样式分配给一些后续的网格时，它们将被分组在一起批处理 - 这是我们做这个努力的全部原因，对吧？
 
-But what does batching mean?
-It just means that we're copying the vertices of all individual meshes to one bigger mesh and render that.
-Somewhere inside Starling's rendering internals, you'll find code that will look similar to this:
+但是批处理是什么意思？
+它意味着我们将所有单个网格的顶点复制到一个更大的网格并渲染。
+在Starling的渲染内部，你会发现看起来像这样的代码：
 
 [source, as3]
 ----
@@ -168,42 +168,42 @@ batch.style = meshA.style; // ← !!!
 batch.render();
 ----
 
-Do you see the problem? The big mesh (`batch`) receives a copy of the style of the mesh that was first added.
-Those three styles will probably use different settings, though.
-If those settings are just stored in the _style_, all but one will be lost on rendering.
-Instead, the style must store its data in the _VertexData_ of its target mesh!
-Only then will the big _batch_ mesh receive all the offsets individually.
+你看到了的问题的实质吗？大网格（“batch”）的网格样式，即是第一个被添加的网格样式的副本!
+虽然这三种样式可能会使用不同的设置。
+如果这些设置只存储在style中，除了一个之外的所有设置将在渲染时丢失。
+所以，必须将样式数据存储在其目标网格的VertexData中！
+只有这样，大的batch网格才能单独接收所有偏移量。
 
-IMPORTANT: Since it's so important, I'll rephrase that:
-*A style's settings must always be stored in the target mesh's vertex data.*
+IMPORTANT: 由于这一点是如此重要！我再复述一遍：
+*样式的设置必须始终存储在目标网格的顶点数据中。*
 
-Per convention, the vertex format is always accessible as a static constant in the style's class, and also returned by the `vertexFormat` property.
-When the style is assigned to a mesh, its vertices will automatically be adapted to that new format.
+按照惯例，顶点格式总是作为样式类中的静态常量，访问时由`vertexFormat`属性返回。
+当样式分配给网格时，其顶点将自动适应该新格式。
 
-When you have understood that concept, you're already halfway through all of this.
-The rest is just updating the code so that the offset is read from the vertex data instead of fragment constants.
+当你理解了这个概念，你就能理解这一切。
+剩下的就是更新代码，以便从顶点数据而不是片段常量读取偏移量。
 
-But I'm getting ahead of myself.
+我讲的可能有些过头了。
 
-==== Member Variables
+==== 成员变量
 
-You'll note that even though I just insisted that all data is to be stored in the vertices, there's still a set of offsets stored in a member variable:
+你会注意到，即使我坚持要将所有数据存储在顶点中，仍然有一组偏移存储在成员变量中：
 
 [source, as3]
 ----
 private var _offsets:Vector.<Number>;
 ----
 
-That's because we want developers to be able to configure the style before it's assigned to a mesh.
-Without a target object, there's no vertex data we could store these offsets in, right?
-So we'll use this vector instead.
-As soon as a target is assigned, the values are copied over to the target's vertex data (see `onTargetAssigned`).
+这是因为我们希望开发人员能够在将样式分配给网格之前对其进行配置。
+即便没有目标对象，没有顶点数据，我们也能存储这些偏移，对吧？
+所以我们使用这个向量。
+一旦分配了目标，值就被复制到目标的顶点数据（参见`onTargetAssigned`）。
 
 ==== copyFrom
 
-During batching, styles sometimes have to be copied from one instance to another (mainly to be able to re-use them without annoying the garbage collector).
-Thus, it's necessary to override the method `copyFrom`.
-We'll do that like this:
+在批处理期间，样式有时必须从一个实例复制到另一个实例（主要是为了能够重用它们而不会给垃圾回收器带来压力）。
+因此，有必要重写`copyFrom`方法。
+我们这样做：
 
 [source, as3]
 ----
@@ -220,12 +220,12 @@ override public function copyFrom(meshStyle:MeshStyle):void
 }
 ----
 
-This is rather straight-forward; we just check if the style we're copying from has the correct type and then duplicate all of its offsets on the current instance.
-The rest is done by the super-class.
+直接了当：我们只是检查复制的样式是否类型正确，然后在当前实例上复制它的所有偏移。
+剩下的事都交给超类完成。
 
 ==== createEffect
 
-This looks very familiar, right?
+这看起来很熟悉，对吧？
 
 [source, as3]
 ----
@@ -235,17 +235,17 @@ override public function createEffect():MeshEffect
 }
 ----
 
-It works just like in the filter class; we return the `ColorOffsetEffect` we're going to create later.
-No, it's not the same as the one used in the filter (since the offset values are read from the vertices), but it would be possible to create an effect that works for both.
+它的工作原理跟滤镜类相似;我们返回稍后将要创建的ColorOffsetEffect。
+但是，它与滤镜使用方式不同（因为偏移值是从顶点读取的），但是可以创建一个适用于两者的效果。
 
 ==== onTargetAssigned
 
-As mentioned above, we need to store our offsets in the vertex data of the target mesh.
-Yes, that means that each offset is stored on all vertices, even though this might seem wasteful.
-It's the only way to guarantee that the style supports batching.
+如上所述，我们需要将偏移存储在目标网格的顶点数据中。
+是的，这意味着偏移值在每个顶点中都存在一份拷贝，即使这似乎有点浪费。
+但这是保证样式支持批处理的唯一方法。
 
-When the filter is assigned a target, this callback will be executed -- that is our cue to update the vertices.
-We're going to do that again elsewhere, so I moved the actual process into the `updateVertices` method.
+当滤镜被分配一个目标时，这个回调将被执行 - 根据这条线索我们知道顶点被更新了。
+同样的工作我们可能需要在别处再做一次，所以我把实际的处理过程封装到`updateVertices`方法中。
 
 [source, as3]
 ----
@@ -268,16 +268,16 @@ private function updateVertices():void
 }
 ----
 
-You might wonder where that `vertexData` object comes from.
-As soon as the target is assigned, the `vertexData` property will reference the target's vertices (the style itself never owns any vertices).
-So the code above loops through all vertices of the target mesh and assigns the correct offset values, ready to be used during rendering.
+你可能想知道`vertexData`对象来自哪里。
+一旦目标被分配，`vertexData`属性将引用目标的顶点（样式本身从不拥有任何顶点）。
+因此，上面的代码循环遍历目标网格的所有顶点，并分配正确的偏移值，准备在渲染期间使用。
 
-=== Extending MeshEffect
+=== 扩展MeshEffect
 
-We're done with the style class now -- time to move on to the effect, which is where the actual rendering takes place.
-This time, we're going to extend the _MeshEffect_ class.
-Remember, effects simplify writing of low-level rendering code.
-I'm actually talking about a group of classes with the following inheritance:
+现在我们已经完成了样式类 - 是时候讨论效果了，这是实际渲染发生的地方。
+这一次，我们要扩展MeshEffect类。
+记住，效果类简化了低级渲染代码的编写。
+我实际上谈论一组具有以下继承关系的类：
 
 [plantuml, effect-classes]
 ....
@@ -287,13 +287,13 @@ Effect <|-- FilterEffect
 FilterEffect <|-- MeshEffect
 ....
 
-The base class (_Effect_) does only the absolute minimum: it draws white triangles.
-The _FilterEffect_ adds support for textures, and the _MeshEffect_ for color and alpha.
+基类（Effect）简洁到了极致：它只绘制白色三角形。
+FilterEffect添加了对纹理的支持，MeshEffect用于颜色和alpha。
 
-NOTE: Those two classes could also have been named _TexturedEffect_ and _ColoredTexturedEffect_, but I chose to baptize them with their usage in mind.
-If you create a filter, you need to extend _FilterEffect_; if you create a mesh style, _MeshEffect_.
+NOTE: 这两个类也可以命名为TexturedEffect和ColoredTexturedEffect，但我选择关于用他们用法的命名方式。
+如果你创建一个自定义滤镜，你需要扩展FilterEffect;如果你创建一个自定义网格样式，则需要扩展MeshEffect。
 
-So let's look at the setup of our _ColorOffsetEffect_, with a few stubs we're filling in later.
+让我们来看一下ColorOffsetEffect的设置，我们稍后会介绍一些代码片断。
 
 [source, as3]
 ----
@@ -329,84 +329,84 @@ class ColorOffsetEffect extends MeshEffect
 }
 ----
 
-If you compare that with the analog filter effect from the previous tutorial, you'll see that all the `offset`-properties were removed; instead, we're now overriding `vertexFormat`, which ensures that we are using the same format as the corresponding style, ready to have our offset values stored with each vertex.
+如果你把它和上一个教程的模拟滤镜效果类进行比较，你会看到所有的'offset`属性被删除了;而我们现在覆盖`vertexFormat`，它确保我们使用的格式与指定样式相同，准备好每个顶点存储我们的偏移值。
 
 ==== beforeDraw & afterDraw
 
-The `beforeDraw` and `afterDraw`-methods now configure the context so that we can read the offset attribute from the shaders as `va3` (_vertex attribute 3_).
-Let's have a look at that line from `beforeDraw`:
+`beforeDraw`和`afterDraw`-方法现在配置上下文，以便我们可以从着色器中读取offset属性为`va3`（vertex属性序号为3）。
+让我们来看看`beforeDraw`中的那行：
 
 [source, as3]
 ----
 vertexFormat.setVertexBufferAt(3, vertexBuffer, "offset");
 ----
 
-That's equivalent to the following:
+这等价于以下这行代码：
 
 [source, as3]
 ----
 context.setVertexBufferAt(3, vertexBuffer, 5, "float4");
 ----
 
-That third parameter (`5 → bufferOffset`) indicates the position of the color offset inside the vertex format, and the last one (`float4 → format`) the format of that attribute.
-So that we don't have to calculate and remember those values, we can ask the `vertexFormat` object to set that attribute for us.
-That way, the code will continue to work if the format changes and we add, say, another attribute before the offset.
+第三个参数（`5→bufferOffset`）表示顶点格式中颜色偏移的位置，最后一个参数（`float4→format`）是该属性的格式。
+所以我们不必计算和记住这些值，我们可以要求`vertexFormat`对象为我们设置这个属性。
+这样，如果格式发生变化，我们就会在偏移之前添加另一个属性，代码将继续工作。
 
-Vertex buffer attributes should always be cleared when drawing is finished, because following draw calls probably use a different format.
-That's what we're doing in the `afterDraw` method.
+顶点缓冲区属性应该在绘制完成时始终清除，因为以下绘制调用可能使用不同的格式。
+这就是我们在`afterDraw`方法中所做的。
 
 ==== createProgram
 
-It's finally time to tackle the core of the style; the AGAL code that does the actual rendering.
-This time, we have to implement the vertex-shader as well; it won't do to use a standard implementation, because we need to add some custom logic.
-The fragment shader, however, is almost identical to the one we wrote for the filter.
-Let's take a look!
+是时候介绍样式底层最核心的部分了;实际渲染的AGAL代码。
+这一次，我们还要实现顶点着色器;它不会使用标准实现，因为我们需要添加一些自定义逻辑。
+但是，片段着色器几乎与我们为滤镜写的一样。
+让我们来看看！
 
 [source, as3]
 ----
 override protected function createProgram():Program
 {
     var vertexShader:String = [
-        "m44 op, va0, vc0", // 4x4 matrix transform to output clip-space
-        "mov v0, va1     ", // pass texture coordinates to fragment program
-        "mul v1, va2, vc4", // multiply alpha (vc4) with color (va2), pass to fp
-        "mov v2, va3     "  // pass offset to fp
+        "m44 op, va0, vc0", // 将4x4变换矩阵输出到剪裁空间
+        "mov v0, va1     ", // 将纹理坐标传递给片段程序
+        "mul v1, va2, vc4", // 将alpha（vc4）与颜色（va2）相乘，并将结果复制到v1
+        "mov v2, va3     "  // 将颜色偏移量复制到v2
     ].join("\n");
 
     var fragmentShader:String = [
-        tex("ft0", "v0", 0, texture) +  // get color from texture
-        "mul ft0, ft0, v1",             // multiply color with texel color
-        "mov ft1, v2",                  // copy complete offset to ft1
-        "mul ft1.xyz, v2.xyz, ft0.www", // multiply offset.rgb with alpha (pma!)
-        "add oc, ft0, ft1"              // add offset, copy to output
+        tex("ft0", "v0", 0, texture) +  // 从纹理获取颜色
+        "mul ft0, ft0, v1",             // 将颜色与纹理颜色相乘
+        "mov ft1, v2",                  // 将完整偏移量复制到ft1
+        "mul ft1.xyz, v2.xyz, ft0.www", // 将颜色偏移的rgb分量与alpha相乘 (pma!)
+        "add oc, ft0, ft1"              // 将纹理颜色值与偏移量相加，并将计算结果输出到oc
     ].join("\n");
 
     return Program.fromSource(vertexShader, fragmentShader);
 }
 ----
 
-To understand what the vertex-shader is doing, you first have to understand the input it's working with.
+要理解顶点着色器正在做什么，你首先要了解它的输入工作方式。
 
-* The `va`-registers ("vertex attribute") contain the attributes from the current vertex, taken from the vertex buffer.
-  They are ordered just like the attributes in the vertex format we set up a little earlier: `va0` is the vertex position, `va1` the texture coordinates, `va2` the color, `va3` the offset.
-* Two constants are the same for all our vertices: `vc0-3` contain the modelview-projection matrix, `vc4` the current alpha value.
+* `va`（vertex attribute 缩写，即顶点属性）寄存器包含当前顶点的属性，取自顶点缓冲区。
+  它们的排序与顶点格式中的属性排序完全一样，我们在前面已设置：`va0`是顶点位置，`va1`是纹理坐标，`va2`是颜色，`va3`是偏移量。
+* 对于所有的顶点，两个常量是相同的：`vc0-3`包含modelview-projection矩阵，`vc4`是当前的alpha值。
 
-The main task of any vertex shader is to move the vertex position into the so-called "clip-space".
-That's done by multiplying the vertex position with the `mvpMatrix` (modelview-projection matrix).
-The first line takes care of that, and you'll find it in any vertex shader in Starling.
-Suffice it to say that it is responsible for figuring out where the vertex is ending up on the screen.
+任何顶点着色器的主要任务是将顶点位置移动到所谓的“剪裁空间”。
+这是通过将顶点位置乘以`mvp矩阵`（modelview-projection matrix）来实现的。
+顶点着色器第一行就是做这个事情的，在Starling中，无论在哪一个顶点着色器，你都能够发现它。
+它负责找出顶点在屏幕上的位置。
 
-Otherwise, we're more or less just forwarding data to the fragment shader via the "varying registers" `v0` - `v2`.
+另一方面，我们或多或少会通过变量寄存器‘v0’ - ‘v2’ 转移数据到片段着色器。
 
-The fragment shader is an almost exact replica of its filter-class equivalent.
-Can you find the difference?
-It's the register we're reading the offset from; before, that was stored in a constant, now in `v2`.
+片段着色器几乎是与滤镜类相同的复制品。
+你能找到区别吗？
+我们正是从这种寄存器中读取颜色偏移量的。 之前，它存储在一个常数中，而现在,存储在变量寄存器`v2`中。
 
-=== Trying it out
+=== 尝试
 
-There you have it: we're almost finished with our style!
-Let's give it a test-ride.
-In a truly bold move, I'll use it on two objects right away, so that we'll see if batching works correctly.
+有了它，我们几乎完成了我们的样式！
+让我们来测试一下。
+一个真正大胆的举动，我们立即把它应用在两个对象上，看看批处理是否正确工作。
 
 [source, as3]
 ----
@@ -424,22 +424,22 @@ image2.style = style2;
 addChild(image2);
 ----
 
-.Two styled images, rendered with just one draw call.
+.两个自定义样式的图像，仅用一次绘制调用呈现。
 image::custom-style-sample.png[Custom Style Sample]
 
-Hooray, this actually works!
-Be sure to look at the draw count at the top left, which is an honest and constant "1".
+天啦噜，它正确的工作了！
+一定要看看左上角的绘制调用(drawCall)，一个诚实和恒定的“1”。
 
-There's a tiny little bit more to do, though; our shaders above were created assuming that there's always a texture to read data from.
-However, the style might also be assigned to a mesh that doesn't use any texture, so we have to write some specific code for that case (which is so simple I'm not going to elaborate on it right now).
+有一个小小的事情还要做;我们创建了上面的着色器，是假定总是可以通过某一个纹理来读取颜色数据。
+然而，样式也可能被分配给一个不使用任何纹理的网格，所以我们必须为这种情况编写一些特定的代码（这是很简单，我不打算再详细说明）。
 
-The complete class, including this last-minute fix, can be found here: https://gist.github.com/PrimaryFeather/eaaa4a1b50cf546613d2[ColorOffsetStyle.as].
+完整的类，包括解决了上述最后一个问题的参考示例，可以在这里找到： https://gist.github.com/PrimaryFeather/eaaa4a1b50cf546613d2[ColorOffsetStyle.as].
 
-=== Where to go from here
+=== 去往何方
 
-That's it with our style!
-I hope you're as thrilled as I am that we succeeded on our task.
-What you see above is the key to extending Starling in ways that are limited only by your imagination.
-The _MeshStyle_ class even has a few more tricks up its sleeve, so be sure to read through the complete class documentation.
+这就是我们的样式！
+我希望你和我一样激动，我们成功完成了我们的任务。
+你上面看到的是扩展Starling的关键，想象力有多大，扩展能力就有多大!
+MeshStyle类还有一些其他的技巧，所以一定要阅读完整的类文档。
 
-I'm looking forward to seeing what you guys come up with!
+我很期待看到你们的让人惊艳的作品!
