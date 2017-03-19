@@ -1,22 +1,22 @@
-== Custom Filters
+== 自定义滤镜
 
-Are you ready to get your hands dirty?
-We are now entering the realm of custom rendering code, starting with a simple fragment filter.
+你准备好开始行动了吗？
+现在,我们正在进入自定义渲染代码的领域，让我们从一个简单的片段过滤器开始。
 
-Yes, this will involve some low level code; heck, you'll even write a few lines of assembler!
-But fear not, it's not rocket science.
-As my old math teacher used to say: a drilled monkey could do that!
+是的，这将涉及一些低级代码; 嘿嘿，你甚至需要写几行汇编程序！
+但不要害怕，这不是火箭科学。
+正如我的老数学老师曾经说过的：一个经过训练的猴子都能做到！
 
-NOTE: Remember: filters work on the pixel level of display objects.
-The filtered object is rendered into a texture, which is then processed by a custom fragment shader (hence the name _fragment filter_).
+NOTE: 记住：滤镜是针对显示对象的每一个像素工作(换个说法:像素级)。
+已过滤的对象将被渲染到纹理，然后通过自定义片段着色器（因此名称为fragment filter）进行处理。
 
-=== The Goal
+=== 目标
 
-Even though we're picking a simple goal, it should be a useful one, right?
-So let's create a _ColorOffsetFilter_.
+我们选择一个尽量简单的目标，但它至少应该是一个有用的，对吧？
+那就让我们创建一个ColorOffsetFilter(颜色偏移滤镜)吧。
 
-You probably know that you can tint any vertex of a mesh by assigning it a color.
-On rendering, the color will be multiplied with the texture color, which provides a very simple (and fast) way to modify the color of a texture.
+你可能知道,可以通过给一个网格的任何顶点指定一种颜色来达到目的。
+在渲染时，颜色将与纹理颜色相乘，这提供了一种非常简单（和快速）的方式来修改纹理的颜色。
 
 [source, as3]
 ----
@@ -24,48 +24,48 @@ var image:Image = new Image(texture);
 image.color = 0x808080; // R = G = B = 0.5
 ----
 
-The math behind that is extremely simple: on the GPU, each color channel (red, green, blue) is represented by a value between zero and one.
-Pure red, for example, would be:
+背后的数学非常简单：在GPU上，每个颜色通道（红色，绿色，蓝色）由0和1之间的值表示。
+例如纯红色表示如下：
 
   R = 1, G = 0, B = 0
 
-On rendering, this color is then multiplied with the color of each pixel of the texture (also called "texel").
-The default value for an image color is pure white, which is a `1` on all channels.
-Thus, the texel color appears unchanged (a multiplication with `1` is a no-op).
-When you assign a different color instead, the multiplication will yield a new color, e.g.
+在渲染时，该颜色将乘以纹理的每个像素的颜色（也称为“纹素”）。
+图像颜色的默认值为纯白色，意味着所有通道值都是1。
+因此，纹理颜色看起来不变（与`1`的乘法结果是无操作）。
+当你分配一个不同的颜色，经过乘法计算后将产生一种新的颜色，例如。
 
   R = 1,   G = 0.8, B = 0.6  ×
   B = 0.5, G = 0.5, B = 0.5
   -------------------------
   R = 0.5, G = 0.4, B = 0.3
 
-And here's there problem: this will only ever make an object darker, never brighter.
-That's because we can only multiply with values between 0 and 1; zero meaning the result will be black, and one meaning it remains unchanged.
+这里有问题：这只会使对象变得更暗，而不是更亮。
+这是因为我们只能乘以0和1之间的值;0意味着结果将是黑色的，而1意味着它保持不变。
 
-.Tinting an image with a gray color.
+.使用灰色显示图像。
 image::customfilter-tinting.png[Tinting]
 
-That's what we want to fix with this filter!
-We're going to include an _offset_ to the formula.
-(In classic Flash, you would do that with a http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/geom/ColorTransform.html[ColorTransform].)
+接下来我们想要解决滤镜的这个问题！
+我们将在公式中包含offset。
+(在经典Flash中，您可以使用 http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/geom/ColorTransform.html[ColorTransform].)
 
-* New red value = (old red value × redMultiplier) + redOffset
-* New green value = (old green value × greenMultiplier) + greenOffset
-* New blue value = (old blue value × blueMultiplier) + blueOffset
-* New alpha value = (old alpha value × alphaMultiplier) + alphaOffset
+* 新红色值=（旧红色值×红色倍数）+ 红色偏移量
+* 新绿色值=（旧绿色值×绿色倍数）+ 绿色偏移量
+* 新蓝色值=（旧蓝色值×蓝色倍数）+ 蓝色偏移量
+* 新透明值=（旧透明值×透明倍数）+ 透明偏移量
 
-We already have the multiplier, since that's handled in the base _Mesh_ class; our filter just needs to add the offset.
+我们已经有了倍增器，因为它是在基本Mesh类中处理的;我们的滤镜只需要添加偏移量即可。
 
-.Adding an offset to all channels.
+.向所有通道添加偏移量。
 image::customfilter-offset.png[Offset]
 
-So let's finally start, shall we?!
+现在进入正题,好吗?！ 
 
-=== Extending FragmentFilter
+=== 扩展片段滤镜
 
-All filters extend the class `starling.filters.FragmentFilter`, and this one is no exception.
-Now hold tight: I'm going to give you the complete _ColorOffsetFilter_ class now; this is not a stub, but the final code.
-We won't modify it any more.
+所有的滤镜扩展自类'starling.filters.FragmentFilter`，这一个也不例外。
+抓紧了：我现在要扔给你完整的ColorOffsetFilter类;这不是一个代码片段，而是最终的完整代码。
+我们不会再修改它。
 
 [source, as3]
 ----
