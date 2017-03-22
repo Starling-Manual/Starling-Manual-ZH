@@ -64,7 +64,7 @@ image::customfilter-offset.png[Offset]
 === 扩展片段滤镜
 
 所有的滤镜扩展自类'starling.filters.FragmentFilter`，这一个也不例外。
-抓紧了：我现在要扔给你完整的ColorOffsetFilter类;这不是一个代码片段，而是最终的完整代码。
+嘿，抓住了！我现在要扔给你一个完整的ColorOffsetFilter类;这不是代码片段，而是最终的完整代码！
 我们不会再修改它。
 
 [source, as3]
@@ -110,41 +110,41 @@ public class ColorOffsetFilter extends FragmentFilter
 }
 ----
 
-That's surprisingly compact, right?
-Well, I have to admit it: this is just half of the story, because we're going to have to write another class, too, which does the actual color processing.
-Still, it's worthwhile to analyze what we see above.
+至目前为止，以上代码还是非常紧凑的，对吧？
+但是我不得不承认：这个故事并没有讲完，因为我们也要写另一个类，来做实际的颜色处理工作。
+无论如何，分析上面所看到的代码是非常值得的。
 
-The class extends _FragmentFilter_, of course, and it overrides one method: `createEffect`.
-You probably haven't run into the `starling.rendering.Effect` class before, because it's really only needed for low-level rendering.
-From the API documentation:
+该类扩展自FragmentFilter，它覆盖了一个方法：`createEffect`。
+以前你可能还没有遇到过`starling.rendering.Effect`类，因为只有低级渲染阶段才需要它。
+通过阅读API文档可以得知：
 
 ====
-An effect encapsulates all steps of a Stage3D draw operation.
-It configures the render context and sets up shader programs as well as index- and vertex-buffers, thus providing the basic mechanisms of all low-level rendering.
+Effect类封装了Stage3D绘图操作的所有步骤:
+它配置渲染上下文，并设置着色器程序以及索引和顶点缓冲区，从而提供所有低级渲染的基本机制。
 ====
 
-The _FragmentFilter_ class makes use of this class, or actually its subclass called _FilterEffect_.
-For this simple filter, we just have to provide a custom effect, which we're doing by overriding `createEffect()`.
-The properties do nothing else than configuring our effect.
-On rendering, the base class will automatically use the effect to render the filter.
-That's it!
+FragmentFilter类使用这个Effect类，或者Effect的子类FilterEffect。
+对于这个简单的滤镜，我们只需要提供一个自定义的效果配置，我们通过重写“createEffect（）”方法来实现。
+它只是通过属性来配置效果，并不做其它的工作。
+在渲染时，基类将自动使用配置的效果来呈现滤镜。
+仅此而已！
 
-NOTE: If you're wondering what the `colorOffsetEffect` property does: that's just a shortcut to be able to access the effect without constantly casting it to _ColorOffsetEffect_.
-The base class provides an `effect` property, too, but that will return an object of type `FilterEffect` -- and we need the full type, _ColorOffsetEffect_, to access our `offset` properties.
+NOTE: 如果您想知道什么是“colorOffsetEffect”属性：它其实相当于一个快捷方式，能够访问配置的相关属性，而不会持续将其转换为ColorOffsetEffect。
+基类也提供了一个`effect`属性，但它会返回一个类型为'FilterEffect`的对象 - 但我们需要完整的类型ColorOffsetEffect来访问“offset”属性。
 
-More complicated filters might need to override the `process` method as well; that's e.g. necessary to create multi-pass filters.
-For our sample filter, though, that's not necessary.
+更复杂的滤镜可能需要重写“process”方法;例如需要创建多通道滤镜。
+但对于我们目前讨论的示例滤镜，不必重写此方法。
 
-Finally, note the calls to `setRequiresRedraw`: they make sure the effect is re-rendered whenever the settings change.
-Otherwise, Starling wouldn't know that it has to redraw the object.
+最后，请注意调用“setRequiresRedraw”：它确保在更改设置后重新呈现效果。
+否则，Starling不会重绘对象。
 
-=== Extending FilterEffect
+=== 扩展FilterEffect
 
-Time to do some actual work, right?
-Well, our _FilterEffect_ subclass is the actual workhorse of this filter.
-Which doesn't mean that it's very complicated, so just bear with me.
+我们来做点实际的工作吧
+FilterEffect子类是实现这个滤镜的重头戏。
+这并不意味着它非常复杂，耐着性子听我讲完还是很容易理解的。
 
-Let's start with a stub:
+我们从一个尚未完成的代码开始：
 
 [source, as3]
 ----
