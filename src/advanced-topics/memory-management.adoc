@@ -1,49 +1,49 @@
-== Memory Management
+== 内存管理
 
-Many Starling developers use the framework to create apps and games for mobile devices.
-And almost all of those developers will sooner or later find out (the hard way) that mobile devices are notoriously low on memory.
-Why is that?
+许多Starling开发人员使用该框架为移动设备创建应用和游戏。
+几乎所有这些开发人员迟早都会发现（以自己惨痛的经验）移动设备在内存上的总是感觉不够用。
+这是为什么？
 
-* Most mobile devices have screens with extremely high resolutions.
-* 2D games for such devices require equally high resolution textures.
-* The available RAM is too small to hold all that texture data.
+* 大多数移动设备具有极高分辨率的屏幕。
+* 这样的设备的2D游戏需要同样高分辨率的纹理。
+* 可用RAM太小，无法容纳所有纹理数据。
 
-In other words, a really vicious combination.
+换句话说，一个真正的恶性组合。
 
-What happens if you _do_ run out of memory?
-Most of the time, you will get the famous error 3691 ("Resource limit for this resource type exceeded") and your app will crash.
-The following hints will show you ways to avoid this nasty error!
+如果内存不足时程序仍在运行，会发生什么？
+大多数时候，你会得到着名的错误3691（超出此资源类型的资源限制），您的应用程序将崩溃。
+以下提示将告诉您如何避免这种讨厌的错误！
 
-=== Dispose your Waste
+=== 清除垃圾
 
-When you don't need an object any longer, don't forget to call `dispose` on it.
-Different to conventional Flash objects, the garbage collector will not clean up any Stage3D resources!
-You are responsible for that memory yourself.
+当你不再需要一个对象时，别忘了在它上面调用`dispose`。
+与传统的Flash对象不同，垃圾收集器不会清理任何Stage3D资源！
+你自己负责管理这个内存。
 
-==== Textures
+==== 纹理
 
-Those are the most important objects you need to take care of.
-Textures will always take up the biggest share of your memory.
+纹理--这就是那些是你需要照顾的最重要的对象。
+纹理总是占据你内存中最大的份额。
 
-Starling tries to help you with this, of course.
-For example, when you load your textures from an atlas, you only need to dispose the atlas, not the actual SubTextures.
-Only the atlas requires GPU memory, the "offspring" textures will just reference the atlas texture.
+当然，Starling试图帮助你。
+例如，当您从图集加载纹理时，您只需要处理图集，而不是实际的SubTextures。
+只有图集才需要GPU内存，“子”纹理只会引用图集的纹理,不会实际占据GPU内存。
 
 [source, as3]
 ----
 var atlas:TextureAtlas = ...;
 var hero:Texture = atlas.getTexture("hero");
 
-atlas.dispose(); // will invalidate "hero" as well.
+atlas.dispose(); // 将失效的“英雄”。
 ----
 
-==== Display Objects
+==== 显示对象
 
-While display objects themselves do not require a lot of graphics memory (some do not require any at all), it's a good practice to dispose them, too.
-Be especially careful with "heavy" objects like TextFields.
+虽然显示对象本身不需要很多显存（有些根本不需要），但失效时调用dispose也是一个很好的做法。
+特别注意“重”对象，如TextFields。
 
-Display object containers will take care of all their children, as is to be expected.
-When you dispose a container, all children will be disposed automatically.
+显示对象容器将照顾所有的孩子，正如预期的那样。
+当你处理一个容器时，所有的孩子将被自动处理。
 
 [source, as3]
 ----
@@ -54,28 +54,28 @@ var child2:Quad = new Quad(100, 100, Color.GREEN);
 parent.addChild(child1);
 parent.addChild(child2);
 
-parent.dispose(); // will dispose the children, too
+parent.dispose(); // 子对象的dispose方法也将被自动调用
 ----
 
-All in all, though, recent Starling versions have become more forgiving when it comes to disposing display objects.
-Most display objects do not store Stage3D resources any longer, so it's not a catastrophe if you forget to dispose one.
+总而言之，最新的Starling版本在处理显示对象时变得更加宽容了。
+大多数显示对象不再存储Stage3D资源，因此如果您忘记释放它们，也不会酿成灾难性的后果。
 
 ==== Images
 
-Here's the first pitfall: disposing an image will _not_ dispose its texture.
+这是第一个陷阱：释放图像将不会释放其纹理。
 
 [source, as3]
 ----
 var texture:Texture = Texture.fromBitmap(/* ... */);
 var image:Image = new Image(texture);
 
-image.dispose(); // will NOT dispose texture!
+image.dispose(); // 不会释放纹理，即不会调用image.texture.dispose();
 ----
 
-That's because Starling can't know if you're using this texture anywhere else!
-After all, you could have other images that use the same texture.
+那是因为Starling不知道你是否在其他地方使用这种纹理！
+毕竟，您其它的图像也可能使用了这种纹理。
 
-On the other hand, if you know that the texture is not used anywhere else, get rid of it.
+另一方面，如果你知道纹理没有在别的地方使用，那就释放它。
 
 [source, as3]
 ----
@@ -83,42 +83,42 @@ image.texture.dispose();
 image.dispose();
 ----
 
-==== Filters
+==== 滤镜
 
-Fragment filters are a little delicate, too.
-When you dispose an object, the filter will be disposed, as well:
-
-[source, as3]
-----
-var object:Sprite = createCoolSprite();
-object.filter = new BlurFilter();
-object.dispose(); // will dispose filter
-----
-
-But watch out: the following similar code will not dispose the filter:
+滤镜也有点玄机。
+当您释放对象时，其滤镜也将被释放：
 
 [source, as3]
 ----
 var object:Sprite = createCoolSprite();
 object.filter = new BlurFilter();
-object.filter = null; // filter will *not* be disposed
+object.dispose(); // 此方法会将滤镜一并释放掉。
 ----
 
-Again, the reason is that Starling can't know if you want to use the filter elsewhere.
+但请注意：以下类似的代码不会释放滤镜：
 
-However, in practice, this is not a problem.
-The filter is not disposed, but Starling will still clean up all its resources.
-So you won't create a memory leak.
+[source, as3]
+----
+var object:Sprite = createCoolSprite();
+object.filter = new BlurFilter();
+object.filter = null; // 调用此方法并没有真正的释放掉滤镜
+----
 
-NOTE: In previous Starling versions (< 2.0), this _did_ create a memory leak.
+同样的原因，Starling不知道你是否想在其他地方使用这个滤镜对象。
 
-=== Do not Embed Textures
+但实际上这并不是一个问题。
+滤镜没有释放，但Starling仍将清理所有资源。
+所以这不会造成内存泄漏。
 
-ActionScript developers have always been used to embedding their bitmaps directly into the SWF file, using `Embed` metadata.
-This is great for the web, because it allows you to combine all your game's data into one file.
+NOTE: 在之前的Starling版本（<2.0）中，上述做法会造成内存泄漏。
 
-We already saw in the <<Context Loss>> section that this approach has some serious downsides in Starling (or Stage3D in general).
-It comes down to this: the texture will be in memory at least two times: once in conventional memory, once in graphics memory.
+=== 不要嵌入纹理
+
+ActionScript开发人员常常使用“Embed”元数据将其位图直接嵌入到SWF文件中。
+这对网页来说非常棒，因为它允许您将所有游戏的数据合并到一个文件中。
+
+我们已经在“设备丢失”部分看到，这种方法在Starling（或一般的Stage3D）中有一些严重的缺点。
+归结为：纹理将占用两份内存：一份在常规内存中，一份在显示内存中。
 
 [source, as3]
 ----
@@ -127,14 +127,14 @@ private static var Hero:Class; // <1>
 
 var texture:Texture = Texture.fromEmbeddedAsset(Hero); // <2>
 ----
-<1> The class is stored in conventional memory.
-<2> The texture is stored in graphics memory.
+<1> 该类存储在常规内存中。
+<2> 纹理存储在图形存储器中。
 
-Note that this sample uses `Texture.fromEmbeddedAsset` to load the texture.
-For reasons discussed in <<Context Loss>>, the alternative (`Texture.fromBitmap`) uses even more memory.
+请注意，此示例使用“Texture.fromEmbeddedAsset”加载纹理。
+由于“设备丢失”中讨论的原因，替代方案（“Texture.fromBitmap”）会使用更多的内存。
 
-The only way to guarantee that the texture is really only stored in graphics memory is by loading it from an URL.
-If you use the _AssetManager_ for this task, that's not even a lot of work.
+保证纹理真的只存储在图形内存中的唯一方法是通过URL加载纹理。
+如果你使用AssetManager来执行这个任务，那么需要做的工作不是很多。
 
 [source, as3]
 ----
@@ -147,22 +147,22 @@ assets.loadQueue(...);
 var texture:Texture = assets.getTexture("hero");
 ----
 
-=== Use RectangleTextures
+=== 使用矩形纹理
 
-Starling's _Texture_ class is actually just a wrapper for two Stage3D classes:
+Starling的Texture类实际上只是两个Stage3D相关类的包装器：
 
-`flash.display3D.textures.Texture`:: Available in all profiles. Supports mipmaps and wrapping, but requires side-lengths that are powers of two.
-`flash.display3D.textures.RectangleTexture`:: Available beginning with `BASELINE` profile. No mipmaps, no wrapping, but supports arbitrary side-lengths.
+`flash.display3D.textures.Texture` ::可用于所有配置文件。 支持mipmaps和包装，但要求纹理边长是2的幂。
+`flash.display3D.textures.RectangleTexture` ::可用于`BASELINE`开头的低配置文件。 没有mipmaps，没有包装，但支持任意边长。
 
-The former (`Texture`) has a strange and little-known side effect: it will always allocate memory for mipmaps, whether you need them or not.
-That means that you will waste about one third of texture memory!
+前者（“纹理”）有一个奇怪的，鲜为人知的副作用：它将始终为mipmap分配内存，无论您是否需要它们。
+这意味着你会浪费大约三分之一的纹理内存！
 
-Thus, it's preferred to use the alternative (`RectangleTexture`).
-Starling will use this texture type whenever possible.
+因此，最好使用替代（“RectangleTexture”）。
+Starling将尽可能使用这种纹理类型。
 
-However, it can only do that if you run at least in `BASELINE` profile, and if you disable mipmaps.
-The first requirement can be fulfilled by picking the best available Context3D profile.
-That happens automatically if you use Starling's default constructor.
+但是，如果运行在仅仅包含“BASELINE”的配置文件环境中，并且如果您禁用mipmaps，那么它只能执行此操作。
+可以通过选择最佳的Context3D配置文件来满足第一个要求。
+如果您使用Starling的默认构造函数，则会自动完成这一切。
 
 [source, as3]
 ----
@@ -173,29 +173,29 @@ That happens automatically if you use Starling's default constructor.
 ... = new Starling(Game, stage, null, null, "auto", "auto");
 ----
 
-The last parameter (`auto`) will tell Starling to use the best available profile.
-This means that if the device supports RectangleTextures, Starling will use them.
+最后一个参数（`auto`）会告诉Starling使用最好的配置文件。
+这意味着如果设备支持RectangleTextures，Starling将会使用它们。
 
-As for mipmaps: they will only be created if you explicitly ask for them.
-Some of the `Texture.from...` factory methods contain such a parameter, and the _AssetManager_ features a `useMipMaps` property.
-Per default, they are always disabled.
+至于mipmap：只有在明确要求的时候才会创建它们。
+一些“Texture.from ...”工厂方法包含这样一个参数，而AssetManager具有一个`useMipMaps`属性。
+默认情况下，它们始终处于禁用状态。
 
-=== Use ATF Textures
+=== 使用ATF纹理
 
-We already talked about <<ATF Textures>> previously, but it makes sense to mention them again in this section.
-Remember, the GPU cannot make use of JPG or PNG compression; those files will always be decompressed and uploaded to graphics memory in their uncompressed form.
+我们之前已经讨论过“ATF贴图”，但是在本节再次提及它们是更有意义的。
+记住，GPU无法直接使用JPG或PNG压缩;这些文件始终在CPU阶段完成解压，并以未压缩形式上传到显卡。
 
-Not so with ATF textures: they can be rendered directly from their compressed form, which saves a lot of memory.
-So if you skipped the ATF section, I recommend you take another look!
+但ATF纹理不是这样：它们可以直接以压缩形式上传给显卡并直接渲染，这样可以节省大量内存。
+所以如果你跳过了ATF部分，我建议你回头再仔细看一下！
 
-The downside of ATF textures is the reduced image quality, of course.
-But while it's not feasible for all types of games, you can try out the following trick:
+当然，ATF纹理的缺点是会降低图像质量。
+但您可以尝试以下技巧，即使这并非适合所有类型的游戏：
 
-. Create your textures a little bigger than what's actually needed.
-. Now compress them with the ATF tools.
-. At runtime, scale them down to their original size.
+. 创建您的纹理比实际需要的更大一点。
+. 现在用ATF工具压缩它们。
+. 在运行时，将它们缩小到原来的大小。
 
-You'll still save a quite a bit of memory, and the compression artifacts will become less apparent.
+您仍将节省相当多的内存，并且压缩痕迹将变得不那么明显。
 
 === Use 16 bit Textures
 
