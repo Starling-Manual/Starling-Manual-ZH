@@ -181,42 +181,42 @@ public class ColorOffsetEffect extends FilterEffect
 }
 ----
 
-Note that we're storing the offsets in a _Vector_, because that will make it easy to upload them to the GPU.
-The `offset` properties read from and write to that vector.
-Simple enough.
+请注意，我们将偏移量存储在Vector中，因为这样可以轻松将其上传到GPU。
+`offset'属性从该向量读取并写入该向量。
+就是这么简单。
 
-It gets more interesting when we look at the two overridden methods.
+当我们看看这两个重写的方法时，它会变得更有趣。
 
 ==== createProgram
 
-This method is supposed to create the actual Stage3D shader code.
+该方法支持创建实际的Stage3D着色器代码。
 
 [NOTE]
 ====
-I'll show you the basics, but explaining _Stage3D_ thoroughly is beyond the scope of this manual.
-To get deeper into the topic, you can always have a look at one of the following tutorials:
+我将向您展示Stage3D的基础知识，但彻底解释Stage3D却超出了本手册的范围。
+要想深入了解该主题，您可以随时查看以下教程：
 
-  * http://www.adobe.com/devnet/flashplayer/articles/how-stage3d-works.html[How Stage3D works]
-  * http://jacksondunstan.com/articles/1661[Introduction to AGAL]
-  * http://help.adobe.com/en_US/as3/dev/WSd6a006f2eb1dc31e-310b95831324724ec56-8000.html[List of AGAL operations]
+  * http://www.adobe.com/devnet/flashplayer/articles/how-stage3d-works.html[Stage3D是如何工作的]
+  * http://jacksondunstan.com/articles/1661[AGAL介绍]
+  * http://help.adobe.com/en_US/as3/dev/WSd6a006f2eb1dc31e-310b95831324724ec56-8000.html[AGAL操作列表]
 ====
 
-All Stage3D rendering is done through vertex- and fragment-shaders.
-Those are little programs that are executed directly by the GPU, and they come in two flavors:
+所有Stage3D渲染都是通过顶点着色器和片段着色器完成的。
+这些是由GPU直接执行的小程序，它们有两种风格：
 
-* *Vertex Shaders* are executed _once for each vertex_.
-  Their input is made up from the vertex attributes we typically set up via the `VertexData` class; their output is the position of the vertex in screen coordinates.
-* *Fragment Shaders* are executed _once for each pixel_ (fragment).
-  Their input is made up of the _interpolated_ attributes of the three vertices of their triangle; the output is simply the color of the pixel.
-* Together, a fragment and a vertex shader make up a *Program*.
+* *顶点着色器*对于每个顶点执行一次。
+  他们的输入通常由“VertexData”类设置的顶点属性组成;它们的输出是屏幕坐标中顶点的位置。
+* *片段着色器*对于每个像素（片段）执行一次。
+  它们的输入由三角形的三个顶点的interpolated属性组成;输出便是具体像素的颜色。
+* 一个片段着色器和一个顶点着色器共同组成一个*程序*。
 
-The language filters are written in is called AGAL, an assembly language.
-(Yes, you read right! This is as low-level as it gets.)
-Thankfully, however, typical AGAL programs are very short, so it's not as bad as it sounds.
+着色语言由一种被成称为AGAL的汇编语言来编写。
+（是的，你没看错！这是一种低级别的语言。）
+幸运的是，典型的AGAL程序非常短，所以实际情况并不是像你想的那么糟糕。
 
-Good news: we only need to write a fragment shader.
-The vertex shader is the same for most fragment filters, so Starling provides a standard implementation for that.
-Let's look at the code:
+有一个好消息：我们仅需要编写一个片段着色器。
+因为顶点着色器相对于大多数片段着色器来说是相同的，所以Starling提供了一个标准的实现。
+我们来看看代码：
 
 [source, as3]
 ----
@@ -231,74 +231,74 @@ override protected function createProgram():Program
 }
 ----
 
-As promised, the vertex shader is taken from a constant; the fragment shader is just two lines of code.
-Both are combined into one _Program_ instance, which is the return value of the method.
+如上所述事实并不难，顶点着色器取自常数;片段着色器只是两行代码。
+两者组合成一个Program实例，并由一个方法返回。
 
-The fragment shader requires some further elaboration, of course.
+当然，片段着色器还需要进一步阐述。
 
-===== AGAL in a Nutshell
+===== AGAL概述
 
-In AGAL, each line contains a simple method call.
+在AGAL中，每行包含一个简单的方法调用。
 
-  [opcode] [destination], [argument 1], ([argument 2])
+  [操作码] [结果]，[参数 1]，（[可选参数 2]）
 
-* The first three letters are the name of the operation (`tex`, `add`).
-* The next argument defines where the result of the operation is saved.
-* The other arguments are the actual arguments of the method.
-* All data is stored in predefined _registers_; think of them as _Vector3D_ instances (with properties for x, y, z and w).
+* 前三个字母是操作码的名称（例如`tex`，`add`）。
+* 下一个参数定义了操作结果的保存位置。
+* 其他参数是方法的实际参数。
+* 所有数据存储在预定义的寄存器中;将它们视为Vector3D实例（具有x，y，z和w的属性）。
 
-There are several types of registers, e.g. for constants, temporary data or for the output of a shader.
-In our shader, some of them already contain data; they were set up by other methods of the filter (we'll come to that later).
+有几种不同类型的寄存器，例如用于常量，临时数据或着色器的输出。
+在这些着色器中，其中一些已经包含数据;他们是通过滤镜的其他方法设置的（稍后会介绍）。
 
-* `v0` contains the current texture coordinates (_varying register 0_)
-* `fs0` points to the input texture (_fragment sampler 0_)
-* `fc0` contains the color offset this is all about (_fragment constant 0_)
+* `v0'包含当前纹理坐标（变量寄存器0）
+* `fs0'指向输入纹理（纹理样本寄存器0）
+* `fc0`包含这个颜色偏移量（片段常量寄存器0）
 
-The result of a fragment shader must always be a color; that color is to be stored in the `oc` register.
+片段着色器的结果始终是一种颜色;该颜色将被存储在“oc”寄存器中。
 
-===== Code Review
+===== 代码审查
 
-Let's get back to the actual code of our fragment shader.
-The *first line* reads the color from the texture:
+让我们回到片段着色器的实际代码。
+*第一行*从纹理读取颜色：
 
     tex ft0, v0, fs0 <2d, linear>
 
-We're reading the texture `fs0` with the texture coordinates read from register `v0`, and some options (`2d, linear`).
-The reason that the texture coordinates are in `v0` is just because the standard vertex shader (`STD_VERTEX_SHADER`) stores them there; just trust me on this one.
-The result is stored in the temporary register `ft0` (remember: in AGAL, the result is always stored in the first argument of an operation).
+我们正在通过寄存器`v0'指定的纹理坐标和其它一些选项（`2d，linear`）来读取纹理`fs0`。
+纹理坐标在“v0”中的原因只是因为标准顶点着色器（“STD_VERTEX_SHADER”）将它们存储在那里;在编写着色程序时记住这一点。
+最后将结果存储在临时寄存器`ft0`（记住：在AGAL中，结果总是存储在操作码后的第一个参数中）。
 
 [NOTE]
 ====
-Now wait a minute. We never created any texture, right? What is this?
+到目前为止我们还没有创建任何纹理，对吧？这是什么？
 
-As I wrote above, a fragment filter works at the pixel level; its input is the original object, rendered into a texture.
-Our base class (_FilterEffect_) sets that up for us; when the program runs, you can be sure that the texture sampler `fs0` will point to the pixels of the object being filtered.
+如上所述，片段着色器始终在像素级别工作;其输入是原始对象，输出结果呈现为纹理。
+我们的基础类（FilterEffect）为我们设定了这个规则:当程序运行时，可以确保纹理采样器`fs0`将指向当前正在被过滤对象的像素。
 ====
 
-You know what, actually I'd like to change this line a little.
-You probably noticed the options at the end, indicating how the texture data should be interpreted.
-Well, it turns out that these options depend on the texture type we're accessing.
-To be sure the code works for every texture, let's use a helper method to write that AGAL operation.
+你知道原因，其实我可能需要改写这一行。
+您可能会注意到最后的可选参数，指定如何解释纹理数据。
+事实证明如何编写这些可选参数取决于我们正在访问的纹理类型。
+为了确保代码适用于每个纹理，我们统一使用一个帮助方法来写入该AGAL操作。
 
 [source, as3]
 ----
 tex("ft0", "v0", 0, this.texture)
 ----
 
-That does just the same (the method returns an AGAL string), but we don't need to care about the options any longer.
-Always use this method when accessing a texture; it will let you sleep much better at night.
+实际结果是一样的（该方法返回一个AGAL字符串），但我们不再需要关心选项了。
+始终使用此方法访问纹理;它会让你在晚上睡得更安稳。
 
-The *second line* is doing what we actually came here for: it adds the color offsets to the texel color.
-The offset is stored in `fc0`, which we'll look at shortly; that's added to the `ft0` register (the texel color we just read) and stored in the output register (`oc`).
+*第二行*干的事情是这样的：它将颜色偏移添加到纹素颜色。
+偏移量存储在`fc0`中，我们稍后会看看;这被添加到`ft0`寄存器（我们刚读取的纹素颜色）并存储在输出寄存器（'oc`）中。
 
     add oc, ft0, fc0
 
-That's it with AGAL for now.
-Let's have a look at the other overridden method.
+这就是AGAL现在做的事情。
+我们来看看其他被重写的方法。
 
 ==== beforeDraw
 
-The `beforeDraw` method is executed directly before the shaders are executed. We can use them to set up all the data required by our shader.
+`beforeDraw`方法在着色器执行之前执行。我们可以使用它们来设置我们的着色器所需的所有数据。
 
 [source, as3]
 ----
@@ -309,19 +309,19 @@ override protected function beforeDraw(context:Context3D):void
 }
 ----
 
-This is where we pass the offset values to the fragment shader.
-The second parameter, `0`, defines the register that data is going to end up in.
-If you look back at the actual shader code, you'll see that we read the offset from `fc0`, and that's exactly what we're filling up here: `fragment constant 0`.
+这是我们将偏移值传递给片段着色器的地方。
+第二个参数“0”定义了数据将要结束的寄存器。
+如果你回头看一下实际的着色器代码，你会看到我们读取'fc0'的偏移量，这正是我们在这里填补的：`fragment constant 0`。
 
-The super call sets up all the rest, e.g. it assigns the texture (`fs0`) and the texture coordinates.
+超类方法完成所有其余的设置，例如分配纹理（`fs0`）和纹理坐标。
 
-NOTE: Before you ask: yes, there is also an `afterDraw()` method, usually used to clean up one's resources.
-But for constants, this is not necessary, so we can ignore it in this filter.
+NOTE: 正如你想要询问的那样，确实还有一个`afterDraw（）`方法，通常用于清理资源。
+但是对于常量来说，这并不是必需的，所以我们可以在这个滤镜中忽略它。
 
-=== Trying it out
+=== 尝试一下
 
-Our filter is ready, actually (download the complete code https://gist.github.com/PrimaryFeather/ba1e26d568320cd31086[here])!
-Time to give it a test ride.
+我们的滤镜已经准备好了，实际上(下载完整的代码 https://gist.github.com/PrimaryFeather/ba1e26d568320cd31086[here])!
+是时候跑一跑看看实际效果了.
 
 [source, as3]
 ----
@@ -332,55 +332,55 @@ image.filter = filter;
 addChild(image);
 ----
 
-.Our filter seems to have an ugly side effect.
-image::customfilter-pma.png[Custom Filter PMA Issue]
+.我们的过滤器似乎有一个令人讨厌的副作用。
+image::customfilter-pma.png[自定义过滤器PMA问题]
 
-Blimey!
-Yes, the red value is definitely higher, but why is it now extending beyond the area of the bird!?
-We didn't change the alpha value, after all!
+老天！
+红色的值肯定是更高的，但为什么它现在超出了鸟的面积呢？
+毕竟，我们并没有改变alpha值！
 
-Don't panic.
-You just created your first filter, and it didn't blow up on you, right?
-That must be worth something.
-It's to be expected that there's some fine-tuning to do.
+不要惊慌。
+你刚刚创建了你的第一个滤镜，它并没有打击到你，对吧？
+这一定是值得的。
+只是需要一些微调。
 
-It turns out that we forgot to consider "premultiplied alpha" (PMA).
-All conventional textures are stored with their RGB channels premultiplied with the alpha value.
-So, a red with 50% alpha, like this:
+事实证明，我们忘了考虑“前乘alpha”（PMA）。
+所有常规纹理都以其alpha通道预先乘以RGB通道进行存储。
+所以，一个红色与50％的alpha，像这样：
 
   R = 1, G = 0, B = 0, A = 0.5
 
-would actually be stored like this:
+实际上会像这样存储：
 
   R = 0.5, G = 0, B = 0, A = 0.5
 
-And we didn't take that into account.
-What he have to do is multiply the offset values with the alpha value of the current pixel before adding it to the output.
-Here's one way to do that:
+我们没有考虑到这一点。
+接下来需要需要做的是将偏移值与当前像素的alpha值相乘，然后再将其输出。
+这是第一种方法：
 
 [source, as3]
 ----
-tex("ft0", "v0", 0, texture)   // get color from texture
-mov ft1, fc0                   // copy complete offset to ft1
-mul ft1.xyz, fc0.xyz, ft0.www  // multiply offset.rgb with alpha (pma!)
-add  oc, ft0, ft1              // add offset, copy to output
+tex("ft0", "v0", 0, texture)   // 从纹理获取颜色
+mov ft1, fc0                   // 将完整的偏移量复制到ft1
+mul ft1.xyz, fc0.xyz, ft0.www  // 将颜色偏移量的rbg通道值分别乘以alpha（pma！）
+add  oc, ft0, ft1              // 添加偏移量后将结果复制到输出寄存器
 ----
 
-As you can see, we can access the `xyzw` properties of the registers to access individual color channels (they correspond with our `rgba` channels).
+您可以看到，我们可以访问寄存器的“xyzw”属性来访问各个颜色通道（它们对应于我们的“rgba”通道）。
 
-NOTE: What if the texture is not stored with PMA?
-The `tex` method makes sure that we always receive the value with PMA, so no need to worry about that.
+NOTE: 如果纹理不与PMA一起存储怎么办？
+`tex`方法确保我们总是使用PMA接收值，所以不用担心。
 
-==== Second Try
+==== 第二种尝试
 
-When you give the filter another try now (complete code: https://gist.github.com/PrimaryFeather/31f1dd7f04cd6ce886f1[ColorOffsetFilter.as]), you'll see correct alpha values:
+当您再次尝试滤镜时（完整的代码：https://gist.github.com/PrimaryFeather/31f1dd7f04cd6ce886f1[ColorOffsetFilter.as]），您会看到正确的Alpha值：
 
-.That's more like it!
+.这就对了！
 image::customfilter-pma-solved.png[Custom Filter with solved PMA issue]
 
-Congratulations!
-You just created your first filter, and it works flawlessly.
-(Yes, you could have just used Starling's `ColorMatrixFilter` instead — but hey, this one is a tiny little bit faster, so it was well worth the effort.)
+恭喜！
+你刚刚完成了第一个滤镜，它工作的相当完美。
+（是的，你可以刚刚使用Starling的“ColorMatrixFilter”，但是，这个比较快一点点，所以很值得一试。）
 
-If you're feeling brave, you could now try to achieve the same with a mesh style instead.
-It's not _that_ different, promised!
+如果你内心坚定勇敢，那么现在可以尝试用网格样式来实现这个效果。
+我承诺你的收获会大有不同！
