@@ -195,33 +195,33 @@ Starling将尽可能使用这种纹理类型。
 . 现在用ATF工具压缩它们。
 . 在运行时，将它们缩小到原来的大小。
 
-您仍将节省相当多的内存，并且压缩痕迹将变得不那么明显。
+这样做将节省相当多的内存，并且压缩痕迹将变得不那么明显。
 
-=== Use 16 bit Textures
+=== 使用16位纹理
 
-If ATF textures don't work for you, chances are that your application uses a comic-style with a limited color palette.
-I've got good news for you: for these kinds of textures, there's a different solution!
+如果您的应用程序使用漫画风格和有限的调色板，可能ATF纹理并不适合您。
+不过仍有一个好消息：对于这些纹理，有一个不同的解决方案！
 
-* The default texture format (`Context3DTextureFormat.BGRA`) uses 32 bits per pixel (8 bits for each channel).
-* There is an alternative format (`Context3DTextureFormat.BGRA_PACKED`) that uses only half of that: 16 bits per pixel (4 bits for each channel).
+* 默认纹理格式（“Context3DTextureFormat.BGRA”）每像素使用32位（每个通道8位）。
+* 有一个替代格式（“Context3DTextureFormat.BGRA_PACKED”），其中只有一半：每像素16位（每个通道4位）。
 
-You can use this format in Starling via the `format` argument of the `Texture.from...` methods, or via the AssetManager's `textureFormat` property.
-This will save you 50% of memory!
+在Starling中,您可以通过`Texture.from ...`方法的`format`参数,或通过AssetManager的`textureFormat`属性使用此格式。
+这将节省50％的内存！
 
-Naturally, this comes at the price of a reduced image quality.
-Especially if you're making use of gradients, 16 bit textures might become rather ugly.
-However, there's a solution for this: dithering!
+当然，代价是降低图像质量。
+特别是如果您使用渐变，则16位纹理可能会变得相当难看。
+但是，有一个解决方案：抖动！
 
-.Dithering can conceal a reduced color depth.
+.抖动可以降低颜色深度。
 image::dithering.png[Dithering]
 
-To make it more apparent, the gradient in this sample was reduced to just 16 colors (4 bits).
-Even with this low number of colors, dithering manages to deliver an acceptable image quality.
+为了使其更加明显，该示例中的渐变减少到仅仅16种颜色（4位）。
+即使仅有这么少的颜色，抖动仍可以提供可接受的图像质量。
 
-Most image processing programs will use dithering automatically when you reduce the color depth.
-_TexturePacker_ has you covered, as well.
+当您减少颜色深度时，大多数图像处理程序将自动使用抖动。
+TexturePacker也有此涵盖。
 
-The _AssetManager_ can be configured to select a suitable color depth on a per-file basis.
+AssetManager可以针对每个文件配置合适的颜色深度。
 
 [source, as3]
 ----
@@ -239,90 +239,90 @@ assets.enqueue(/* ... */);
 assets.loadQueue(/* ... */);
 ----
 
-=== Avoid Mipmaps
+=== 避免Mipmaps
 
-Mipmaps are downsampled versions of your textures, intended to increase rendering speed and reduce aliasing effects.
+Mipmap是您的纹理的低采样版本，旨在提高渲染速度并减少混叠效果。
 
-.Sample of a texture with mipmaps.
+.使用mipmap的纹理示例。
 image::mipmap.jpg[Mipmap]
 
-Since version 2.0, Starling doesn't create any mipmaps by default.
-That turned out to be the preferable default, because without mipmaps:
+自Starling2.0版本以来，默认情况下不会创建任何mipmap。
+这是最好的默认值，因为没有mipmap：
 
-* Textures load faster.
-* Textures require less texture memory (just the original pixels, no mipmaps).
-* Blurry images are avoided (mipmaps sometimes become fuzzy).
+* 纹理加载速度更快。
+* 纹理需要较少的纹理内存（只是原始像素，没有mipmap）。
+* 避免模糊的图像（mipmaps有时变得模糊）。
 
-On the other hand, activating them will yield a slightly faster rendering speed when the object is scaled down significantly, and you avoid aliasing effects (i.e. the effect contrary to blurring).
-To enable mipmaps, use the corresponding parameter in the `Texture.from...` methods.
+另一方面，当对象显著缩小时，激活它们将产生稍微更快的渲染速度，并且避免混叠效果（即与模糊相反的效果）。
+要启用mipmap，请使用“Texture.from ...”方法中的相应参数。
 
-=== Use Bitmap Fonts
+=== 使用位图字体
 
-As already discussed, TextFields support two different kinds of fonts: TrueType fonts and Bitmap Fonts.
+如前所述，TextField支持两种不同类型的字体：TrueType字体和位图字体。
 
-While TrueType fonts are very easy to use, they have a few downsides.
+虽然TrueType字体非常易于使用，但它们有一些缺点。
 
-* Whenever you change the text, a new texture has to be created and uploaded to graphics memory. This is slow.
-* If you've got many TextFields or big ones, this will require a lot of texture memory.
+* 每当您更改文本时，都必须创建一个新的纹理并将其上传到图形内存。这很慢
+* 如果您有很多TextFields或大的TextFields，这将需要大量的纹理内存。
 
-Bitmap Fonts, on the other hand, are
+另一方面，位图字体有一些特性:
 
-* updated very quickly and
-* require only a _constant_ amount of memory (just the glyph texture).
+* 非常快速地更新
+* 只需要一个恒定的内存量（只是字形纹理）。
 
-That makes them the preferred way of displaying text in Starling.
-My recommendation is to use them whenever possible!
+这使他们成为在Starling中显示文本的首选方式。
+我的建议是尽可能使用它们！
 
-TIP: Bitmap Font textures are a great candidate for 16 bit textures, because they are often just pure white that's tinted to the actual TextField color at runtime.
+TIP: 位图字体纹理是16位纹理的一个很好的候选者，因为它们通常只是纯白色，在运行时被着色为实际的TextField颜色。
 
-=== Optimize your Texture Atlas
+=== 优化您的纹理图集
 
-It should be your top priority to pack your texture atlases as tightly as possible. Tools like https://www.codeandweb.com/texturepacker/starling?source=gamua[TexturePacker] have several options that will help with that:
+首要任务是把你的纹理贴图尽可能地包装在一起。比如这个工具 https://www.codeandweb.com/texturepacker/starling?source=gamua[TexturePacker] 有几个可选的帮助选项：
 
-* Trim transparent borders away.
-* Rotate textures by 90 degrees if it leads to more effective packing.
-* Reduce the color depth (see above).
-* Remove duplicate textures.
-* etc.
+* 修剪透明的边框。
+* 如果有可能，将纹理旋转90度以更有效的节省空间。
+* 降低颜色深度（见上文）。
+* 删除重复纹理。
+* 等等...
 
-Make use of this!
-Packing more textures into one atlas not only reduces your overall memory consumption, but also the number of draw calls (more on that in the next chapter).
+使用它!
+将更多的纹理包装在一个图集中不仅可以降低整体内存消耗，还可以减少绘制调用（下一章更多介绍）。
 
 [[memory_management_scout]]
-=== Use Adobe Scout
+=== 使用Adobe Scout
 
-https://www.adobe.com/products/scout.html[Adobe Scout] is a lightweight but comprehensive profiling tool for ActionScript and Stage3D.
-Any Flash or AIR application, regardless of whether it runs on mobile devices or in browsers, can be quickly profiled with no change to the code -- and Adobe Scout quickly and efficiently detects problems that could affect performance.
+https://www.adobe.com/products/scout.html[Adobe Scout] 是一款用于ActionScript和Stage3D的轻量级但全面的概要分析工具。
+任何Flash或AIR应用程序，无论是在移动设备上还是在浏览器中运行，都可以快速分析，而不会改变代码 - 而Adobe Scout可以快速有效地检测可能影响性能的问题。
 
-With Scout, you can not only find performance bottlenecks in your ActionScript code, but you'll also find a detailed roundup of your memory consumption over time, both for conventional and graphics memory.
-This is priceless!
+使用Scout，您不仅可以在ActionScript代码中找到性能瓶颈，还可以在常规和图形内存方面随时随地找到内存消耗的详细内容。
+这是无价的！
 
-NOTE: Adobe Scout is part of the _free_ version of Adobe's Creative Cloud membership. You don't have to become a paying subscriber of CC to get it.
+NOTE: Adobe Scout是Adobe的Creative Cloud成员的免费版本的一部分。你不必成为CC的付费用户。
 
-Here is a great tutorial from Thibault Imbert that explains in detail how to work with Adobe Scout: http://www.adobe.com/devnet/scout/articles/adobe-scout-getting-started.html[Getting started with Adobe Scout]
+以下是Thibault Imbert的精彩教程，详细介绍了如何使用Adobe Scout： http://www.adobe.com/devnet/scout/articles/adobe-scout-getting-started.html[开始使用Adobe Scout]
 
 .Adobe Scout
 image::scout-screenshot.png[Adobe Scout]
 
-=== Keep an Eye on the Statistics Display
+=== 保持统计显示
 
-The statistics display (available via `starling.showStats`) includes information about both conventional memory and graphics memory.
-It pays off to keep an eye on these values during development.
+统计显示（通过`starling.showStats`提供）包括有关传统内存和图形内存的信息。
+在开发过程中，关注这些内容是很有价值的。
 
-Granted, the conventional memory value is often misleading -- you never know when the garbage collector will run.
-The graphics memory value, on the other hand, is extremely accurate.
-When you create a texture, the value will rise; when you dispose a texture, it will decrease -- immediately.
+当然，传统的内存值常常是误导的 - 你永远不知道垃圾收集器何时运行。
+但另一方面，图形内存值却非常准确。
+创建纹理时，值会上升;当您释放纹理时，会立即减少。
 
-Actually, when I added this feature to Starling, it took about five minutes and I had already found the first memory leak -- in Starling's demo app.
-I used the following approach:
+实际上，当我将此功能添加到Starling后，大约花了五分钟，我已经发现了第一个内存泄漏 - 在Starling的演示程序中。
+我使用以下方法：
 
-* In the main menu, I noted down the used GPU memory.
-* Then I entered the demos scenes, one after another.
-* Each time I returned to the main menu, I checked if the GPU memory had returned to the original value.
-* After returning from one of the scenes, that value was not restored, and indeed: a code review showed that I had forgotten to dispose one of the textures.
+* 在主菜单中，我记下了使用的GPU内存。
+* 然后我一个接一个地进入演示场景。
+* 每当我回到主菜单，我检查了GPU内存是否已经恢复到原来的值。
+* 从一个场景返回后，该值没有恢复，确实：审查代码后我发现忘记了释放一个纹理。
 
-.The statistics display shows the current memory usage.
+.统计显示显示当前内存使用情况。
 image::stats-display.png[The statistics display]
 
-Needless to say: Scout offers far more details on memory usage.
-But the simple fact that the statistics display is always available makes it possible to find things that would otherwise be easily overlooked.
+Scout自然是提供了更多关于内存使用的细节。
+但是统计显示总是用简单事实，让我们可以容易找到被忽视的东西。
