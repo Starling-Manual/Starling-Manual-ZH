@@ -1,41 +1,41 @@
-== Performance Optimization
+== 性能优化
 
-While Starling mimics the classic display list of Flash, what it does behind the scenes is quite different.
-To achieve the best possible performance, you have to understand some key concepts of its architecture.
-Here is a list of best practices you can follow to have your game run as fast as possible.
+虽然Starling模仿Flash的经典显示列表，但幕后的功能是完全不同的。
+要实现最佳性能，您必须了解其架构的一些关键概念。
+以下列表是您可以遵循的最佳做法，让您的游戏尽可能快地运行。
 
-=== General AS3 Tips
+=== 普通AS3程序通用提示
 
-==== Always make a Release Build
+==== 总是构建发行版本
 
-The most important rule right at the beginning: always create a _release build_ when you test performance.
-Unlike conventional Flash projects, a release build makes a huge difference when you use a Stage3D framework.
-The speed difference is immense; depending on the platform you're working on, you can easily get a multiple of the framerate of a debug build.
+首先也是最重要的一条：在测试性能时始终构建发行(release)版本。
+与传统的Flash项目不同，当您使用Stage3D框架时，发行版本会产生巨大的差异。
+根据您正在开发的平台不同，运行时速度差异可能非常大;发行版帧率甚至可以轻松达到调试版帧率的倍数。
 
-* In Flash Builder, release builds are created by clicking on _menu:Project[Export Release Build]_.
-* In Flash Develop, choose the "Release" configuration and build the project;
-  then choose "ipa-ad-hoc" or "ipa-app-store" option when you execute the "PackageApp.bat" script.
-* In IntelliJ IDEA, select _menu:Build[Package AIR Application]_; choose "release" for Android and "ad hoc distribution" for iOS.
-  For non-AIR projects, deselect "Generate debuggable SWF" in the module's compiler options.
-* If you build your Starling project from command line, make sure `-optimize` is true and `-debug` is false.
+* 在Flash Builder中，通过单击菜单：工程 [导出发行版本] 构建发布版本。
+* 在Flash Develop中，选择“发布”配置并构建项目;
+  然后在执行“PackageApp.bat”脚本时选择“ipa-ad-hoc”或“ipa-app-store”选项。
+* 在IntelliJ IDEA中，选择菜单：构建 [AIR应用程序包] ;为Android选择“发布”，iOS选择“临时发行”。
+  对于非AIR项目，请取消选择模块编译器选项中的“生成可调试SWF”。
+* 如果您从命令行构建Starling项目，请确保`-optimize`为true，`-debug`为false。
 
-.Don't get confused by this Flash Builder dialog.
+.不要因此Flash Builder对话框而感到困惑。
 image::not-release-build.png[Flash Builder Dialog]
 
-==== Check your Hardware
+==== 检查你的硬件
 
-Be sure that Starling is indeed using the GPU for rendering.
-That's easy to check: if `Starling.current.context.driverInfo` contains the string `Software`, then Stage3D is in software fallback mode, otherwise it's using the GPU.
+确保Starling确实使用GPU进行渲染。
+这很容易检查：如果“Starling.current.context.driverInfo”包含字符串“software”，则Stage3D处于软件回退模式，否则使用GPU。
 
-Furthermore, some mobile devices can be run in a _Battery Saving Mode_.
-Be sure to turn that off when making performance tests.
+此外，一些移动设备可以在省电模式中运行。
+进行性能测试时，请务必将其关闭。
 
-==== Set the Framerate
+==== 设置帧速率
 
-Your framerate is somehow stuck at 24 frames per second, no matter how much you optimize?
-Then you probably never set your desired framerate, and you'll see the Flash Player's default setting.
+无论您怎么优化,您的应用程序仍然以每秒24帧运行？
+那么你可能从来没有设置你想要的帧速率，你看到只是Flash Player的默认设置。
 
-To change that, either use the appropriate _metadata_ on your startup class, or manually set the framerate at the Flash stage.
+要改变这一点，可以在启动类中使用相应的元数据标签，或者在Flash运行阶段手动设置帧速率。
 
 [source, as3]
 ----
@@ -43,29 +43,29 @@ To change that, either use the appropriate _metadata_ on your startup class, or 
 public class Startup extends Sprite
 { /* ... */ }
 
-// or anywhere else
+// 或其他任何地方
 Starling.current.nativeStage.frameRate = 60;
 ----
 
-==== Use Adobe Scout
+==== 使用Adobe Scout
 
-_Adobe Scout_ is not only useful for <<memory_management_scout, memory analysis>>; it's just as powerful when it comes to performance profiling.
+Adobe Scout不仅对“memory_management_scout，内存分析”有用;它在性能分析方面同样强大。
 
-It allows you to actually see how much time is actually spent in each of your (and Starling's) _ActionScript_ methods.
-This is extremely useful, because it shows you where you can gain most from any optimizations.
-Without it, you might end up optimizing areas of your code that are actually not relevant to the framerate at all!
+它允许您实际查看每个ActionScript（和Starling）方法中花费了多少时间。
+这是非常有用的，因为它显示了您可以从任何优化中获得最大收益的位置。
+没有它，你最终优化的代码可能会在实际上与帧速率无关的区域！
 
-TIP: Remember, premature optimization is the root of all evil!
+TIP: 记住，过早优化是所有不幸的根源！
 
-What's nice compared to classic profilers is that it also works in release mode, with all optimizations in place.
-That ensures that its output is extremely accurate.
+与传统的分析器相比，它的优点在于，它还可以在发布模式下运行，所有优化都已做到位。
+这确保其输出非常准确。
 
-==== Decode Loaded Images Asynchronously
+==== 异步解码加载的图像
 
-By default, if you use a _Loader_ to load a PNG or JPEG image, the image data is not decoded right away, but when you first use it.
-This happens on the main thread and can cause your application to stutter on texture creation.
-To avoid that, set the image decoding policy flag to `ON_LOAD`.
-This will cause the image to be decoded directly in the Loader's background thread.
+默认情况下，如果您使用Loader加载PNG或JPEG图像，则图像数据不会立即解码，而是首次使用时。
+这种情况发生在主线程上，可能会导致应用程序在纹理创建时表现卡顿。
+为了避免这种情况，请将图像解码策略标志设置为“ON_LOAD”。
+这将导致图像在Loader的后台线程中直接解码。
 
 [source, as3]
 ----
@@ -73,42 +73,42 @@ loaderContext.imageDecodingPolicy = ImageDecodingPolicy.ON_LOAD;
 loader.load(url, loaderContext);
 ----
 
-On the other hand, you are probably using Starling's _AssetManager_ to load your textures, aren't you?
-In that case, don't worry: it makes use of this practice, anyway.
+另一方面，您可能正在使用Starling的AssetManager加载纹理，不是吗？
+在这种情况下，不要担心，它内部已经采用这种做法。
 
-==== Avoid "for each"
+==== 避免 "for each"
 
-When working with loops that are repeated very often or are deeply nested, it's better to avoid `for each`; the classic `for i` yields a http://jacksondunstan.com/articles/358[better] performance.
-Furthermore, beware that the loop condition is executed once per loop, so it's faster to save it into an extra variable.
+当使用经常重复或深入嵌套的循环时，最好避免“for each”而改用经典的“for i”优化性能： http://jacksondunstan.com/articles/358[better] 。
+此外，请注意，每次循环都会执行循环条件一次，因此将其保存到一个额外的变量中速度更快。
 
 [source, as3]
 ----
-// slowish:
+// 慢:
 for each (var item:Object in array) { ... }
 
-// better:
+// 更快:
 for (var i:int=0; i<array.length; ++i) { ... }
 
-// fastest:
+// 最快:
 var length:int = array.length;
 for (var i:int=0; i<length; ++i) { ... }
 ----
 
-==== Avoid Allocations
+==== 避免分配内存
 
-Avoid creating a lot of temporary objects.
-They take up memory and need to be cleaned up by the garbage collector, which might cause small hiccups when it's running.
+避免创建大量临时对象。
+它们占用内存，需要被垃圾收集器清理，这可能会在运行时产生小的卡顿。
 
 [source, as3]
 ----
-// bad:
+// 较差:
 for (var i:int=0; i<10; ++i)
 {
     var point:Point = new Point(i, 2*i);
     doSomethingWith(point);
 }
 
-// better:
+// 更好:
 var point:Point = new Point();
 for (var i:int=0; i<10; ++i)
 {
@@ -117,9 +117,9 @@ for (var i:int=0; i<10; ++i)
 }
 ----
 
-Actually, Starling contains a class that helps with that: _Pool_.
-It provides a pool of objects that are often required, like _Point_, _Rectangle_ and _Matrix_.
-You can "borrow" objects from that pool and return them when you're done.
+实际上，Starling包含一个帮助类：Pool。
+它提供了对象池,能存取经常需要的对象，如Point，Rectangle和Matrix。
+您可以从该池中“借”对象，并在完成后返还到池中。
 
 [source, as3]
 ----
@@ -130,39 +130,39 @@ for (var i:int=0; i<10; ++i)
     point.setTo(i, 2*i);
     doSomethingWith(point);
 }
-Pool.putPoint(point); // don't forget this!
+Pool.putPoint(point); // 不要忘记这个！
 ----
 
-=== Starling Specific Tips
+=== Starling特性提示
 
-==== Minimize State Changes
+==== 最大限度地减少状态变化
 
-As you know, Starling uses Stage3D to render the display list.
-This means that all drawing is done by the GPU.
+你已经知道，Starling使用Stage3D渲染显示列表。
+这意味着所有绘图都是由GPU完成的。
 
-Now, Starling could send one quad after the other to the GPU, drawing one by one.
-In fact, this is how the very first Starling release worked!
-For optimal performance, though, GPUs prefer to get a huge pile of data and draw all of it at once.
+现在，Starling可以一个接一个地将四边形发送到GPU，逐一绘制。
+事实上，最初的Starling发行版就是这样工作的！
+但是，为了获得最佳性能，GPU更适合获得一大堆数据，同时绘制所有数据。
 
-That's why newer Starling versions batch as many quads together as possible before sending them to the GPU.
-However, it can only batch quads that have similar properties.
-Whenever a quad with a different "state" is encountered, a "state change" occurs, and the previously batched quads are drawn.
+这就是为什么更新的Starling版本在将它们发送到GPU之前,将尽可能多的四边形拼凑在一起的原因。
+不过，它只能批量渲染具有相似属性的四边形。
+每当遇到具有不同“状态”的四边形时，GPU将发生“状态改变”，并绘制当前批次的四边形。
 
 [NOTE]
 ====
-I use _Quad_ and _Image_ synonymously in this section.
-Remember, _Image_ is just a subclass of _Quad_ that adds a few methods.
-Besides, _Quad_ extends _Mesh_, and what you read below is true for meshes, as well.
+我在本节中使用四边形(Quad)和图像(Image)同义。
+记住，Image只是Quad的一个子类，只是它添加了几个方法。
+此外，Quad扩展网格(Mesh)，并且以下内容也适用于Mesh。
 ====
 
-These are the crucial properties that make up a state:
+这些是构成状态的关键属性：
 
-* The _texture_ (different subtextures from the same atlas are fine, though)
-* The _blendMode_ of display objects
-* The _textureSmoothing_ value of meshes/quads/images
-* The _textureRepeat_ mode of meshes/quads/images
+* 纹理 (不同的纹理来自同一图集)
+* 显示对象的blendMode(混合模式)
+* Mesh/Quad/Image的textureSmoothing(平滑)值
+* Mesh/Quad/Image的textureRepeat(重复填充)值
 
-If you set up your scene in a way that creates as little state changes as possible, your rendering performance will profit immensely.
+如果您以尽可能少的更改状态的制作方式设置场景，则您的渲染性能将获得巨大的提升。
 
 Again, Starling's statics display provides useful data.
 It shows exactly how many draw calls are executed per frame.
