@@ -1,34 +1,34 @@
-== Context Loss
+== 上下文丢失
 
-All Stage3D rendering happens through a so called "render context" (an instance of the _Context3D_ class).
-It stores all current settings of the GPU, like the list of active textures, pointers to the vertex data, etc.
-The render context is your connection to the GPU -- without it, you can't do any Stage3D rendering.
+所有Stage3D渲染通过所谓的“渲染上下文”（Context3D类的一个实例）发生。
+它是存储GPU的所有当前设置，如活动纹理列表，顶点数据的指针等的一个软件设备。所以渲染上下文丢失有时又称设备丢失。
+渲染上下文是与GPU的连接 - 没有它，你不能做任何Stage3D渲染。
 
-And here comes the problem: that context can sometimes get lost.
-This means that you lose references to all data that was stored in graphics memory; most notably: textures.
+这里出现的问题是：这种软件设备有时会丢失。
+这意味着您将丢失存储在图形内存中的所有数据的引用;最显著的是：纹理。
 
-Such a context loss doesn't happen equally frequently on all systems; it's rare on _iOS_ and _macOS_, happens from time to time on _Windows_ and very often on _Android_ (rotating the screen? Bam!).
-So there's no way around it: we need to expect the worst and prepare for a context loss.
+对于所有操作系统而言上下文丢失并不频繁;在iOS和macOS上很少出现;但Windows上经常发生的;Android情况呢（旋转屏幕？炸了！）。
+所以没有办法：我们需要预期最坏的情况，并随时准备应付上下文丢失。
 
 [TIP]
-.How to trigger a context loss
+.如何触发上下文丢失
 ====
-There is an easy way to check if your application can handle a context loss: simply dispose the current context via `Starling.context.dispose()`.
-It will immediately be recreated, which is just what happens after the real thing.
+有一个简单的方法来检查您的应用程序是否可以应付上下文丢失的异常情况：只需通过`Starling.context.dispose（）`处理当前上下文。
+它将立即重新创建，这是真正的设备丢失之后会发生的事情。
 ====
 
-=== Default Behavior
+=== 默认行为
 
-When Starling recognizes that the current render context has been lost, it initiates the following procedures:
+当Starling认识到当前渲染上下文已经丢失时，它启动以下过程：
 
-* Starling will automatically create a new context and initialize it with the same settings as before.
-* All vertex- and index buffers will be restored.
-* All vertex- and fragment programs (shaders) will be recompiled.
-* Textures will be restored by whatever means possible (from memory/disk/etc.)
+* Starling会自动创建一个新的上下文，并使用与之前相同的设置进行初始化。
+* 所有顶点和索引缓冲区都将被恢复。
+* 所有顶点和片段程序（着色器）将被重新编译。
+* 纹理将通过任何可能的方式恢复（从内存/磁盘/等）
 
-Restoring buffers and programs is not problematic; Starling has all data that's required and it doesn't take much time.
-Textures, however, are a headache.
-To illustrate that, let's look at the worst case example: a texture created from an embedded bitmap.
+恢复缓冲区和程序没有问题;Starling拥有所需的所有数据，并不需要太多时间。
+但是，恢复纹理是个头痛的问题。
+为了说明这一点，我们来看一下最糟糕的例子：从嵌入式位图创建的纹理。
 
 [source, as3]
 ----
@@ -39,54 +39,54 @@ var bitmap:Bitmap = new Hero();
 var texture:Texture = Texture.fromBitmap(bitmap);
 ----
 
-The moment you call `Texture.fromBitmap`, the bitmap is uploaded to GPU memory, which means it's now part of the context.
-If we could rely on the context staying alive forever, we'd be done now.
+当您调用“Texture.fromBitmap”的时刻，位图被上传到GPU内存，这意味着它现在是上下文的一部分。
+如果我们能够依靠永远处于激活状态的设备环境，我们现在就完成了所有的工作。
 
-However, we _cannot_ rely on that: the texture data could be lost anytime.
-That's why Starling will keep a copy of the original bitmap.
-When the worst happens, it will use it to recreate the texture.
-All of that happens behind the scenes.
+但是，现实是残酷的，我们不能依靠。纹理数据可能会随时丢失。
+这就是为什么Starling将保留原始位图的副本的原因。
+当最坏的情况发生时，它会使用它来重新创建纹理。
+所有这一切都发生在幕后。
 
-Lo and behold!
-That means that the texture is in memory three times.
+但是，你瞧！
+这意味着纹理在内存中存在三份。
 
-* The "Hero" class (conventional memory)
-* The backup bitmap (conventional memory)
-* The texture (graphics memory)
+* “英雄”类（常规内存）
+* 备份位图（常规内存）
+* 纹理（图形内存）
 
-Given the tight memory constraints we're facing on mobile, this is a catastrophe.
-You don't want this to happen!
+鉴于我们在移动设备上面临的严格的内存限制，这是一场灾难。
+你绝对不希望发生这样的情况！
 
-It becomes a little better if you change your code slightly:
+如果稍微更改代码，会变得更好一点
 
 [source, as3]
 ----
-// use the 'fromEmbeddedAsset' method instead
+// 改用'fromEmbeddedAsset'方法
 var texture:Texture = Texture.fromEmbeddedAsset(Hero);
 ----
 
-That way, Starling can recreate the texture directly from the embedded class (calling `new Hero()`), which means that the texture is in memory only two times.
-For embedded assets, that's your best bet.
+这样，Starling可以直接从嵌入式类重新创建纹理（调用`new Hero（）`），这意味着纹理在内存中只有两份。
+对于嵌入式资源，这是您最好的选择。
 
-Ideally, though, we want to have the texture in memory only once.
-For this to happen, you must not embed the asset; instead, you need to load it from an URL that points to a local or remote file.
-That way, only the URL needs to be stored; the actual data can then be reloaded from the original location.
+理想情况下，我们希望纹理在内存中仅有一份。
+为此，您不能嵌入资源;相反，您需要通过指向本地或远程的URL加载它。
+这样，只需要存储URL;然后可以从原始位置重新加载实际数据。
 
-There are two ways to make this happen:
+有两种方法可以实现这一点：
 
-* Use the _AssetManager_ to load your textures.
-* Restore the texture manually.
+* 使用AssetManager加载纹理。
+* 手动恢复纹理。
 
-My recommendation is to use the _AssetManager_ whenever possible.
-It will handle a context loss without wasting any memory; you don't have to add any special restoration logic whatsoever.
+我的建议是尽可能使用AssetManager。
+它能应付上下文丢失而不浪费任何内存;并且您不必添加任何特殊的恢复逻辑。
 
-Nevertheless, it's good to know what's happening behind the scenes.
-Who knows -- you might run into a situation where a manual restoration is your only choice.
+不过，应该庆幸知道了幕后发生的事情。
+天知道 - 你可能会遇到手动恢复是唯一的选择的情形。
 
-=== Manual Restoration
+=== 手动恢复
 
-You might wonder how `Texture.fromEmbeddedAsset()` works internally.
-Let's look at a possible implementation of that method:
+你可能会思考，“Texture.fromEmbeddedAsset（）”内部是如何工作的。
+我们来看一下该方法可能的实现：
 
 [source, as3]
 ----
@@ -101,23 +101,23 @@ public static function fromEmbeddedAsset(assetClass:Class):Texture
 }
 ----
 
-You can see that the magic is happening in the `root.onRestore` callback.
-Wait a minute: what's `root`?
+你可以看到真正的技巧发生在`root.onRestore`回调中。
+等一下：什么是“root”？
 
-You might not know it, but when you've got a _Texture_ instance, that's actually often not a concrete texture at all.
-In reality, it might be just a pointer to a part of another texture (a _SubTexture_).
-Even the `fromBitmap` call could return such a texture!
-(Explaining the reasoning behind that would be beyond the scope of this chapter, though.)
+你可能不知道，当你有一个Texture实例时，实际上根本不是一个具体的纹理。
+它可能只是一个指向另一个纹理的一部分（SubTexture）的一个指针。
+即使`fromBitmap`调用也可以返回这样一个纹理！
+（解释背后的逻辑超出了本章的范围）。
 
-In any case, `texture.root` will always return the _ConcreteTexture_ object, and that's where the `onRestore` callback is found.
-This callback will be executed directly after a context loss, and it gives you the chance of recreating your texture.
+在任何情况下，`texture.root`将始终返回ConcreteTexture对象，即是包含`onRestore`回调的对象。
+这种回调将在上下文丢失之后直接执行，并且可以让您重新创建纹理。
 
-In our case, that callback simply instantiates the bitmap once again and uploads it to the root texture.
-Voilà, the texture is restored!
+在我们的例子中，该回调简单地实例化了位图，并将其上传到根纹理。
+太好了，你瞧！纹理恢复了！
 
-The devil lies in the details, though.
-You have to construct your `onRestore`-callback very carefully to be sure not to store another bitmap copy without knowing it.
-Here's one innocent looking example that's actually totally useless:
+细节之处见功夫。
+你必须非常仔细地构造你的`onRestore` - 回调，以确保不要存储另一个位图副本而不自知。
+这是一个反面的示例，实际上不能这样用：
 
 [source, as3]
 ----
@@ -135,65 +135,65 @@ public static function fromEmbeddedAsset(assetClass:Class):Texture
 }
 ----
 
-Can you spot the error?
+你能发现错误吗？
 
-The problem is that the method creates a _Bitmap_ object and uses it in the callback.
-That callback is actually a so-called _closure_; that's an inline function that will be stored together with some of the variables that accompany it.
-In other words, you've got a function object that stays in memory, ready to be called when the context is lost.
-And the bitmap instance is stored inside it, even though you never explicitly said so.
-(Well, in fact you did, by using `bitmap` inside the callback.)
+问题在于该方法创建了一个Bitmap对象并在回调中使用它。
+这个回调实际上是所谓的闭包;这是一个内联函数，它将与其中的一些变量一起存储。
+换句话说，你有一个保持在内存中的函数对象，可以在上下文丢失时调用。
+而且位图实例被存储在它里面，即使你没有明确地这样声明。
+（嗯，其实你是通过在回调中使用`bitmap`来实现的。）
 
-In the original code, the bitmap is not referenced, but _created_ inside the callback.
-Thus, there is no `bitmap` instance to be stored with the closure.
-Only the `assetClass` object is referenced in the callback -- and that is in memory, anyway.
+在原始代码中，位图不被引用，但在回调中是重新创建位图实例。
+因此，没有“闭包”存储的“位图”实例。
+回调中只引用`assetClass`对象，而且在内存中也是这样。
 
-That technique works in all kinds of scenarios:
+该技术适用于各种场景：
 
-* If your texture originates from an URL, you pass only that URL to the callback and reload it from there.
-* For ATF textures, the process is just the same, except that you need to upload the data with `root.uploadATFData` instead.
-* For a bitmap containing a rendering of a conventional display object, just reference that display object and draw it into a new bitmap in the callback.
-  (That's just what Starling's _TextField_ class does.)
+* 如果您的纹理来自URL，则只将该URL传递给onRestore回调方法并从那里重新加载。
+* 对于ATF纹理，该过程是一样的，只是您需要改用`root.uploadATFData`上传数据。
+* 对于包含传统显示对象渲染的位图，只需引用该显示对象并在回调中的重新绘制新位图后再次上传即可。
+  （就像Starling的TextField类所做的那样）
 
-NOTE: Let me emphasize: the _AssetManager_ does all this for you, so that's the way to go. I just wanted to show you how that is achieved.
+NOTE: 强调一下，AssetManager已经为您做了所有的这些恢复逻辑，之所以按着这个过程再走一遍，我只是想告诉你这是如何实现的。
 
-=== Render Textures
+=== 渲染纹理
 
-Another area where a context loss is especially nasty: render textures.
-Just like other textures, they will lose all their contents -- but there's no easy way to restore them.
-After all, their contents is the result of any number of dynamic draw operations.
+上下文丢失导致的另一个特别令人讨厌的领域：渲染纹理。
+就像其他纹理一样，它们将丢失所有的内容 - 但是没有简单的方法来恢复它们。
+毕竟，他们的内容是任意数量的动态绘制操作的结果。
 
-If the _RenderTexture_ is just used for eye candy (say, footprints in the snow), you might be able to just live with it getting cleared.
-If its contents is crucial, on the other hand, you need a solution for this problem.
+如果RenderTexture仅用于特殊效果（比如说雪地上的足迹），那么您可能只需要清除它即可 ,无伤大雅。
+另一方面，如果其内容至关重要，则需要一个系统的解决方案。
 
-There's no way around it: you will need to manually redraw the texture's complete contents.
-Again, the `onRestore` callback could come to the rescue:
+没有其它办法：您需要手动重绘纹理的完整内容。
+再一次，`onRestore`回调可能会拯救你：
 
 [source, as3]
 ----
 renderTexture.root.onRestore = function():void
 {
     var contents:Sprite = getContents();
-    renderTexture.clear(); // required on texture restoration
+    renderTexture.clear(); // 在纹理恢复时需要调用
     renderTexture.draw(contents);
 });
 ----
 
-I hear you: it's probably more than just one object, but a bunch of draw calls executed over a longer period.
-For example, a drawing app with a _RenderTexture_-canvas, containing dozens of brush strokes.
+我仿佛听见你说：它可能不仅仅是一个对象，而是在更长的时间内执行了一堆绘图调用的综合结果。
+例如，一个包含RenderTexture-canvas的绘图应用程序，包含数十个画笔笔画。
 
-In such a case, you need to store sufficient information about all draw commands to be able to reproduce them.
+在这种情况下，您需要存储有关所有绘制命令的足够信息才能再现它们。
 
-If we stick with the drawing app scenario, you might want to add support for an _undo/redo_ system, anyway.
-Such a system is typically implemented by storing a list of objects that encapsulate individual commands.
-You can re-use that system in case of a context loss to restore all draw operations.
+如果我们坚持使用渲染纹理绘制应用程序场景，您可能需要添加对 取消/重做 系统的支持。
+这样的系统通常通过存储封装各个命令的对象的列表来实现。
+在上下文丢失的情况下，您可以重新使用该系统来恢复所有绘图操作。
 
-Now, before you start implementing this system, there is one more gotcha you need to be aware of.
-When the `root.onRestore` callback is executed, it's very likely that not all of your textures are already available.
-After all, they need to be restored, too, and that might take a while!
+现在，在开始实施这个系统之前，还有一个需要注意的问题。
+当执行`root.onRestore`回调时，很可能并不是所有的纹理都已经可用了。
+毕竟，他们也需要恢复，这可能需要一些时间！
 
-If you loaded your textures with the _AssetManager_, however, it has got you covered.
-In that case, you can listen to its `TEXTURES_RESTORED` event instead.
-Also, make sure to use `drawBundled` for optimal performance.
+如果您使用AssetManager加载纹理，那么它已经包含了这个处理过程。
+在这种情况下，您可以监听“TEXTURES_RESTORED”事件。
+另外，确保使用`drawBundled`获得最佳性能。
 
 [source, as3]
 ----
@@ -202,10 +202,10 @@ assetManager.addEventListener(Event.TEXTURES_RESTORED, function():void
     renderTexture.drawBundled(function():void
     {
         for each (var command:DrawCommand in listOfCommands)
-            command.redraw(); // executes `renderTexture.draw()`
+            command.redraw(); // 执行`renderTexture.draw（）`
     });
 });
 ----
 
-NOTE: This time, there is no need to call clear, because that's the default behavior of `onRestore`, anyway -- and we did not modify that.
-Remember, we are in a different callback here (`Event.TEXTURES_RESTORED`), and `onRestore` has not been modified from its default implementation.
+NOTE: 这一次，不需要调用clear，因为这只是`onRestore`的默认行为，不管如何--我们并没有修改它。
+记住，我们在这里有一个不同的回调（`Event.TEXTURES_RESTORED`），`onRestore`没有被修改为默认的实现。
