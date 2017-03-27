@@ -164,74 +164,74 @@ Pool.putPoint(point); // 不要忘记这个！
 
 如果您以尽可能少的更改状态的制作方式设置场景，则您的渲染性能将获得巨大的提升。
 
-Again, Starling's statics display provides useful data.
-It shows exactly how many draw calls are executed per frame.
-The more state changes you have, the higher this number will be.
+Starling的统计显示又提供了有用的数据。
+它显示每帧执行多少次绘制调用。
+应用程序状态更改次数越多，这个数字就越高。
 
-.The statistics display includes the current number of draw calls.
+.统计显示包括当前绘制次数。
 image::stats-display.png[Statistics Display]
 
 [NOTE]
 ====
-The statistics display causes draw calls, as well.
-However, Starling explicitly decrements the draw count displayed to take that into account.
+统计显示小界面本身也会引发绘制调用。
+但是，Starling已经将这个因素考虑在内，自身显示导致的绘制计数也一并统计,以得出最终明确的结论。
 ====
 
-Your target should always be to keep it as low as possible.
-The following tips will show you how.
+您的目标应始终保持绘制调用次数尽可能低。
+以下提示将告诉你如何做到。
 
-===== The Painter's Algorithm
+===== 画家算法
 
-To know how to minimize state changes, you need to know the order in which Starling processes your objects.
+要了解如何将状态更改次数降到最低，您需要知道Starling处理对象的逻辑顺序。
 
-Like Flash, Starling uses the _Painter's algorithm_ to process the display list.
-This means that it draws your scene like a painter would do it: starting at the object at the bottom layer (e.g. the background image) and moving upwards, drawing new objects on top of previous ones.
+像Flash一样，Starling使用画家算法来处理显示列表。
+这意味着它像画家一样绘制您的场景：从底层的对象（例如背景图像）开始并向上移动，在先前的对象之上绘制新对象。
 
-.Drawing a scene with the Painter's algorithm.
+.用画家算法绘制场景。
 image::painters-algorithm.png[Painter's algorithm]
 
-If you'd set up such a scene in Starling, you could create three sprites: one containing the mountain range in the distance, one with the ground, and one with the vegetation.
-The mountain range would be at the bottom (index 0), the vegetation at the top (index 2).
-Each sprite would contain images that contain the actual objects.
+如果您在Starling中设置了这样一个场景，您创建了三个精灵：一个包含远处的山脉，一个包含地面，另一个包含植被。
+山脉处于底部（在_children中下标为0），植被处于顶部（下标2）。
+每个精灵都将包含实际图像。
 
-.The scene graph of the landscape from above.
+.从上往下看的景观图。
 image::landscape.png[Landscape Scene Graph]
 
-On rendering, Starling would start at the left with "Mountain 1" and continue towards the right, until it reaches "Tree 2".
-If all those objects have a different state, this would mean six draw calls.
-That's exactly what will happen if you load each object's texture from a separate Bitmap.
+在渲染时，Starling将从左侧开始，以“山 1”开始，向右移动，直到达到“树 2”。
+如果所有这些对象具有不同的状态，这意味着会产生六次绘制调用。
+如果每个对象的纹理都是从单独的位图加载就一定会发生这种情况。
 
 // <note tip>
 // Another tool at your disposal is the [[http://doc.starling-framework.org/core/starling/display/DisplayObjectContainer.html#sortChildren()|DisplayObjectContainer::sortChildren()]] method which can be used to sort layers, within a ''Sprite'' object for example, based on properties such as ''x'', ''y'', ''alpha'' etc. The method accepts a compare function which means you can sort objects based on any criteria you wish! :-D
 // </note>
 
-===== The Texture Atlas
+===== 纹理图集
 
-That's one of the reasons why texture atlases are so important.
-If you load all those textures from one single atlas, Starling will be able to draw all objects at once!
-(At least if the other properties listed above do not change.)
+如果所有这些纹理都是从同一个图集中加载，Starling将能够一次绘制所有对象！
+这就是为什么纹理图集是如此重要的原因之一。
+(上面列出的影响状态的属性不改变的情况下)
 
-.The same scene graph, now using a single atlas texture.
+.相同的场景图，现在使用单一的图集纹理。
 image::landscape-2.png[Landscape Scene Graph 2]
 
-The consequence of this is that you should _always_ use an atlas for your textures.
-Here, each image uses the same atlas (depicted by all nodes having the same color).
+这个实验结果指出我们应该总是把纹理封装到一个图集后使用。
+这里，每个图像来源于同一个图集（由具有相同颜色描绘的所有节点）。
 
-Sometimes, though, not all of your textures will fit into a single atlas.
-The size of textures is limited, so you'll run out of space sooner or later.
-But this is no problem, as long as you arrange your textures in a smart way.
+有时候，并不是所有的纹理都适合存放于同一图集。
+因为纹理图集的尺寸是有上限的，所以你迟早会耗尽空间。
+但这并不是问题，只要你以一种聪明的方式安排你的纹理。
 
-.The order of objects makes a difference.
+.对象的顺序有所不同。
 image::landscape-3.png[Landscape Scene Graph 3]
 
-Both those examples use two atlases (again, one color per atlas).
-But while the display list on the left will force a state change for each object, the version on the right will be able to draw all objects in just two batches.
+这两个例子都使用两个图集（每个图集一个颜色）。
+但是，当左侧的显示列表强制对每个对象进行状态更改时，右侧的版本将能够在两个批次中完成所有对象的绘制。
 
-==== Use the MeshBatch class
+==== 使用MeshBatch类
 
-The fastest way to draw a huge number of quads or other meshes at once is to use the _MeshBatch_ class.
-That's the same class that is used internally by Starling for all rendering, so it's heavily optimized.footnote:[If you're still using Starling 1.x, look for ''QuadBatch'' instead.]
-It works like this:
+一次绘制大量四边形或其他网格的最快方法是使用MeshBatch类。
+这是Starling内部所有渲染都会使用的类，所以它是经过重度优化的。.footnote:[如果您仍在使用Starling 1.x，请改用“QuadBatch”。]
+它的工作原理如下：
 
 [source, as3]
 ----
@@ -247,49 +247,49 @@ for (var i:int=0; i<100; ++i)
 addChild(meshBatch);
 ----
 
-Did you notice? You can add the same image as often as you want!
-Furthermore, adding it is a very fast operation; e.g. no event will be dispatched (which is the case when you add an object to a container).
+你注意到了吗？您可以随意添加相同的图像！
+此外，添加对象是一个非常快的操作;例如不会调度任何事件（而将对象添加到容器时则会派发事件）。
 
-As expected, this has some downsides, though:
+正如预想的那样，这个机制也存在一些缺点：
 
-* All the objects you add must have the same state (i.e. use textures from the same atlas).
-  The first image you add to the MeshBatch will decide on its state.
-  You can't change the state later, except by resetting it completely.
-* You can only add instances of the _Mesh_ class or its subclasses (that includes _Quad_, _Image_, and even _MeshBatch_).
-* Object removal is quite tricky: you can only remove meshes by trimming the number of vertices and indices of the batch.
-  However, you can overwrite meshes at a certain index.
+* 您添加的所有对象必须具有相同的状态（例如：使用来自同一图集的纹理）。
+  您添加到MeshBatch的第一张图像将决定其状态。
+  您以后不能更改状态，除非将其完全重置。
+* 您只能添加Mesh类或其子类（包括Quad，Image，甚至MeshBatch）的实例。
+* 对象删除非常棘手：只能通过修剪MeshBatch内部的顶点和索引数来删除网格。
+  但是，您也可以在特定索引处覆盖网格。
 
-For these reasons, it's only suitable for very specific use-cases (the _BitmapFont_ class, for example, uses a mesh batch internally).
-In those cases, it's definitely the fastest option, though. You won't find a more efficient way to render a huge number of objects in Starling.
+由于这些原因，它仅适用于非常具体的用例（例如，BitmapFont类，其内部就使用了MeshBatch）。
+在这些情况下，这绝对是最快的选择。您在Starling中找不到更有效的渲染大量物件的方式。
 
-==== Batch your TextFields
+==== TextFields批处理
 
-Per default, a TextField will require one draw call, even if your glyph texture is part of your main texture atlas.
-That's because long texts require a lot of CPU time to batch; it's faster to simply draw them right away (without copying them to a _MeshBatch_).
+默认情况下，即使您的字形纹理是主要纹理图集的一部分，TextField也需要单独的一次绘图调用。
+这是因为长文本需要大量的CPU计算以达到批次的目的;这种情况下只需简单地绘制它们即可（不需要将它们复制到MeshBatch）。
 
-However, if your text field contains only a few letters (rule of thumb: below 16), you can enable the `batchable` property on the TextField.
-With that enabled, your texts will be batched just like other display objects.
+但是，如果文本字段只包含少数几个字符（经验法则：16个字符以下），则可以在TextField上启用`batchable`属性。
+启用该功能后，您的文本将像其他显示对象一样能进行合并批渲染。
 
-==== Use BlendMode.NONE
+==== 使用BlendMode.NONE
 
-If you've got totally opaque, rectangular textures, help the GPU by disabling blending for those textures.
-This is especially useful for large background images.
+如果您有完全不透明的矩形纹理，可以通过禁用这些纹理的混合功能来节省GPU消耗。
+这对于大背景图像特别有用。
 
 [source, as3]
 ----
 backgroundImage.blendMode = BlendMode.NONE;
 ----
 
-Naturally, this will also mean an additional state change, so don't overuse this technique.
-For small images, it's probably not worth the effort (except if they'd cause a state change, anyway, for some other reason).
+当然这也意味着产生了一个额外的状态变化，即多一次绘制调用，所以不要过度使用这种技术。
+对于小图像，它可能不值得的这样做（除非它们由于其他原因导致状态已经改变）。
 
-==== Use stage.color
+==== 使用stage.color
 
-Oftentimes, the actual stage color is actually never seen in your game, because there are always images or meshes on top of the stage.
+通常情况下，您的游戏中看不到舞台的实际颜色，因为舞台上总是有图像或网格。
 
-In that case, always set it to clear black (`0x0`) or white (`0xffffff`).
-There seems to be a fast hardware optimization path for a `context.clear` on some mobile hardware when it is called with either all 1's or all 0's.
-Some developers reported a full millisecond of spared rendering time per frame, which is a very nice gain for such a simple change!
+在这种情况下，始终将其设置为黑色（“0x0”）或白色（“0xffffff”）。
+因为在某些移动硬件上调用“context.clear”，对于全部为1或全部为0的情况，似乎存在一个快速的硬件优化途径。
+一些开发人员测试对比帧使用时间，发现即使这样一个简单的改变也有一个非常好的增益！
 
 [source, as3]
 ----
@@ -300,8 +300,8 @@ public class Startup extends Sprite
 }
 ----
 
-On the other hand, if the background of your game is a flat color, you can make use of that, too: just set the stage color to that value instead of displaying an image or a colored quad.
-Starling has to clear the stage once per frame, anyway -- thus, if you change the stage color, that operation won't cost anything.
+另一方面，如果您的游戏背景是纯色，您也可以利用这一点：只需将舞台颜色设置为该值，而不是显示图像或彩色四边形。
+任何情况下，Starling必须每帧清除一次舞台 - 因此，如果您更改舞台颜色，则该操作则不会有任何消耗。
 
 [source, as3]
 ----
@@ -312,17 +312,17 @@ public class Startup extends Sprite
 }
 ----
 
-==== Avoid querying width and height
+==== 避免查询宽度和高度
 
-The `width` and `height` properties are more expensive than one would guess intuitively, especially on sprites.
-A matrix has to be calculated, and each vertex of each child will be multiplied with that matrix.
+查询“宽”和“高”属性比你想象的更耗费性能，特别是在精灵上查询这些属性。
+必须计算矩阵，并且每个子对象的每个顶点将与该矩阵相乘。
 
-For that reason, avoid accessing them repeatedly, e.g. in a loop.
-In some cases, it might even make sense to use a constant value instead.
+为此，请避免重复访问它们。例如，在一个循环中反复访问它们。
+在某些情况下，使用常量值更有价值。
 
 [source, as3]
 ----
-// bad:
+// 较差:
 for (var i:int=0; i<numChildren; ++i)
 {
     var child:DisplayObject = getChildAt(i);
@@ -330,7 +330,7 @@ for (var i:int=0; i<numChildren; ++i)
         child.removeFromParent();
 }
 
-// better:
+// 较好:
 var wallWidth:Number = wall.width;
 for (var i:int=0; i<numChildren; ++i)
 {
@@ -340,54 +340,54 @@ for (var i:int=0; i<numChildren; ++i)
 }
 ----
 
-==== Make containers non-touchable
+==== 禁用容器touchable功能
 
-When you move the mouse/finger over the screen, Starling has to find out which object is hit.
-This can be an expensive operation, because it requires a hit-test on each and every display object (in the worst case).
+当您将鼠标/手指移动到屏幕上时，Starling必须找出哪个对象被选中。
+这可能是一个非常耗性能的操作，因为它需要对每个显示对象进行碰撞测试（在最坏的情况下）。
 
-Thus, it helps to make objects _untouchable_ if you don't care about them being touched, anyway.
-It's best to disable touches on complete containers: that way, Starling won't even have to iterate over their children.
+因此，无论如何，如果你不关心他们被选中，禁用其touchable功能将有助于提高运行时性能。
+最好在完整的容器上禁用touchable：因为这样，Starling也就不必对其孩子进行迭代。
 
 [source, as3]
 ----
-// good:
+// 好:
 for (var i:int=0; i<container.numChildren; ++i)
     container.getChildAt(i).touchable = false;
 
-// even better:
+// 更好:
 container.touchable = false;
 ----
 
-==== Hide objects that are outside the Stage bounds
+==== 隐藏在舞台边界之外的对象
 
-Starling will send any object that is part of the display list to the GPU.
-This is true even for objects that are outside the stage bounds!
+Starling将发送显示列表的所有对象到GPU。
+即使此对象在舞台界限之外，也是如此！
 
-You might wonder: why doesn't Starling simply ignore those invisible objects?
-The reason is that checking the visibility in a universal way is quite expensive.
-So expensive, in fact, that it's faster to send objects up to the GPU and let it do to the clipping.
-The GPU is actually very efficient with that and will abort the whole rendering pipeline very early if the object is outside the screen bounds.
+你可能会想：为什么Starling不自动忽略那些看不见的物体？
+原因是以普通的方式检查可视性(CPU实时计算)是相当昂贵的。
+事实上，与其这样做昂贵的CPU操作，不如将对象发送到GPU，GPU剪辑速度更快。
+GPU实际上是非常高效的，如果对象在屏幕边界之外，则很快就会中止整个渲染管道。
 
-However, it still takes time to upload that data, and you can avoid that.
-Within the high level game logic, it's often easier to make visibility checks (you can e.g. just check the x/y coordinates against a constant).
-If you've got lots of objects that are outside those bounds, it's worth the effort.
-Remove those elements from the stage or set their `visible` property to `false`.
+但是，上传数据还需要时间，您可以避免这种情况的话更好。
+在应用程序具体模块内或游戏内部逻辑中，通常更容易进行可见性检查（例如，您仅仅将x / y坐标与常量进行比较就可以做到）。
+如果你有很多对象在这些边界之外，这是值得的。
+从显示列表上移除这些元素，或者将它们的`visible`属性设置为`false`。
 
-==== Make use of Event Pooling
+==== 利用事件池
 
-Compared to classic Flash, Starling adds an additional method for event dispatching:
+与传统Flash相比，Starling增加了一种事件调度的附加方法：
 
 [source, as3]
 ----
-// classic way:
+// 经典方式：
 object.dispatchEvent(new Event("type", bubbles));
 
-// new way:
+// 新方式：
 object.dispatchEventWith("type", bubbles);
 ----
 
-The new approach will dispatch an event object just like the first one, but behind the scenes, it will pool event objects for you.
-That means that you will save the garbage collector some work.
+新方式将像第一个方法一样调度事件对象，但在幕后，它将把您的事件对象缓存进对象池。
+这意味着你不必浪费垃圾回收器来回收事件对象。
 
-In other words, it's less code to write _and_ is faster -- thus, it's the preferred way to dispatch events.
-(Except if you need to dispatch a custom subclass of `Event`; they cannot be dispatched with that method.)
+换句话说，写代码较少且更快 - 因此，这是调度事件的首选方式。
+(除了需要调度“Event”的自定义子类，不能使用该方法进行调度以外。)
