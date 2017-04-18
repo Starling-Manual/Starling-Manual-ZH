@@ -1,23 +1,23 @@
-== Device Rotation
+== 设备旋转
 
-A very cool feature of today's smartphones and tablets is that they recognize the orientation of the device in the physical world and may update the user interface accordingly.
+今天智能手机和平板电脑的一个非常酷的功能就是它们识别出物理世界中设备的方向，并可以相应地更新用户界面。
 
-To detect orientation changes in Starling, you first need to update your application's AIR configuration file.
-Make sure that it includes the following settings:
+要检测Starling中的方向更改，您首先需要更新应用程序的AIR配置文件。
+确保它包括以下设置：
 
 [source, xml]
 ----
 <aspectRatio>any</aspectRatio> <1>
 <autoOrients>true</autoOrients> <2>
 ----
-<1> The initial aspect ratio (`portrait`, `landscape` or `any`).
-<2> Indicates whether the app will begin auto-orienting on launch.
+<1> 初始宽高比（“portrait”，“landscape”或“any”）。
+<2> 表示应用程序在启动时是否开始自动定向。
 
-When that's in place, you can listen for a `RESIZE` event on the Starling stage.
-It is dispatched whenever the orientation changes.
-After all, an orientation change always causes the stage size to change, as well (exchanging _width_ and _height_).
+当这样做的时候，你可以在Starling舞台上监听“RESIZE”事件。
+每当方向发生变化时这个事件都会被调度。
+毕竟，方向变化总是导致舞台大小改变（交换width和height）。
 
-Update the dimensions of the Starling viewPort and stage in the corresponding event handler.
+在相应的事件处理程序中更新Starling viewPort和stage的尺寸。
 
 [source, as3]
 ----
@@ -46,16 +46,16 @@ private function updatePositions(width:int, height:int):void // <3>
     // Update the positions of the objects that make up your game.
 }
 ----
-<1> This event handler is called when the device rotates.
-<2> Updates the size of stage and viewPort depending on the current screen size in pixels.
-<3> Updates your user interface so that it fits the new orientation.
+<1> 设备旋转时调用此事件处理程序。
+<2> 根据当前的屏幕尺寸（像素）更新舞台和viewPort的大小。
+<3> 更新您的用户界面，使其符合新的方向。
 
-Note that we had to update _viewPort_ and _stage size_ manually in the event listener.
-Per default, they will remain unchanged, which means that your application will appear cropped.
-The code above fixes that; it works for every scale factor.
+请注意，我们必须在事件侦听器中手动更新viewPort和stage size。
+默认情况下，它们将保持不变，这意味着您的应用程序将出现裁剪。
+上面的代码修复了这个问题; 它现在能适用于不同的缩放因子。
 
-The last part is going to be much harder: updating your user interface so that it fits into the new stage dimensions.
-This does not make sense for all games -- but if it does, you should consider the additional effort.
-Your users will appreciate it!
+最后一部分会变得更加困难：更新您的用户界面，使其适应新的舞台维度。
+这并非对所有游戏都有意义 - 但如果有必要的话，你应该考虑额外的自适应工作。
+您的用户会感受到更好的体验！
 
-TIP: The _Scaffold_ project coming with Starling contains a possible implementation of this feature.
+TIP: Starling附带的Scaffold项目包含了此功能的可能实现。

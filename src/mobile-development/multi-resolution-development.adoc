@@ -1,29 +1,29 @@
-== Multi-Resolution Development
+== 多分辨率开发
 
-Oh, where are the days we developed games for a single screen?
-Back then, we had a small rectangular area in an HTML page, and that's where we placed our sprites, texts and images.
-A single resolution to work for -- wasn't that nice?
+嗯，我们在单一屏幕上开发游戏是什么时候的事了？
+那时，我们在HTML页面中有一个小的矩形区域，那就是我们放置我们的精灵，文本和图像的地方。
+一个单一的解决方案 - 不是很好吗？
 
-Alas ... the times they are a-changin'!
-Mobile phones come in all flavors and sizes, and even desktop computers and notebooks feature high density displays.
-This is great news for our consumer-selves, but it doesn't exactly make our lives as developers easier, that's for sure!
+唉...是改变的时候了！
+手机具有各种类型和尺寸，甚至台式电脑和笔记本电脑都具有高密度显示器。
+这对我们的消费者而言是一个好消息，但它并不能让我们这些开发者的开发生涯变得更容易，这是肯定的！
 
-But don't give up hope: you can manage that.
-It's just a matter of thinking ahead and making use of a few simple mechanisms provided by Starling.
+但不要放弃治疗：你可以搞定这个。
+通过一系列需要预先考虑的事件，和利用Starling提供的一些简单的机制。
 
-The problem is just that it's a little overwhelming at first.
-That's why we'll do this in small steps -- and we will begin in 2007.
+问题在于，万事开头难。
+我们将在一个个小步骤中完成这个工作 - 我们将从2007年开始。
 
-Yes, you heard right: step into the DeLorean, start up the Flux Capacitor(TM) and hold tight while we hit those eighty miles per hour.
+是的，你听到了：进入DeLorean，启动Flux Capacitor（TM），并按每小时八十英里的速度前进。
 
 === iPhone
 
-The iPhone is arguably the most popular platform for casual games.
-Back in 2007, it was also the _only_ one you could easily develop for.
-This was the time of the big App Store gold rush!
+iPhone可以说是休闲游戏最受欢迎的平台。
+早在2007年，它也是你可以轻松开发的唯一一个平台。
+这是大型App Store淘金热的时候！
 
-With its fixed resolution of 320×480 pixels, the first iPhone was super easy to develop for.
-Granted, Starling wasn't around back then, but you would have started it up like this:
+其固定分辨率为320×480像素，第一款iPhone超级容易开发。
+当然，Starling如果那时候就有了，你会这样启动它：
 
 [source, as3]
 ----
@@ -34,46 +34,46 @@ var viewPort:Rectangle = new Rectangle(0, 0, screenWidth, screenHeight);
 starling = new Starling(Game, stage, viewPort);
 ----
 
-We set the _viewPort_ to the full size of the screen: 320×480 pixels.
-Per default, the stage will have exactly the same dimensions.
+我们将viewPort设置为屏幕的全尺寸：320×480像素。
+默认情况下，舞台将具有完全相同的尺寸。
 
-.Our game on the original iPhone.
+.我们的游戏运行在原始的iPhone中。
 image::iphone-penguflip.png[PenguFlip on the iPhone, 120]
 
-So far, so easy: this works just like in, say, a game for the browser.
-(That would be Internet Explorer 6, then, right?)
+到目前为止，就这么简单：这就像在浏览器中的游戏一样。
+(那会是Internet Explorer 6，对吧？)
 
-Next stop: 2010.
+下一站：2010。
 
-=== iPhone Retina
+=== iPhone视网膜屏幕
 
-We park our DeLorean right around the corner of the old Apple campus and check out the App Store charts.
-Hurray! Apparently, our game was a huge success in 2007, and it's still in the top 10!
-There's no time to lose: we must make sure it looks well on the iPhone 4 that's going to come out in a few weeks.
+我们将DeLorean停在旧苹果校园的拐角处，查看App Store图表。
+欢呼！显然，我们的游戏在2007年取得了巨大的成功，而且还在前十名！
+没时间了，我们输不起：我们必须确保在几周内iPhone 4上看起来很好。
 
-Since we're coming from the future, we know about its major innovation, the high-resolution screen dubbed "Retina Display" by the Apple marketing team.
-We fire up our game from 2007 and start it up on this yet-to-be released device.
+由于我们来自未来，我们知道其主要创新点：被苹果营销团队称为“视网膜显示”的高分辨率屏幕。
+我们从2007年开始我们的游戏，并启动了这个尚待发布的设备。
 
-.That's definitely not intended.
+.这绝对不是故意的。
 image::iphone4-wrong.png[PenguFlip with a wrong scale on the iPhone4, 160]
 
-Damn, the game is now only taking up a quarter of the screen!
-Why is that?
+可惜，游戏现在只占了四分之一的屏幕！
+这是为什么？
 
-If you look back at the code we wrote in 2007, you'll see that we made the _viewPort_ just as big as the screen.
-With the iPhone 4, these values have doubled: its screen has 640×960 pixels.
-The code that placed display objects on the stage expected a coordinate system of just 320×480, though.
-So things that were placed on the very right (`x=320`) are now suddenly at the center instead.
+如果你回顾我们在2007年写的代码，你会看到我们使viewPort和屏幕一样大。
+使用iPhone 4，这些值翻了一番：其屏幕有640×960像素。
+在舞台上放置显示对象的代码预计只有320×480的坐标系。
+所以放在右边的东西（`x = 320`）现在突然在中心了。
 
-That's easily solved, though.
-Remember: Starling's `viewPort` and `stageWidth/Height` properties can be set independently.
+这很容易解决。
+记住：Starling的“viewPort”和“stageWidth / Height”属性可以独立设置。
 
-* The viewPort decides into which area of the screen Starling renders into.
-  It is always specified in pixels.
-* The stage size decides the size of the coordinate system that is displayed in that viewPort.
-  When your stage width is 320, any object with an x-coordinate between 0 and 320 will be within the stage, no matter the size of the viewPort.
+* ViewPort(视口)决定了Starling显示的画面在屏幕的哪个区域。
+  它总是以像素为单位指定。
+* 舞台尺寸决定在该视口中显示的坐标系的大小。
+  当您的舞台宽度为320时，任何x坐标在0和320之间的对象都将处于舞台中，无论viewPort的大小如何。
 
-With that knowledge, upscaling is trivial:
+有了这个知识，升级之事就是小菜一碟：
 
 [source, as3]
 ----
@@ -86,53 +86,53 @@ starling.stage.stageWidth  = 320;
 starling.stage.stageHeight = 480;
 ----
 
-The viewPort is still dynamic, depending on the device the game is started on; but we added two lines at the bottom that hard-code the stage size to fixed values.
+viewPort仍然是动态的，具体取决于游戏开始的设备;但是，我们在底部添加了两行，将舞台大小硬编码为固定值。
 
-NOTE: Since those values no longer indicate pixels, we are now calling them _points_: our stage size is now 320×480 points.
+NOTE: 由于这些值不再指示像素，我们现在称呼它们为：点：我们的舞台大小现在是320×480点。
 
-On the iPhone 4, the game now looks like this:
+在iPhone 4上，游戏现在看起来像这样：
 
-.Better, but a little blurry.
+.还行，有点模糊。
 image::iphone4-scale-blurry.png[PenguFlip scaled up blurry, 285]
 
-That's better: we are now using the full screen size.
-However, it's also a little blurry.
-We're not really making any use of the big screen.
-I can already see the bad reviews coming in ... we need to fix this!
+这更好：我们现在正在使用全屏尺寸。
+但是，它也有点模糊。
+我们并没有真正使用大屏幕。
+我可以看到糟糕的评论进来了...我们需要解决这个问题！
 
-==== HD textures
+==== 高清纹理
 
-The solution for that problem is to provide special textures for the high resolution.
-Depending on the pixel density, we will use either the low- or high-resolution texture set.
-The advantage: except for the logic that picks the textures, we don't need to change any of our code.
+该问题的解决方案是提供高分辨率的特殊纹理。
+根据像素密度，我们将使用低或高分辨率纹理集。
+优点：除了选择纹理的逻辑，我们不需要更改我们的任何代码。
 
-It's not enough to simply load a different set of files, though.
-After all, bigger textures will return bigger values for _width_ and _height_.
-With our fixed stage width of 320 points,
+但是，仅仅加载一组不同的文件还不够。
+毕竟，较大的纹理将为width和height返回更大的值。
+我们固定的舞台宽度为320点。
 
-* an SD texture with a width of 160 pixels will fill half of the stage;
-* a corresponding HD texture (width: 320 pixels) would fill the complete stage.
+* 宽度为160像素的SD纹理将填充舞台的一半;
+* 相应的高清纹理（宽度：320像素）将填满整个舞台。
 
-What we want instead is for the HD texture to report the same size as the SD texture, but provide more detail.
+我们想要的是使HD纹理返回与SD纹理相同的大小，但提供更多的细节。
 
-That's where Starling's _contentScaleFactor_ comes in handy.
-We implicitly set it up when we configured Starling's _stage_ and _viewPort_ sizes.
-With the setup shown above, run the following code on an iPhone 4:
+这时候,Starling的contentScaleFactor就派上用场了。
+当我们配置Starling的stage和viewPort大小时，我们隐式地设置它。
+使用上述设置，在iPhone 4上运行以下代码：
 
 [source, as3]
 ----
 trace(starling.contentScaleFactor); // → 2
 ----
 
-The _contentScaleFactor_ returns the _viewPort width_ divided by the _stage width_.
-On a retina device, it will be "2"; on a non-retina device, it will be "1".
-This tells us which textures to load at runtime.
+contentScaleFactor返回viewPort width/stage width。
+在视网膜设备上，将为“2”; 在非视网膜设备上，将为“1”。
+这告诉我们在运行时加载哪些纹理。
 
-NOTE: It's not a coincidence that the contentScaleFactor is a whole number.
-Apple exactly doubled the number of pixels per row / per column to avoid aliasing issues as much as possible.
+NOTE: contentScaleFactor是一个整数不是巧合。
+苹果公司每行/每列的像素数量翻倍，以尽可能避免混叠问题。
 
-The texture class has a similar property simply called `scale`.
-When set up correctly, the texture will work just like we want it to.
+纹理类有一个类似的属性，简称为“scale”。
+当正确设置时，纹理将按我们预想的那样工作。
 
 [source, as3]
 ----
@@ -147,18 +147,18 @@ assetManager.loadQueue(...);
 var texture:Texture = assetManager.getTexture("penguin"); // <4>
 trace(texture.scale); // → Either '1' or '2' <5>
 ----
-<1> Get the `contentScaleFactor` from the Starling instance.
-<2> Depending on the scale factor, the textures will be loaded from the directory `1x` or `2x`.
-<3> By assigning the same scale factor to the _AssetManager_, all textures will be initialized with that value.
-<4> When accessing the textures, you don't need to take care about the scale factor.
-<5> However, you can find out the scale of a texture anytime via the `scale` property.
+<1> 从Starling实例获取`contentScaleFactor`。
+<2> 根据比例因子，纹理将从“1x”或“2x”目录加载。
+<3> 通过将相同的比例因子分配给AssetManager，所有纹理将使用该值进行初始化。
+<4> 访问纹理时，您不需要关注比例因子。
+<5> 然而，您可以随时通过`scale`属性找出纹理的比例。
 
-NOTE: Not using the _AssetManager_?
-Don't worry: all the `Texture.from...` methods contain an extra argument for the scale factor.
-It must be configured right when you create the texture; the value can't be changed later.
+NOTE: 不使用AssetManager？
+别担心，所有的“Texture.from ...”方法都包含一个额外的比例因子参数。
+创建纹理时必须正确配置; 该值不能稍后更改。
 
-The textures will now take the _scale factor_ into account when you query their width or height.
-For example, here's what will happen with the game's full-screen background texture.
+当您查询纹理宽度或高度时，现在需要考虑scale factor。
+例如，假如这是游戏全屏背景纹理,将会发生什么。
 
 |===
 |File |Size in Pixels |Scale Factor |Size in Points
@@ -175,30 +175,30 @@ For example, here's what will happen with the game's full-screen background text
 
 |===
 
-Now we have all the tools we need!
+现在我们拥有所需的所有工具！
 
-* Our graphic designer on the back seat (call him Biff) creates all textures in a high resolution (ideally, as vector graphics).
-* In a preprocessing step, the textures are converted into the actual resolutions we want to support (`1x`, `2x`).
-* At runtime, we check Starling's _contentScaleFactor_ and load the textures accordingly.
+* 我们在后座的平面设计师（称他为Biff）以高分辨率创建所有纹理（理想情况下，作为矢量图形）。
+* 在预处理步骤中，纹理将转换成我们要支持的实际分辨率（“1x”，“2x”）。
+* 在运行时，我们检查Starling的contentScaleFactor并加载对应的纹理。
 
-This is it: now we've got a crisp-looking retina game!
-Our player's will appreciate it, I'm sure of that.
+现在我们有一个清晰的视网膜游戏了！
+我们的玩家将会喜欢它的，我确信这一点。
 
-.Now we're making use of the retina screen!
+.现在我们正在使用视网膜屏幕！
 image::iphone4-scale-hd.png[PenguFlip on the iPhone, 285]
 
-TIP: Tools like https://www.codeandweb.com/texturepacker/starling?source=gamua[TexturePacker] make this process really easy.
-Feed them with all your individual textures (in the highest resolution) and let them create multiple texture atlases, one for each scale factor.
+TIP: 使用像 https://www.codeandweb.com/texturepacker/starling?source=gamua[TexturePacker] 这样的工具让事情变得非常简单.
+给他们提供所有的纹理（最高分辨率），并让它们创建多个纹理图集，即每个缩放因子对应一个图集。
 
-We celebrate our success at a http://gizmodo.com/5520438/how-apple-lost-the-next-iphone[bar] in Redwood, drink a beer or two, and move on.
+我们在Redwood的 http://gizmodo.com/5520438/how-apple-lost-the-next-iphone[bar] 上庆祝我们的成功，喝一两杯啤酒然后继续前进。
 
 === iPhone 5
 
-In 2012, the iPhone has another surprise in store for us: Apple changed the screen's aspect ratio.
-Horizontally, it's still 640 pixels wide; but vertically, it's now a little bit longer (1136 pixels).
-It's still a retina display, of course, so our new logical resolution is 320×568 points.
+2012年，iPhone对我们来说又有一个惊喜：苹果改变了屏幕的纵横比。
+在水平方面，它仍然是640像素宽;但垂直方面，现在已经有点长了（1136像素）。
+它仍然是一个视网膜屏幕，当然，我们的新的逻辑分辨率变成了320×568点。
 
-As a quick fix, we simply center our stage on the _viewPort_ and live with the black bars at the top and bottom.
+作为一个快速的解决方案，我们只需将我们的舞台放在viewPort上，并且让它伴随顶部和底部的黑色条纹一起呈现。
 
 [source, as3]
 ----
@@ -206,25 +206,25 @@ var offsetY:int = (1136 - 960) / 2;
 var viewPort:Rectangle = new Rectangle(0, offsetY, 640, 960);
 ----
 
-Mhm, that seems to work!
-It's even a fair strategy for all those Android smartphones that are beginning to pop up in this time line.
-Yes, our game might look a little blurry on some devices, but it's not too bad: the image quality is still surprisingly good.
-Most users won't notice.
+嗯, 似乎正常工作了！
+对于在这个时间线上开始出现的所有Android智能手机来说，这是一个公平的策略。
+是的，我们的游戏在某些设备上可能看起来有点模糊，但这并不太糟糕：图像质量仍然令人惊喜。
+大多数用户不会注意到。
 
-.Letterbox scaling.
+.宽幕缩放.
 image::iphone5-letterbox.png[PenguFlip with letterbox bars, 160]
 
-I call this the *Letterbox Strategy*.
+我称之为*黑边模式*。
 
-* Develop your game with a fixed stage size (like 320×480 points).
-* Add several sets of assets, depending on the scale factor (e.g. `1x`, `2x`, `3x`).
-* Then you scale up the application so that it fills the screen without any distortion.
+* 以固定的舞台大小开发游戏（如320×480点）。
+* 根据比例因子（例如“1x”，“2x”，“3x”）添加几组资源。
+* 然后，您可以扩展应用程序，使其填充屏幕而不会发生任何失真。
 
-This is probably the most pragmatic solution.
-It allows your game to run in an acceptable quality on all available display resolutions, and you don't have to do any extra work other than setting the viewPort to the right size.
+这可能是最务实的解决方案。
+它允许您的游戏在所有可用的显示分辨率上以可接受的质量运行，除了将viewPort设置为正确的大小外，您不必进行任何额外的工作。
 
-By the way, the latter is very easy when you use the _RectangleUtil_ that comes with Starling.
-To "zoom" your viewPort up, just create it with the following code:
+顺便说一句，当您使用Starling附带的RectangleUtil时，事情变得非常容易处理。
+要“放大”您的viewPort，只需使用以下代码创建它：
 
 [source, as3]
 ----
@@ -239,23 +239,23 @@ var viewPort:Rectangle = RectangleUtil.fit(
     ScaleMode.SHOW_ALL);
 ----
 
-Simple, yet effective!
-We definitely earned ourselves another trip with the time machine.
-Hop in!
+简单高效！
+我们乘坐时光机再来一次旅行。
+出发！
 
 === iPhone 6 and Android
 
-We're in 2014 now and ... Great Scott!
-Checking out the "App Store Almanac", we find out that our sales haven't been great after our last update.
-Apparently, Apple wasn't too happy with our letterbox-approach and didn't feature us this time.
-Damn.
+我们现在在2014年...天哪！
+检查“苹果商店年鉴”，我们发现在上次更新后，我们的销售情况并不好。
+显然，苹果对我们的黑边方法并不满意，这次并没有提供这个功能给我们。
+可恶。
 
-Well, I guess we have no other choice now: let's bite the bullet and make use of that additional screen space.
-So long, hard-coded coordinates!
-From now on, we need to use relative positions for all our display objects.
+嗯，我想我们现在别无选择了，让我们咬住子弹，并利用这个额外的屏幕空间。
+是告别硬编码坐标的时候了，我们竟然用了这么久！
+从现在开始，我们需要为所有的显示对象使用相对位置。
 
-I will call this strategy *Smart Object Placement*.
-The startup-code is still quite similar:
+我会称这个策略*智能对象布局*。
+启动代码仍然非常相似：
 
 [source, as3]
 ----
@@ -266,13 +266,13 @@ starling.stage.stageWidth  = 320;
 starling.stage.stageHeight = isIPhone5() ? 568 : 480;
 ----
 
-Yeah, I smell it too.
-Hard coding the stage height depending on the device we're running ... that's not a very smart idea.
-Promised, we're going to fix that soon.
+是的，我也感觉到哪里不对。
+根据我们正在运行的设备硬编码舞台高度...这不是一个非常聪明的想法。
+我承诺，我们即将解决这个问题。
 
-For now, it works, though: both _viewPort_ and _stage_ have the right size.
-But how do we make use of that?
-Let's look at the _Game_ class now, the class acting as our Starling root.
+到现在为止，它能正常的工作，毕竟：viewPort和stage都有正确的大小。
+但是我们该怎么做显得更聪明呢？
+我们现在来看看Game类，这个类将作为Starling的根类。
 
 [source, as3]
 ----
@@ -300,31 +300,31 @@ public class Game extends Sprite
     }
 }
 ----
-<1> When the constructor of game is called, it's not yet connected to the stage. So we postpone initialization until we are.
-<2> We call our custom `setup` method and pass the stage size along.
-<3> Exemplary, we create a _LifeBar_ instance (a custom user interface class) at the bottom of the screen.
+<1> 当游戏的构造函数被调用时，它尚未连接到舞台。所以我们推迟初始化，直到连接到舞台。
+<2> 我们调用自定义的“setup”方法，并传入舞台大小。
+<3> 示例，我们在屏幕底部创建一个LifeBar实例（一个自定义的用户界面类）。
 
-All in all, that wasn't too hard, right?
-The trick is to always take the stage size into account.
-Here, it pays off if you created your game in clean components, with separate classes responsible for different interface elements.
-For any element where it makes sense, you pass the size along (like in the _LifeBar_ constructor above) and let it act accordingly.
+总而言之，这不是太难，对吧？
+诀窍是始终考虑舞台尺寸。
+在这里，如果您在干净的组件中创建游戏，并且单独的类负责不同的界面元素，这将是有益的。
+对于任何有意义的元素，您可以传递大小（如上面的LifeBar构造函数），并使其相应地执行。
 
-.No more letterbox bars: the complete screen is put to use.
+.没有更多的黑边吧：使用上完整的屏幕。
 image::iphone5-smart-objects.png[PenguFlip without letterbox bars, 160]
 
-That works really well on the iPhone 5.
-We should have done that in 2012, dammit!
-Here, in 2014, things have become even more complicated.
+这在iPhone 5上非常出色。
+我们应该在2012年做到这一点，而不是2014年！
+在2014年，事情变得更复杂了。
 
-* Android is quickly gaining market share, with phones in all different sizes and resolutions.
-* Even Apple introduced bigger screens with the _iPhone 6_ and _iPhone 6 Plus_.
-* Did I mention tablet computers?
+* Android正在迅速获得市场份额，手机具有不同的尺寸和分辨率。
+* 苹果公司也推出了更大的屏幕 - iPhone 6和iPhone 6 Plus。
+* 我是否提到平板电脑？
 
-By organizing our display objects relative to the stage dimensions, we already laid the foundations to solve this.
-Our game will run with almost any stage size.
+我们通过组织相对于舞台尺寸的显示对象，已经奠定了解决这个问题的基础。
+我们的游戏几乎能运行任何尺寸的舞台之上。
 
-The remaining problem is which values to use for stage size and content scale factor.
-Looking at the range of screens we have to deal with, this seems like a daunting task!
+剩下的问题是使用一个值-舞台大小和内容的比例因子。
+看看我们必须处理的屏幕区域，这似乎是一项艰巨的任务！
 
 |===
 |Device |Screen Size |Screen Density |Resolution
@@ -376,16 +376,16 @@ Looking at the range of screens we have to deal with, this seems like a daunting
 
 |===
 
-The key to figuring out the scale factor is to take the screen's density into account.
+确定比例因子的关键是考虑到屏幕的密度。
 
-* The higher the density, the higher the scale factor.
-  In other words: we can infer the scale factor from the density.
-* From the scale factor, we can calculate the appropriate stage size.
-  Basically, we reverse our previous approach.
+* 密度越高，比例因子越高。
+  换句话说：我们可以从密度推断出比例因子。
+* 从比例因子我们可以计算适当的舞台大小。
+  基本上我们扭转了我们以前的做法。
 
-The original iPhone had a screen density of about 160 dpi.
-We take that as the basis for our calculations: for any device, we divide the density by 160 and round the result to the next integer.
-Let's make a sanity check of that approach.
+原始iPhone的屏幕密度约为160 dpi。
+我们将其作为我们计算的基础：对于任何设备，我们将密度除以160，并将结果取为大于或等于当前值的最近一个整数。
+下面对这种做法进行细致的检查。
 
 |===
 |Device |Screen Size |Screen Density |Scale Factor |Stage Size
@@ -446,16 +446,16 @@ Let's make a sanity check of that approach.
 
 |===
 
-Look at the resulting stage sizes: they are now ranging from 320×480 to 414×736 points.
-That's a moderate range, and it also makes sense: a screen that's physically bigger is supposed to have a bigger stage.
-The important thing is that, by choosing appropriate scale factors, we ended up with reasonable coordinate systems.
-This is a range we can definitely work with!
+看看计算出来的舞台的大小：现在它们从320×480到414×736点。
+这是一个适度的范围，这也是有道理的：一个物理尺寸更大的屏幕料想会有更大的舞台。
+重要的是，通过选择适当的比例因子，我们得到了合理的坐标系。
+这是我们可以依据的尺寸范围！
 
-NOTE: You might have noticed that the scale factor of the _Galaxy S1_ is not an integer value.
-This was necessary to end up with an acceptable stage size.
+NOTE: 您可能已经注意到Galaxy S1的比例因子不是整数值。
+这是必要的，以达到可接受的舞台大小。
 
-Let's see how I came up with those scale values.
-Create a class called `ScreenSetup` and start with the following contents:
+我们来看看我是如何得到这些比例因子的。
+创建一个名为“ScreenSetup”的类，并从以下内容开始：
 
 [source, as3]
 ----
@@ -482,21 +482,21 @@ public class ScreenSetup
 }
 ----
 
-This class is going to figure out the _viewPort_ and _stage size_ Starling should be configured with.
-Most properties should be self-explanatory -- except for the `assetScale`, maybe.
+这个类将会找出Starling如何合理配置viewPort和stage size。
+大多数属性应该是其意自见的 - 或许`assetScale`除外。
 
-The table above shows that we're going to end up with scale factors ranging from "1" to "4".
-However, we probably don't want to create our textures in all those sizes.
-The pixels of the densest screens are so small that your eyes can't possibly differentiate them, anyway.
-Thus, you'll often get away with just providing assets for a subset of those scale factors (say, 1-2 or 1-3).
+上表显示，我们将以“1”到“4”的比例因子结束。
+但是，我们可能不想为所有尺寸都创建匹配的纹理。
+反正最密集的屏幕的像素很小，你的眼睛不可能区分它们。
+因此，您通常只会为这些比例因子的一部分（例如1-2或1-3）提供资源。
 
-* The `assetScales` argument in the constructor is supposed to be an array filled with the scale factors for which you created textures.
-* The `assetScale` property will tell you which of those asset-sets you need to load.
+* 构造函数中的`assetScales`参数应该是一个填充了您创建纹理的比例因子的数组。
+* “assetScale”属性将告诉您需要加载哪些资源图集。
 
-TIP: Nowadays, it's even rare for an application to require scale factor "1".
-However, that size comes in handy during development, because you can preview your interface without requiring an extremely big computer screen.
+TIP: 如今，应用程序要求比例因子“1”的情况已经是罕见的。
+但是，在开发过程中，该尺寸非常方便，因为您可以预览界面而不需要极大的电脑屏幕。
 
-Let's get to the implementation of that constructor, then.
+我们来看看那个构造函数的实现。
 
 [source, as3]
 ----
@@ -527,16 +527,16 @@ public function ScreenSetup(
     _viewPort = new Rectangle(0, 0, _stageWidth * _scale, _stageHeight * _scale);
 }
 ----
-<1> We need to add a small workaround for the Apple iPad. We want it to use the same set of scale factors you get natively on iOS.
-<2> Our base density is 160 dpi (or 130 dpi on iPads). A device with such a density will use scale factor "1".
-<3> Our scale factors should be integer values or `1.5`. This code picks the closest one.
-<4> Here, we decide the set of assets that should be loaded.
+<1> 我们需要为Apple iPad添加一个小的解决方法。 我们希望它使用与iOS上本机相同的比例因子。
+<2> 我们的基本密度为160 dpi（iPad上为130 dpi）。 具有这种密度的设备将使用比例因子“1”。
+<3> 我们的比例因子应该是整数值或“1.5”。 该代码选择最接近的一个。
+<4> 在这里，我们选择要加载的资源集。
 
-TIP: If you want to see the results of this code if run on the devices I used in the tables above, please refer to this https://gist.github.com/PrimaryFeather/505fc4f120c06d09d2c56910476ab710[Gist].
-You can easily add some more devices to this list and check out if you are pleased with the results.
+TIP: 如果要查看此代码在上表设备上运行的结果，请参阅此 https://gist.github.com/PrimaryFeather/505fc4f120c06d09d2c56910476ab710[Gist].
+您可以轻松地在此列表中添加更多设备，并查看您是否对结果感到满意。
 
-Now that everything is in place, we can adapt the startup-code of Starling.
-This code presumes that you are providing assets with the scale factors "1" and "2".
+现在，一切都到位，我们可以调整Starling的启动代码。
+此代码假定您提供的比例因子为“1”和“2”。
 
 [source, as3]
 ----
@@ -548,7 +548,7 @@ _starling.stage.stageWidth  = screen.stageWidth;
 _starling.stage.stageHeight = screen.stageHeight;
 ----
 
-When loading the assets, make use of the `assetScale` property.
+在加载资源时，使用`assetScale`属性。
 
 [source, as3]
 ----
@@ -561,38 +561,38 @@ assetManager.enqueue(appDir.resolvePath(texturePath));
 assetManager.loadQueue(...);
 ----
 
-That's it!
-You still have to make sure to set up your user interface with the stage size in mind, but that's definitely manageable.
+就是这样!
+您仍然需要时刻考虑舞台大小以设置您的用户界面与之相适应，但这绝对是可以做到的。
 
-TIP: The Starling repository contains a project called _Mobile Scaffold_ that contains all this code.
-It's the perfect starting point for any mobile application.
-(If you can't find the _ScreenSetup_ class in your download yet, please have a look at the head revision of the GitHub project.)
+TIP: Starling存储库包含一个名为Mobile Scaffold的项目，其中包含所有这些代码。
+这是任何移动应用程序的完美起点。
+(如果您在下载中找不到ScreenSetup类，请查看GitHub项目的最新版本)
 
-TIP: If you are using _Feathers_, the class _ScreenDensityScaleFactorManager_ will do the job of the _ScreenSetup_ class we wrote above.
-In fact, the logic that's described here was heavily inspired by that class.
+TIP: 如果您使用_Feathers_，类ScreenDensityScaleFactorManager将执行我们上面写的ScreenSetup类所做的工作。
+事实上，这里描述的逻辑很多的灵感来自于该类。
 
-=== iPad and other Tablets
+=== iPad和其他平板电脑
 
-Back in the present, we're starting to wonder if it would make sense to port our game to tablets.
-The code from above will work just fine on a tablet; however, we will be facing a much larger stage, with much more room for content.
-How to handle that depends on the application you are creating.
+回过头来看, 我们开始怀疑将游戏移植到平板电脑是否有意义。
+上面的代码在平板电脑上工作得很好，然而我们将面临更大的舞台，更多的内容空间。
+如何处理这取决于您正在创建的应用程序。
 
-==== Some games can simply be scaled up.
+==== 有些游戏可以简单地放大。
 
-Games like _Super Mario Bros_ or _Bejeweled_ look great scaled to a big screen with detailed textures.
-In that case, you could ignore the screen density and calculate the scale factor based just on the amount of available pixels.
+像Super Mario Bros或Bejeweled这样的游戏看起来可以很大地缩放到具有详细纹理的大屏幕。
+在这种情况下，您可以忽略屏幕密度，并根据可用像素的数量计算缩放因子。
 
-* The first iPad (resolution: 768×1024) would simply become a device with a stage size of 384×512 and a scale factor of "2".
-* A retina iPad (resolution: 1536×2048) would also have a stage size of 384×512, but a scale factor of "4".
+* 第一款iPad（分辨率：768×1024）将简单地成为舞台大小为384×512，比例因子为“2”的适配设备。
+* 视网膜iPad（分辨率：1536×2048）的舞台大小也是384×512，比例因子为“4”。
 
-==== Others can display more content.
+==== 显示更多的内容。
 
-Think of _Sim City_ or _Command & Conquer_: such games could show the user much more of the landscape.
-The user interface elements would take up less space compared to the game's content.
+想想Sim City或Command＆Conquer：这样的游戏可以向用户展示更多的景观。
+与游戏的内容相比，用户界面元素将占用更少的空间。
 
-==== Some will need you to rethink the complete interface.
+==== 有些需要你重新思考完整的用户界面。
 
-This is especially true for productivity-apps.
-On the small screen of a mobile phone, an email client will show either a single mail, the inbox, or your mailboxes.
-A tablet, on the other hand, can display all three of those elements at once.
-Don't underestimate the development effort this will cause.
+对于app尤其如此。
+在手机的小屏幕上，电子邮件客户端将单个显示邮件，收件箱或邮箱。
+但是，平板电脑可以一次显示这三个元素。
+不要低估这将导致增加的开发工作量。
