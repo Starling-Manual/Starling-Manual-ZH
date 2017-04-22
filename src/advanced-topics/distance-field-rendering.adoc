@@ -125,7 +125,7 @@ image::cat-modes.png[用不同模式呈现的猫, 500]
 我希望未来的产品会有所改善。
 
 TIP: 对于Hiero, https://github.com/libgdx/libgdx/wiki/Distance-field-fonts[这里] 是一个很好的介绍。
-不幸的是，Hiero不能导出Starling要求的XML格式;不过，这个小脚本可能有所帮助。https://gist.github.com/tluyben/4984856[perl script]
+不幸的是，Hiero不能导出Starling要求的XML格式;不过，这个小脚本可能有所帮助: https://gist.github.com/tluyben/4984856[perl脚本]
 
 无论使用什么工具或过程：最后，你将有一个纹理和一个`.fnt`文件，就像往常一样。
 小小提示，下面是创建和注册位图字体的代码：

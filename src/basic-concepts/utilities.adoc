@@ -131,5 +131,5 @@ IMPORTANT: 始终确保get和put调用是平衡的。
 === 此外 ...
 
 `starling.utilities`包包含更多的帮助，我可能一并在这里列出。
-有关方法和类的完整列表，请参阅http://doc.starling-framework.org/core/starling/utils/package-detail.html [API参考]。
+有关方法和类的完整列表，请参阅:http://doc.starling-framework.org/core/starling/utils/package-detail.html[API Reference].
 它值得一看！
