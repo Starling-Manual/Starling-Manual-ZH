@@ -568,7 +568,7 @@ TIP: Starling存储库包含一个名为Mobile Scaffold的项目，其中包含�
 这是任何移动应用程序的完美起点。
 (如果您在下载中找不到ScreenSetup类，请查看GitHub项目的最新版本)
 
-TIP: 如果您使用_Feathers_，类ScreenDensityScaleFactorManager将执行我们上面写的ScreenSetup类所做的工作。
+TIP: 如果您使用Feathers，类ScreenDensityScaleFactorManager将执行我们上面写的ScreenSetup类所做的工作。
 事实上，这里描述的逻辑很多的灵感来自于该类。
 
 === iPad和其他平板电脑

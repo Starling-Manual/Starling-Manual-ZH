@@ -251,12 +251,12 @@ image::stats-display.png[The statistics display]
 
 这些值的含义是什么?
 
-* _framerate_ (帧率)意义应该是相当明确的: Starling统计到在前一秒内渲染的帧数.
-* _Standard memory_ 是内存, 总而言之, 你使用的 _AS3_ 对象, 无论它是 _String_,  _Sprite_,  _Bitmap_, 或者 _Function_: 所有对象都需要一些内存.
+* framerate (帧率)意义应该是相当明确的: Starling统计到在前一秒内渲染的帧数.
+* Standard memory 是内存, 总而言之, 你使用的 AS3 对象, 无论它是 String,  Sprite,  Bitmap, 或者 Function: 所有对象都需要一些内存.
   单位是兆字节(Mb).
-* _GPU memory_ 表示显存，这分几种情况. 纹理存储在图形存储器（显存）中，顶点缓冲和着色器程序也是如此.
+* GPU memory 表示显存，这分几种情况. 纹理存储在图形存储器（显存）中，顶点缓冲和着色器程序也是如此.
   大多数时候，纹理占据了绝大部分.
-* _draw calls_ 表示绘制调用次数,即每帧向GPU发送多少个单独的“绘制”命令.
+* draw calls 表示绘制调用次数,即每帧向GPU发送多少个单独的“绘制”命令.
   通常，当绘制调用较少时，场景渲染会更快.
   当我们谈论<<性能优化>>时，我们将详细解读这个值.
 

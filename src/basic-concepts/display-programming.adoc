@@ -10,9 +10,9 @@ ifndef::imagesdir[:imagesdir: ../../img]
 === 显示对象
 
 屏幕上显示的所有元素其类型都是显示对象。
-`starling.display`包包括抽象_DisplayObject_类;它提供了许多不同类型的基本显示对象，例如图像，影片剪辑和文本等等。
+`starling.display`包包括抽象DisplayObject类;它提供了许多不同类型的基本显示对象，例如图像，影片剪辑和文本等等。
 
-_DisplayObject_类提供了所有显示对象共有的方法和属性。
+DisplayObject类提供了所有显示对象共有的方法和属性。
 例如，以下属性用于配置对象在屏幕上的位置：
 
 * `x`，`y`：当前坐标系中的位置。
@@ -55,28 +55,28 @@ Image <|-- MovieClip
 
 网格是Starling的渲染架构的基本组成部分。
 实际上一切被绘制到屏幕上的对象都是网格！
-_Stage3D_不能绘制任何东西，除了三角形，一个网格其实是一系列的点，这些点按一定的顺序组成三角形。
+Stage3D不能绘制任何东西，除了三角形，一个网格其实是一系列的点，这些点按一定的顺序组成三角形。
 
-第二个分支，你会发现一些扩展自_DisplayObjectContainer_的类。
+第二个分支，你会发现一些扩展自DisplayObjectContainer的类。
 顾名思义，这个类充当其他显示对象的容器。
-它可以将显示对象组织成逻辑系统 - _display list_（显示列表）。
+它可以将显示对象组织成逻辑系统 - display list（显示列表）。
 
 === 显示列表
 
-被渲染的所有显示对象的层次结构称为_display list_。
-_Stage_是显示列表的根容器。
+被渲染的所有显示对象的层次结构称为display list。
+Stage是显示列表的根容器。
 把"stage"(舞台)按字面上的意思理解：你的用户（观众）只会看到已经进入舞台的对象（演员）。
 当您开始创建Starling时，舞台将自动被创建。
 连接到舞台（直接或间接）的所有内容都将被渲染。
 
-当我说“连接到”时，我的意思是需要一个_parent-child_关系。
-为了使一个对象出现在屏幕上，你应该把它添加(addChild)到舞台，或任何其他连接到舞台的_DisplayObjectContainer_上。
+当我说“连接到”时，我的意思是需要一个parent-child关系。
+为了使一个对象出现在屏幕上，你应该把它添加(addChild)到舞台，或任何其他连接到舞台的DisplayObjectContainer上。
 
 .Display objects are organized in the display list.
 image::display-list.png[Display List, 350]
 
-舞台的第一个（通常是唯一的）子对象是_application root_：这是你传递给Starling构造函数的类。
-就像舞台，它可能也是一个_DisplayObjectContainer_。
+舞台的第一个（通常是唯一的）子对象是application root：这是你传递给Starling构造函数的类。
+就像舞台，它可能也是一个DisplayObjectContainer。
 你将通过它来接管显示列表！
 
 您将创建容器，其中容器将包含其他容器和网格（例如图片）。
@@ -87,20 +87,20 @@ image::display-list.png[Display List, 350]
 
 这两个对象应该作为一个整体：当移动时，图像和文本应该跟随。
 同样的，应该一起适应大小，缩放，旋转等的变化。
-我们可以把这些对象放在一个非常轻量级的_DisplayObjectContainer_：_Sprite_中来实现。
+我们可以把这些对象放在一个非常轻量级的DisplayObjectContainer：Sprite中来实现。
 
 [NOTE]
 .DisplayObjectContainer vs. Sprite
 ====
-_DisplayObjectContainer_和_Sprite_可以几乎具有相同的意义。
-这两个类之间的唯一区别是，一个（_DisplayObjectContainer_）是抽象的，而另一个（_Sprite_）不是。
-因此，您可以使用_Sprite_将对象分组在一起，而不需要再创建一个扩展自_DisplayObjectContainer_的子类。
-可以看出_Sprite_的另一个优点：它是更快捷的类型。
+DisplayObjectContainer和Sprite可以几乎具有相同的意义。
+这两个类之间的唯一区别是，一个（DisplayObjectContainer）是抽象的，而另一个（Sprite）不是。
+因此，您可以使用Sprite将对象分组在一起，而不需要再创建一个扩展自DisplayObjectContainer的子类。
+可以看出Sprite的另一个优点：它是更快捷的类型。
 通常，这是我更喜欢它的主要原因。
 像大多数程序员一样，我也是一个懒人！
 ====
 
-因此，要将文本和图像组合在一起，您可以创建一个sprite，并将文本和图像添加为_children_：
+因此，要将文本和图像组合在一起，您可以创建一个sprite，并将文本和图像添加为children：
 
 [source, as3]
 ----
@@ -111,8 +111,8 @@ sprite.addChild(image); // <2>
 sprite.addChild(textField); // <3>
 ----
 <1> 创建sprite。
-<2> 向sprite中添加一个_Image_。
-<3> 向sprite中添加一个_TextField_。
+<2> 向sprite中添加一个Image。
+<3> 向sprite中添加一个TextField。
 
 添加子项的顺序很重要 - 它们按照放置顺序来决定显示层次。
 这里，`textField`将出现在`image`前面。
@@ -134,7 +134,7 @@ sprite.rotation = deg2rad(90); // <4>
 <3> 向右移动50点。
 <4> 将组旋转90度（Starling始终使用弧度）。
 
-实际上，_DisplayObjectContainer_定义了许多方法来帮助你操纵它的子对象：
+实际上，DisplayObjectContainer定义了许多方法来帮助你操纵它的子对象：
 
 [source, as3]
 ----

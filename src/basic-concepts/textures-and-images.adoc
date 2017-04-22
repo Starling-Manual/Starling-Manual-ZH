@@ -94,12 +94,12 @@ var subTexture:Texture = Texture.fromTexture(
         texture, new Rectangle(10, 10, 41, 47));
 ----
 
-很快，你会知道_TextureAtlas_类; 它基本上围绕这个功能构建。
+很快，你会知道TextureAtlas类; 它基本上围绕这个功能构建。
 
 === 图像
 
 我们现在有了一些纹理，但我们仍然不知道如何在屏幕上显示它们。
-最简单的方法是使用_Image_类或其直系亲属之一。
+最简单的方法是使用Image类或其直系亲属之一。
 
 让我们聚焦此族谱中的这一部分。
 
