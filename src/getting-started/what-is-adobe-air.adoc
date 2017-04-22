@@ -7,7 +7,7 @@ ifndef::imagesdir[:imagesdir: ../../img]
 总之：情况是一团糟.
 
 这就是为什么Adobe Flash如此受欢迎的原因.
-footnote:[_Flash_ was originally created by _Macromedia_, which was acquired by Adobe in 2005.]
+footnote:[Flash最初是由Adobe在2005年收购的Macromedia创建的。]
 Adobe Flash允许设计师和开发人员在直观的创作工具（现在称为Adobe Animate）中创建多媒体内容，并确保它在所有平台上看起来一样.
 Flash使用ActionScript 3编程，它是一门易于学习， 并且非常强大的编程语言.
 

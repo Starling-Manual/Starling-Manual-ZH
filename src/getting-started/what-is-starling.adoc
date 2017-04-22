@@ -22,7 +22,7 @@ Starling对开发人员隐藏了Stage3D内部接口，但是对于需要完全�
 但是，今天的移动硬件具有几乎颠倒的设置：拥有非常先进的图形芯片和相对较弱的CPU（即节省电池的）.
 
 那么问题来了：如何让原有针对纯CPU渲染设计的API能够快速有效地利用GPU，显然，这是是非常困难的（即使有可能的话）.
-footnote:[Here's an interesting article from one of Adobe's engineers about the reasons, via 'archive.org': http://tinyurl.com/hkbdgfn]
+footnote:[以下是Adobe某工程师的一篇有趣的文章: http://tinyurl.com/hkbdgfn]
 这种尝试失败了，因此，Flash插件也一直未能在手机和平板电脑上的浏览器中出现.
 
 值得称道的是，Adobe非常清楚这个问题.
@@ -31,7 +31,7 @@ footnote:[Here's an interesting article from one of Adobe's engineers about the 
 
 那么问题又来了：这样一个低级的API并没能帮助用户利用上已有的经典显示列表，至少不能方便的使用.
 正因为Stage3D API是如此低级，所以它不是一个典型的开发者可以（或应该）用来直接创建应用程序或游戏的API.
-footnote:[Fancy writing some some pixel shaders in an assembly language? I guessed so.]
+footnote:[我猜是用汇编语言编写一些像素着色器]
 显然，Adobe需要一个建立在Stage3D之上，但是像'flash.display'一样容易使用的更高级的API.
 
 嗯...是时候了，Starling进入舞台了（一语双关）!
