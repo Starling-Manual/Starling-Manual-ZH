@@ -373,7 +373,7 @@ NOTE: 如果纹理不与PMA一起存储怎么办？
 
 ==== 第二种尝试
 
-当您再次尝试滤镜时（完整的代码：https://gist.github.com/PrimaryFeather/31f1dd7f04cd6ce886f1[ColorOffsetFilter.as]），您会看到正确的Alpha值：
+当您再次尝试滤镜时(完整的代码： https://gist.github.com/PrimaryFeather/31f1dd7f04cd6ce886f1[ColorOffsetFilter.as]), 您会看到正确的Alpha值：
 
 .这就对了！
 image::customfilter-pma-solved.png[Custom Filter with solved PMA issue]

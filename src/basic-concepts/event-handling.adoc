@@ -460,7 +460,7 @@ else if (touches.length >= 2)
 * 在第一个if子句中，屏幕上只有一个手指。通过`getMovement`，我们可以实现拖动手势。
 * 在else子句中，两个手指在屏幕上。通过访问两个触摸对象，我们可以实施捏合手势。
 
-注意：作为Starling下载一部分的演示应用程序包含https://github.com/Gamua/Starling-Framework/blob/master/samples/demo/src/utils/TouchSheet.as[TouchSheet]类，该类使用在Multitouch场景中。
+注意：作为Starling下载一部分的演示应用程序包含 https://github.com/Gamua/Starling-Framework/blob/master/samples/demo/src/utils/TouchSheet.as[TouchSheet] 类，该类使用在Multitouch场景中。
 它显示了允许拖动，旋转和缩放sprite的触摸处理程序的示例实现。
 
 ==== 鼠标移开和结束悬停
