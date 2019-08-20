@@ -6,7 +6,7 @@ Daniel Sperl <http://www.gamua.com[Gamua]>
 :sectnums:
 :sectanchors:
 :icons: font
-:source-highlighter: pygments
+:source-highlighter: rouge
 :imagesdir: ../img
 :experimental:
 :autofit-option:
@@ -39,7 +39,7 @@ endif::[]
 [.right]
 image::handbook-mockup.jpg[The Starling Handbook, 250]
 
-我还在编写一本书，其中不仅包含本手册的完整内容，还添加了许多其他的HOW-TO和指南。 
+我还在编写一本书，其中不仅包含本手册的完整内容，还添加了许多其他的HOW-TO和指南。
 分步教程将引导您完成一个完整的游戏的开发。
 
 * 上 http://gamua.com/blog/2016/09/the-starling-handbook/[Gamua 博客]了解更多信息.
